@@ -1,12 +1,12 @@
 # TARCC_F22
 
-The scientific objectives of focus are:
+### The scientific objectives of focus are:
 
 Determine biological and non-biological risk factors for Alzheimer’s and analyze the weight of influence of these factors in developing or resisting the progress of Alzheimer’s Disease.
 
 Develop an effective and economically viable analysis method to predict the risk of early-onset Alzheimer’s disease, with an intent to replace PET, MRI and CT scans in the future.
 
-## Individual Steps Applied: 
+### Individual Steps Applied: 
 
 1. Eliminate columns that may be unnecessary to what we are looking for in the dataset in accordance with the project goals
 2. Investigate columns/features with null values (NaN) and drop columns/features that have > 10000 NaN values 

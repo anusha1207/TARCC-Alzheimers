@@ -1,5 +1,5 @@
 # TARCC_F22
-My development environment consists of the following documents:
+My development environment consists of the following documents and highlighted points:
   - IPYNB containing the data science pipeline, including all the scripts for analysis
   - Data Wrangling and Preprocessing
   - EDA, pandas profiling for visualization

@@ -11,4 +11,4 @@ The scientific objectives of focus are:
      disease, with an intent to replace PET, MRI and CT scans
      in the future.
      
- Please visit our teams' branch individually for further examination and analyses of our scopes. 
+ Please visit our team's branch individually for further examination and analyses of our scopes. 

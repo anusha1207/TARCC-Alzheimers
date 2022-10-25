@@ -40,7 +40,7 @@ def find_features(model, features, score):
     df=df[:20]
     df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for {model}')
-    plt.savefig(f'{model}_features', format="pdf", bbox_inches="tight")
+    plt.savefig(f'{model}_features.pdf', format="pdf", bbox_inches="tight")
     plot = plt.show()
     return df, plot
 
@@ -107,7 +107,7 @@ def fb_selection(model, direction_name, direction):
     ff1_df = pd.DataFrame.from_dict(ff1_dict).T
     fig1=plot_sfs(ff1_dict, kind='ci')
     plt.title(f'{direction_name} Feature Selection using {model} (With confidence interval)')
-    plt.savefig(f'{model}_features', format="pdf", bbox_inches="tight")
+    plt.savefig(f'{model}_features.pdf', format="pdf", bbox_inches="tight")
     plt.grid()
     plot = plt.show()
     ff1_features=list(ff1_df['feature_names'][30])
@@ -136,7 +136,7 @@ def kruskal_select(X, y):
     kruskal_df.iloc[:30, :]
     kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
     plt.title('Feature Selection using Kruskall_Wallace')
-    plt.savefig("Kruskall_features", format="pdf", bbox_inches="tight")
+    plt.savefig("Kruskall_features.pdf", format="pdf", bbox_inches="tight")
     kw_plot = plt.show()
     return kruskal_df, kw_plot
 
@@ -157,7 +157,7 @@ def combine_features():
 
 
 ###### Mann- Whitney ######
-
+# cant get this to run
 #mw=stats.mannwhitneyu(X, y, alternative = 'two-sided')
 #Choosing significant features
 #lst=np.where(mw.pvalue>0)[0].tolist()
@@ -201,7 +201,7 @@ dtr = RFE(estimator=DecisionTreeClassifier(), n_features_to_select=30)
 dtr_df = recursive_selection(dtr, X, y)
 
 ###### Forward and Backward selection ######
-
+# these take so long to run
 #dtf_df, dtf_fig, dtf_plot = fb_selection(model = DecisionTreeClassifier(), direction_name = 'Forward', direction = True)
 #rff_df, rff_fig, rff_plot =fb_selection(model = RandomForestClassifier(), direction_name = 'Forward', direction = True)
 

@@ -20,16 +20,16 @@ Our main goal is to determine biological and non-biological risk factors for Alz
 ## Prerequisites
 This project installs and uses the following packages.
 - [Numpy](https://pypi.org/project/numpy/)
-- Pandas
-- Matplotlib
-- Seaborn
-- Statsmodel
-- Scikit Learn
-- Scipy Stats
-- MLXtend
-- LightGBM
-- XGBoost
-- Boruta
+- [Pandas](https://pypi.org/project/pandas/)
+- [Matplotlib](https://pypi.org/project/matplotlib/)
+- [Seaborn](https://pypi.org/project/seaborn/)
+- [Statsmodel](https://pypi.org/project/statsmodels/)
+- [Scikit Learn](https://pypi.org/project/scikit-learn/)
+- [Scipy Stats](https://pypi.org/project/scipy/)
+- [MLXtend](https://pypi.org/project/mlxtend/)
+- [LightGBM](https://pypi.org/project/lightgbm/)
+- [XGBoost](https://pypi.org/project/xgboost/)
+- [Boruta](https://pypi.org/project/Boruta/)
 
 ## Folder Structure
 

@@ -1,14 +1,19 @@
-# TARCC_F22
-The scientific objectives of focus are:
+# Texas Alzheimers' Research Care and Consortium: Team TARCC 'F22
 
-  1) Determine biological and non-biological risk factors for
-     Alzheimer’s and analyze the weight of influence of
-     these factors in developing or resisting the progress of
-     Alzheimer’s Disease.
-     
-  2) Develop an effective and economically viable analysis
-     method to predict the risk of early-onset Alzheimer’s
-     disease, with an intent to replace PET, MRI and CT scans
-     in the future.
-     
- Please visit our team's branch individually for further examination and analyses of our scopes. 
+## Table of Contents
+1. About the Project
+2. Prerequisites
+3. Folder Structure
+4. Installation and Usage Instructions
+5. Data 
+6. Data Science pipeline
+  a. Preprocessing
+  b. Feature Selection
+  c. Modeling
+  d. Interpretation
+7. Contributors
+
+## About the Project
+Our main goal is to determine biological and non-biological risk factors for Alzheimer’s and analyze the weight of influence of these factors in developing or resisting the progress of Alzheimer’s Disease.
+
+*This project was a part of DSCI 535/COMP 449/COMP 549 as a part of D2K Lab, in Rice University.

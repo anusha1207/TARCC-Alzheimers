@@ -19,7 +19,7 @@ Our main goal is to determine biological and non-biological risk factors for Alz
 
 ## Prerequisites
 This project installs and uses the following packages.
-- Numpy
+- [Numpy](https://pypi.org/project/numpy/)
 - Pandas
 - Matplotlib
 - Seaborn

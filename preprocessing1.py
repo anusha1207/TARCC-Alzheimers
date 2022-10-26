@@ -7,14 +7,10 @@ import regex as re
 
 
 
-def preprocessing(data):
-  """
-  This function drops columns with more than 60% NAs or no relation to alzheimers.
-  Input: raw dataframe
-  Output: cleaned dataframe
-  """
+def preprocessing(non_genetic_data):
+
   #Only retain the data where the patients' samples are analysed with RBM 
-  df_with_RBM = data[data['RBM_Rule_Based_Medicine']==1]
+  df_with_RBM = non_genetic_data[non_genetic_data['RBM_Rule_Based_Medicine']==1]
 
   #Drop columns which are not "biomarkers"
   df_biomarkers = df_with_RBM.drop(['STUDYID','VISIT','MISC_TARC_PAT_VISIT','CCR','CCR_YES','CCR_CL_IMPRESS_CODE',
@@ -105,4 +101,6 @@ def preprocessing(data):
   rbm_cols = list(filter(regex_rbm.match, all_cols))
   df_biomarkers = df_biomarkers[df_biomarkers[rbm_cols].apply(pd.Series.nunique, axis=1) > 1]
 
+  #removing the 2 rows where diagnosis is MCI/Other
+  df_biomarkers = df_biomarkers[df_biomarkers['P1_PT_TYPE'].isin([1,2])]
   return df_biomarkers

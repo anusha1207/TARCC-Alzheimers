@@ -36,6 +36,7 @@ This project installs and uses the following packages.
 * `main.py` orchestrates the run and pipes data between other functions
 * `config.py` sets global variables for parameters and settings for methods
 * `data_utils.py` contains functions to load the data
+* `requirements.txt` contains the necessary dependencies.
 * `preprocessing.py` contains the function block to preprocess the data and subset it to usable features
 * `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
 * `model.py` contains functions to run the different models
@@ -51,6 +52,7 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 pip install requirements.txt
 ```
+
 ## Data
 The data we have is from Texas Alzheimer's Research Care and Consortium. It consists of clinical survey information of different patients. There are different types of columns pertaining to information about the patient, mental and physical disorders, blood test and protein data, as well as other statistical and phenotypical information. The dataset size is 14655 observations/rows and 787 features/columns. The 14655 observations are repetitive visits which are spread across 3670 unique patients.
 
@@ -67,7 +69,23 @@ The data pertaining to blood test information and protein content is subsetted t
 The correlation of other mental ailments such as depression, anxiety, delusion etc., and physical ailments such as diabetes, angina etc., is studied against the propensity towards Alzheimer's. This analysis uses another preprocessed subset of data containing information pertinent only to the aforementioned types of physical and mental ailments. The overall dataset size is X rows/observations and Y columns/features after the preprocessing.
 
 > Feature Selection <br />
-- Details here
+The feature selection methods we've used are as follows.
+>> **STAT BASED FEATURE SELECTION**
+1. Chi Square Test
+2. Mutual Information Test
+3. Kruskal Wallis Test
+>> **EMBEDDED FEATURE SELECTION**
+4. Random Forest
+>> **WRAPPER BASED**
+5. Recursive Feature Elimination: Using Decision Tree Classifier 
+6. Recursive Feature Elimination: Using Random Forest Classifier
+7. Forward Feature Selection: Using Decision Tree Classifier
+8. Forward Feature Selection: Using Random Forest Classifier 
+9. Backwards Features Elimination: Using Logistic Regression Classifier
+10. Backwards Feature Elimination: Using Decision Tree Classifer 
+>>**OTHER METHODS**
+11. Boruta Test
+ 
 
 > Modeling <br />
 - Details here

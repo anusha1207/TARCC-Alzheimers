@@ -48,10 +48,10 @@ This project installs and uses the following packages.
 
 
 ## Data Science Pipeline
-> Preprocessing
-> Feature Selection
-> Modeling
-> Results and Interpretation
+> Preprocessing <br />
+> Feature Selection <br />
+> Modeling <br />
+> Results and Interpretation <br />
 
 ## Contributors
 **Cao, Angela** <br />

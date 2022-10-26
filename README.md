@@ -61,35 +61,35 @@ The data we have is from Texas Alzheimer's Research Care and Consortium. It cons
 ![Pipeline](https://user-images.githubusercontent.com/97485268/198148374-fc9760c7-bf3f-4b82-8a7c-b83b73d82556.png)
 
 #### Preprocessing <br />
-There are two tangents to the project, as follows. <br />
+- There are two tangents to the project, as follows. <br />
 **Blood and Protein Biomarkers** <br />
-The data pertaining to blood test information and protein content is subsetted to perform a line of analysis which helps us gauge the most important features in this aspect. The overall dataset size is 595 rows/observations and 194 columns/features after the preprocessing. <br />
+- The data pertaining to blood test information and protein content is subsetted to perform a line of analysis which helps us gauge the most important features in this aspect. The overall dataset size is 595 rows/observations and 194 columns/features after the preprocessing. <br />
 **Diseases: Mental and Physical Ailments** <br />
-The correlation of other mental ailments such as depression, anxiety, delusion etc., and physical ailments such as diabetes, angina etc., is studied against the propensity towards Alzheimer's. This analysis uses another preprocessed subset of data containing information pertinent only to the aforementioned types of physical and mental ailments. The overall dataset size is X rows/observations and Y columns/features after the preprocessing. <br />
+- The correlation of other mental ailments such as depression, anxiety, delusion etc., and physical ailments such as diabetes, angina etc., is studied against the propensity towards Alzheimer's. This analysis uses another preprocessed subset of data containing information pertinent only to the aforementioned types of physical and mental ailments. The overall dataset size is X rows/observations and Y columns/features after the preprocessing. <br />
 
 #### Feature Selection <br />
 The feature selection methods we've used are as follows. <br />
-**STAT BASED FEATURE SELECTION**
+- **STAT BASED FEATURE SELECTION**
 1. Chi Square Test
 2. Mutual Information Test
-3. Kruskal Wallis Test
-**EMBEDDED FEATURE SELECTION** <br />
-4. Random Forest
-**WRAPPER BASED** <br />
+3. Kruskal Wallis Test <br />
+- **EMBEDDED FEATURE SELECTION** <br />
+4. Random Forest <br />
+- **WRAPPER BASED** <br />
 5. Recursive Feature Elimination: Using Decision Tree Classifier 
 6. Recursive Feature Elimination: Using Random Forest Classifier
 7. Forward Feature Selection: Using Decision Tree Classifier
 8. Forward Feature Selection: Using Random Forest Classifier 
 9. Backwards Features Elimination: Using Logistic Regression Classifier
-10. Backwards Feature Elimination: Using Decision Tree Classifer 
-**OTHER METHODS** <br />
-11. Boruta Test
+10. Backwards Feature Elimination: Using Decision Tree Classifer <br />
+- **OTHER METHODS** <br />
+11. Boruta Test <br />
  
 #### Modeling <br />
-- Details here
+- Details here <br />
 
 #### Results and Interpretation <br />
-- Details here
+- Details here <br />
 
 ## Contributors
 **Cao, Angela** <br />

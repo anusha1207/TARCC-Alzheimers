@@ -1,9 +1,12 @@
 # Texas Alzheimers' Research Care and Consortium: Team TARCC 'F22
 
 ## Table of Contents
+<details>
 <summary>
  1. [About the Project](#about-the-project)
 </summary>
+</details>
+
 2. [Prerequisites](#prerequisites)
 3. [Folder Structure](#folder-structure)
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)

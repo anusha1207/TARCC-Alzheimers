@@ -7,6 +7,7 @@ from sklearn.feature_selection import mutual_info_classif as MIC
 from mlxtend.plotting import plot_sequential_feature_selection as plot_sfs
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
 import warnings
+import regex
 import statsmodels.api as sm
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -17,11 +18,12 @@ from sklearn.feature_selection import RFE
 from sklearn.feature_selection import chi2
 # from sklearn import externals
 # import joblib
+import config
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
 from pyparsing import printables
 
 ### Load data
-data = pd.read_csv("20220916 updated TARCC Data for Dr Broussard.csv", low_memory=False)
+data = pd.read_csv(config.DATA, low_memory=False)
 
 df = pp.preprocessing(data)
 
@@ -40,7 +42,7 @@ def find_features(model, features, score):
     df=df[:20]
     df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for {model}')
-    plt.savefig(f'{model}_features.pdf', format="pdf", bbox_inches="tight")
+    plt.savefig(f'figures/{model}_features.pdf', format="pdf", bbox_inches="tight")
     plot = plt.show()
     return df, plot
 
@@ -77,7 +79,7 @@ def random_forest_select(X,y):
     rf_df=rf_df.head(30)
     rf_df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for Random Forest')
-    plt.savefig("RandomForest_features.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("figures/RandomForest_features.pdf", format="pdf", bbox_inches="tight")
     rf_plot = plt.show()
     return rf_df, rf_plot
 
@@ -136,7 +138,7 @@ def kruskal_select(X, y):
     kruskal_df.iloc[:30, :]
     kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
     plt.title('Feature Selection using Kruskall_Wallace')
-    plt.savefig("Kruskall_features.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("figures/Kruskall_features.pdf", format="pdf", bbox_inches="tight")
     kw_plot = plt.show()
     return kruskal_df, kw_plot
 

@@ -1,0 +1,19 @@
+# Ignore Logs
+logs
+*.log
+
+# Ignore the build directory
+/dist
+
+# The file containing environment variables 
+.env
+
+
+# The file(s) containing the data
+*.csv
+
+# Ignore IDE specific files
+.pyc
+.idea/
+.vscode/
+*.sw*

@@ -1,18 +1,18 @@
 # Texas Alzheimers' Research Care and Consortium: Team TARCC 'F22
 
 ## Table of Contents
-<details> <summary>
- 1. [About the Project](#about-the-project) </summary>
- </details>
+
+1. [About the Project](#about-the-project)
 2. [Prerequisites](#prerequisites)
 3. [Folder Structure](#folder-structure)
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)
 5. [Data](#data)
-6. [Data Science pipeline](#data-science-pipeline)
+6. <details> <summary> [Data Science pipeline](#data-science-pipeline) </summary>
   - Preprocessing
   - Feature Selection
   - Modeling
-  - Results and Interpretation
+  - Results and Interpretation 
+</details>
 7. [Contributors](#contributors)
 
 ## About the Project

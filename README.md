@@ -8,11 +8,11 @@
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)
 5. [Data](#data)
 6. [Data Science pipeline](#data-science-pipeline)
-<summary>
+<details><summary>
 - Preprocessing
 - Feature Selection
 - Modeling
-- Results and Interpretation </summary>
+- Results and Interpretation </summary></details>
 8. [Contributors](#contributors)
 
 ## About the Project

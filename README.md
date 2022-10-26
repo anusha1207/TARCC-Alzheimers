@@ -56,7 +56,7 @@ pip install requirements.txt
 
 ## Data Science Pipeline
 
-<img src="/TARCC_F22/Pipeline.png", alt="Data">
+<img src="/TARCC_F22/Pipeline.png" alt="Data">
 
 > Preprocessing <br />
 - Details here

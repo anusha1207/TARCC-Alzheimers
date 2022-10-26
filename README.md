@@ -55,12 +55,8 @@ pip install requirements.txt
 
 
 ## Data Science Pipeline
-<img
-  src="TARCC_F22/Pipeline.png"
-  alt="Alt text"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
+<img src="/TARCC_F22/Pipeline.png" alt="Alt text" title="Optional title">
 
 > Preprocessing <br />
 - Details here

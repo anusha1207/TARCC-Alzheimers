@@ -8,11 +8,12 @@
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)
 5. [Data](#data)
 6. [Data Science pipeline](#data-science-pipeline)
+<summary>
 - Preprocessing
 - Feature Selection
 - Modeling
-- Results and Interpretation 
-7. [Contributors](#contributors)
+- Results and Interpretation </summary>
+8. [Contributors](#contributors)
 
 ## About the Project
 Our main goal is to determine biological and non-biological risk factors for Alzheimer’s and analyze the weight of influence of these factors in developing or resisting the progress of Alzheimer’s Disease.

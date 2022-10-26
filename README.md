@@ -52,15 +52,19 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 pip install requirements.txt
 ```
 ## Data
+The data we have is from Texas Alzheimer's Research Care and Consortium. It consists of clinical survey information of different patients. There are different types of columns pertaining to information about the patient, mental and physical disorders, blood test and protein data, as well as other statistical and phenotypical information. The dataset size is 14655 observations/rows and 787 features/columns. The 14655 observations are repetitive visits which are spread across 3670 unique patients.
 
-
-## Data Science Pipeline
+## **Data Science Pipeline**
 
 ![Pipeline](https://user-images.githubusercontent.com/97485268/198148374-fc9760c7-bf3f-4b82-8a7c-b83b73d82556.png)
 
 
 > Preprocessing <br />
-- Details here
+There are two tangents to the project, as follows.
+>> **Blood and Protein Biomarkers** <br />
+The data pertaining to blood test information and protein content is subsetted to perform a line of analysis which helps us gauge the most important features in this aspect. The overall dataset size is 595 rows/observations and 194 columns/features after the preprocessing.
+>> **Diseases: Mental and Physical Ailments** <br />
+The correlation of other mental ailments such as depression, anxiety, delusion etc., and physical ailments such as diabetes, angina etc., is studied against the propensity towards Alzheimer's. This analysis uses another preprocessed subset of data containing information pertinent only to the aforementioned types of physical and mental ailments. The overall dataset size is X rows/observations and Y columns/features after the preprocessing.
 
 > Feature Selection <br />
 - Details here

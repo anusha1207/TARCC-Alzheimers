@@ -58,7 +58,7 @@ This project installs and uses the following packages.
 
 **Mudappatti, Anusha** <br />
 **Gan, Wei Ren** <br />
-[wg21@rice.edu](wg21@rice.edu) \
+<a href="mailto:wg21@rice.edu?"><img src="https://img.shields.io/badge/gmail-%23DD0031.svg?&style=for-the-badge&logo=gmail&logoColor=white"/></a> \
 **Prieto, Sophia** <br />
 **Viswanathan, Tejeshwine** <br /> 
 

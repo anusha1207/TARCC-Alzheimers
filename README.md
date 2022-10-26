@@ -43,6 +43,7 @@ This project installs and uses the following packages.
 * `environment.yml` defines the project environment
 
 ## Installation and Usage Instructions
+1. Clone the repository
 
 ## Data
 

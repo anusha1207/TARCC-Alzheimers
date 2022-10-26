@@ -7,10 +7,10 @@
 4. Installation and Usage Instructions
 5. Data 
 6. Data Science pipeline
-  a. Preprocessing
-  b. Feature Selection
-  c. Modeling
-  d. Interpretation
+  - Preprocessing
+  - Feature Selection
+  - Modeling
+  - Interpretation
 7. Contributors
 
 ## About the Project

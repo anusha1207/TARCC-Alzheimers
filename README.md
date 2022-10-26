@@ -58,7 +58,7 @@ This project installs and uses the following packages.
 
 **Mudappatti, Anusha** <br />
 **Gan, Wei Ren** <br />
-<a href="mailto:wg21@rice.edu?"><img src="https://img.shields.io/badge/gmail-%23DD0031.svg?&style=for-the-badge&logo=gmail&logoColor=white"/></a> \
+mailto:wg21@rice.edu?subject=[GitHub]%20Source%20Han%20Sans
 **Prieto, Sophia** <br />
 **Viswanathan, Tejeshwine** <br /> 
 

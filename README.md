@@ -55,7 +55,11 @@ pip install requirements.txt
 
 
 ## Data Science Pipeline
-[Pipeline](https://www.dropbox.com/s/ofy54s5d50239bj/Pipeline.png?dl=0)
+<img
+  src="https://www.dropbox.com/s/ofy54s5d50239bj/Pipeline.png?dl=0"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
 
 > Preprocessing <br />

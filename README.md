@@ -36,7 +36,8 @@ This project installs and uses the following packages.
 * `main.py` orchestrates the run and pipes data between other functions
 * `config.py` sets global variables for parameters and settings for methods
 * `data_utils.py` contains functions to load the data
-* `features.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
+* `preprocessing.py` contains the function block to preprocess the data and subset it to usable features
+* `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
 * `model.py` contains functions to run the different models
 * `visualization.py` contains functions that output visualizations of the data
 * `environment.yml` defines the project environment

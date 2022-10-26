@@ -44,7 +44,10 @@ This project installs and uses the following packages.
 
 ## Installation and Usage Instructions
 1. Clone the repository
-
+2. Install dependencies
+```
+pip install requirements.txt
+```
 ## Data
 
 

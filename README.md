@@ -18,6 +18,18 @@
 Our main goal is to determine biological and non-biological risk factors for Alzheimer’s and analyze the weight of influence of these factors in developing or resisting the progress of Alzheimer’s Disease.
 
 ## Prerequisites
+This project installs and uses the following packages.
+- Numpy
+- Pandas
+- Matplotlib
+- Seaborn
+- Statsmodel
+- Scikit Learn
+- Scipy Stats
+- MLXtend
+- LightGBM
+- XGBoost
+- Boruta
 
 ## Folder Structure
 

@@ -42,7 +42,7 @@ def find_features(model, features, score):
     df=df[:20]
     df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for {model}')
-    plt.savefig(f'{model}_features.pdf', format="pdf", bbox_inches="tight")
+    plt.savefig(f'results/{model}_features.pdf', format="pdf", bbox_inches="tight")
     plot = plt.show()
     return df, plot
 
@@ -174,7 +174,7 @@ b_df = boruta_features
 ##### Combining all methods #####
 features=[]
 def combine_features():
-    features=list(mi_df['Features'])+list(chi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'])
+    features=list(mi_df['Features'])+list(chi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'] + )
     features=pd.DataFrame(features).reset_index(drop=True)
     features.columns = ['Features']
     counts = features['Features'].value_counts().to_frame().reset_index()

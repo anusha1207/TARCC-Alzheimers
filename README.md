@@ -55,8 +55,10 @@ This project installs and uses the following packages.
 
 ## Contributors
 **Cao, Angela** <br />
+
 **Mudappatti, Anusha** <br />
 **Gan, Wei Ren** <br />
+[wg21@rice.edu](wg21@rice.edu) \
 **Prieto, Sophia** <br />
 **Viswanathan, Tejeshwine** <br /> 
 

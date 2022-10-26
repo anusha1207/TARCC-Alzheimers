@@ -44,6 +44,9 @@ This project installs and uses the following packages.
 
 ## Installation and Usage Instructions
 1. Clone the repository
+```
+git clone https://github.com/RiceD2KLab/TARCC_F22.git
+```
 2. Install dependencies
 ```
 pip install requirements.txt

@@ -55,10 +55,8 @@ This project installs and uses the following packages.
 
 ## Contributors
 **Cao, Angela** <br />
-
 **Mudappatti, Anusha** <br />
 **Gan, Wei Ren** <br />
-mailto:wg21@rice.edu?subject=[GitHub]%20Source%20Han%20Sans
 **Prieto, Sophia** <br />
 **Viswanathan, Tejeshwine** <br /> 
 

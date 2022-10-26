@@ -15,6 +15,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression #linear_model.LogisticRegression (setting multi_class=”multinomial”)
 from sklearn.feature_selection import RFE
 from sklearn.feature_selection import chi2
+from sklearn.ensemble import RandomForestRegressor
+from boruta import BorutaPy
 # from sklearn import externals
 # import joblib
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
@@ -140,7 +142,34 @@ def kruskal_select(X, y):
     kw_plot = plt.show()
     return kruskal_df, kw_plot
 
+##### Boruta #####
 
+model = RandomForestRegressor(n_estimators=100, max_depth=5)
+# let's initialize Boruta
+feat_selector = BorutaPy(
+    verbose=2,
+    estimator=model,
+    n_estimators='auto',
+    max_iter=10  # number of iterations to perform
+)
+
+# train Boruta
+# N.B.: X and y must be numpy arrays
+feat_selector.fit(np.array(X), np.array(y))
+
+# print support and ranking for each feature
+print("\n------Support and Ranking for each feature------")
+
+for i in range(len(feat_selector.support_)):
+    if feat_selector.support_[i]:
+        print(X.columns[i],
+              " - Ranking: ", feat_selector.ranking_[i])
+
+boruta_features=[]
+for i in range(len(feat_selector.support_)):
+    if feat_selector.support_[i]:
+        boruta_features.append(X.columns[i])
+b_df = boruta_features
 
 ##### Combining all methods #####
 features=[]

@@ -7,8 +7,7 @@
 3. [Folder Structure](#folder-structure)
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)
 5. [Data](#data)
-6. [Data Science pipeline](#data-science-pipeline)
-<details><summary></summary>
+<details><summary>6. [Data Science pipeline](#data-science-pipeline)</summary>
 - Preprocessing
 - Feature Selection
 - Modeling

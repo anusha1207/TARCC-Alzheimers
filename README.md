@@ -56,7 +56,7 @@ pip install requirements.txt
 
 ## Data Science Pipeline
 <img
-  src="https://www.dropbox.com/s/ofy54s5d50239bj/Pipeline.png?dl=0"
+  src="TARCC_F22/Pipeline.png"
   alt="Alt text"
   title="Optional title"
   style="display: inline-block; margin: 0 auto; max-width: 300px">

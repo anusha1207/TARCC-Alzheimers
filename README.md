@@ -55,7 +55,7 @@ pip install requirements.txt
 
 
 ## Data Science Pipeline
-[Pipeline.pdf](https://github.com/RiceD2KLab/TARCC_F22/files/9873991/Pipeline.pdf)
+[Pipeline](https://www.dropbox.com/s/ofy54s5d50239bj/Pipeline.png?dl=0)
 
 
 > Preprocessing <br />

@@ -14,7 +14,7 @@
 - Results and Interpretation </details>
 7. [Contributors](#contributors)
 
-<hr style="border:2px solid gray">
+<hr style="border:2px raspberryColor">
 
 ## About the Project
 Our main goal is to determine biological and non-biological risk factors for Alzheimer’s and analyze the weight of influence of these factors in developing or resisting the progress of Alzheimer’s Disease.

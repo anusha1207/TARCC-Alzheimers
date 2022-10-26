@@ -34,10 +34,18 @@ This project installs and uses the following packages.
 - [Boruta](https://pypi.org/project/Boruta/)
 
 ## Folder Structure
+* `main.py` orchestrates the run and pipes data between other functions
+* `config.py` sets global variables for parameters and settings for methods
+* `data_utils.py` contains functions to load the data
+* `features.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
+* `model.py` contains functions to run the different models
+* `visualization.py` contains functions that output visualizations of the data
+* `environment.yml` defines the project environment
 
 ## Installation and Usage Instructions
 
 ## Data
+
 
 ## Data Science Pipeline
 > Preprocessing
@@ -46,5 +54,10 @@ This project installs and uses the following packages.
 > Results and Interpretation
 
 ## Contributors
+**Cao, Angela** <br />
+**Mudappatti, Anusha** <br />
+**Gan, Wei Ren** <br />
+**Prieto, Sophia** <br />
+**Viswanathan, Tejeshwine** <br /> 
 
 *This project was a part of DSCI 535/COMP 449/COMP 549 as a part of D2K Lab, in Rice University.*

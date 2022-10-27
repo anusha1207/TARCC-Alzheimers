@@ -53,7 +53,7 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 pip install -r requirements.txt
 ```
 3. Run main.py
-```
+
 
 ## Data
 The data we have is from Texas Alzheimer's Research Care and Consortium. It consists of clinical survey information of different patients. There are different types of columns pertaining to information about the patient, mental and physical disorders, blood test and protein data, as well as other statistical and phenotypical information. The dataset size is 14655 observations/rows and 787 features/columns. The 14655 observations are repetitive visits which are spread across 3670 unique patients.

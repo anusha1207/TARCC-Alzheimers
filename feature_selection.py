@@ -17,19 +17,21 @@ from sklearn.feature_selection import RFE
 from sklearn.feature_selection import chi2
 from sklearn.ensemble import RandomForestRegressor
 from boruta import BorutaPy
+import config
 # from sklearn import externals
 # import joblib
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
 from pyparsing import printables
 
 ### Load data
-data = pd.read_csv("20220916 updated TARCC Data for Dr Broussard.csv", low_memory=False)
+data = pd.read_csv(config.DATA, low_memory=False)
 
 df = pp.preprocessing(data)
-
+#remove patient ID while doing feature selection
+df_features = df.drop(['PATID'], axis=1)
 ##### Split features and target variable #####
-X = df.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-y = df['P1_PT_TYPE']
+X = df_features.drop(['P1_PT_TYPE'], axis=1, inplace = False)
+y = df_features['P1_PT_TYPE']
 
 
 def find_features(model, features, score):
@@ -79,7 +81,7 @@ def random_forest_select(X,y):
     rf_df=rf_df.head(30)
     rf_df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for Random Forest')
-    plt.savefig("RandomForest_features.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("results/RandomForest_features.pdf", format="pdf", bbox_inches="tight")
     rf_plot = plt.show()
     return rf_df, rf_plot
 
@@ -109,7 +111,7 @@ def fb_selection(model, direction_name, direction):
     ff1_df = pd.DataFrame.from_dict(ff1_dict).T
     fig1=plot_sfs(ff1_dict, kind='ci')
     plt.title(f'{direction_name} Feature Selection using {model} (With confidence interval)')
-    plt.savefig(f'{model}_features.pdf', format="pdf", bbox_inches="tight")
+    plt.savefig(f'results/{model}_features.pdf', format="pdf", bbox_inches="tight")
     plt.grid()
     plot = plt.show()
     ff1_features=list(ff1_df['feature_names'][30])
@@ -138,7 +140,7 @@ def kruskal_select(X, y):
     kruskal_df.iloc[:30, :]
     kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
     plt.title('Feature Selection using Kruskall_Wallace')
-    plt.savefig("Kruskall_features.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("results/Kruskall_features.pdf", format="pdf", bbox_inches="tight")
     kw_plot = plt.show()
     return kruskal_df, kw_plot
 
@@ -174,7 +176,7 @@ b_df = boruta_features
 ##### Combining all methods #####
 features=[]
 def combine_features():
-    features=list(mi_df['Features'])+list(chi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'] + )
+    features=list(mi_df['Features'])+list(chi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'])
     features=pd.DataFrame(features).reset_index(drop=True)
     features.columns = ['Features']
     counts = features['Features'].value_counts().to_frame().reset_index()
@@ -207,7 +209,7 @@ mi_df, mi_plot = find_features('mutual_info', mi_cols,mi_score)
 
 ###### Chi-Square ######
 
-df2=df
+df2=df_features
 df2[df2<0]=99 #Chi square doesn't recognize negative values- missing values aka -9 are resubstituted as 99
 X1 = df2.drop(['P1_PT_TYPE'], axis=1, inplace = False)
 y1 = df2['P1_PT_TYPE']

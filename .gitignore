@@ -10,14 +10,14 @@ logs
 
 
 #Ignore the data science pipeline image on the README.md
-.png
+*.png
 
 # The file(s) containing the data
 *.csv
 
 
 #The files from Desktop Services Store containing meta info
-.DS_Store
+*.DS_Store
 
 # Ignore IDE specific files
 __pycache__

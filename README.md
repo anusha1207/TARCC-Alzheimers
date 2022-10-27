@@ -53,6 +53,9 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 pip install -r requirements.txt
 ```
 3. Run main.py
+```
+python main.py
+```
 
 
 ## Data

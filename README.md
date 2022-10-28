@@ -109,8 +109,10 @@ The feature selection methods we've used are as follows. <br />
 4. Area Under the Precision Recall Curve (AUPRC)
 5. F1 Score
 6. F-Beta Score
-7. Precision Score
-8. Accuracy Score <br />
+7. Confusion Matrix
+8. Classificaiton Report
+9. Precision Score
+10. Accuracy Score <br />
 
 ### INTERPRETATION AND RESULTS <br />
 - Details here <br />

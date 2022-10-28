@@ -107,8 +107,8 @@ The feature selection methods we've used are as follows. <br />
 2. Specificity
 3. Receiver Operating Characteristic - Area Under the Curve (ROC-AUC) 
 4. Area Under the Precision Recall Curve (AUPRC)
-5. F1 Score
-6. F-Beta Score
+5. F-Beta Score 
+6. F1 Score
 7. Confusion Matrix
 8. Classificaiton Report
 9. Precision Score

@@ -8,6 +8,5 @@
 
 import feature_selection as fs
 
-combined_features = fs.combine_features()
-combined_features
+fs.combined_featuresb
 

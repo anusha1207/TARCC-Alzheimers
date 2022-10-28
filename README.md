@@ -92,7 +92,25 @@ The feature selection methods we've used are as follows. <br />
 11. Boruta Test <br />
  
 ### MODELING AND VALIDATION <br />
-- Details here <br />
+- **Classification Models** <br />
+1. Light Gradient Boosting Method (LGBM)
+2. Categorical Boosting (CatBoost)
+3. eXtreme Gradient Boosting (XGB)
+4. Gradient Boosting 
+5. Random Forest 
+6. Extra Trees
+7. Decision Tree
+8. Logistic Regression <br />
+
+- **Evaluation Metrics** <br />
+1. Recall/Sensitivity
+2. Specificity
+3. Receiver Operating Characteristic - Area Under the Curve (ROC-AUC) 
+4. Area Under the Precision Recall Curve (AUPRC)
+5. F1 Score
+6. F-Beta Score
+7. Precision Score
+8. Accuracy Score <br />
 
 ### INTERPRETATION AND RESULTS <br />
 - Details here <br />

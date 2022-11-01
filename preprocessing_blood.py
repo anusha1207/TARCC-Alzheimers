@@ -76,6 +76,15 @@ def preprocessing(non_genetic_data):
  'P1_SERUM', 'P1_SHARE_AGREE', 'P1_SHARE_DATEX', 'P1_TIMEDRAWX','P1_TIMEFOODX', 'P1_TIMESTICKX', 'P1_WHOLEBLOOD', 'P1_WHYNOTALL', 'P1_WHYNOTALLX',
  'RBM_Rule_Based_Medicine', 'A1_RESIDENC', 'GWAS'], axis=1)
   
+  #removing proteo biomarkers that have missing values as majority
+  df_biomarkers = df_biomarkers.drop(['PROTEO_EOTAXIN_3_HUMAN', 'PROTEO_IL_12_P70_HUMAN', 
+  'PROTEO_IL_13_HUMAN', 'PROTEO_IL_17A','PROTEO_IL_1A','PROTEO_IL_4_HUMAN',
+         'PROTEO_IL_8_HA'], axis=1)
+  
+  #removing blood biomarkers that have missing values as majority
+  df_biomarkers = df_biomarkers.drop(['APOE_GENOTYPE','P1_BGRESULT', 'RBM_VDBP', 'RBM_OSM', 'RBM_Active_GLP_1', 'RBM_Galanin',
+  'RBM_BMP6', 'RBM_ASP', 'APOE_GENOTYPE_DIGITS','APOE_E2_COUNT','APOE_E3_COUNT','APOE_E4_COUNT'], axis=1)
+  
   #replacing empty strings(missing vals) with NaN values
   df_biomarkers = df_biomarkers.replace(r'^\s*$', np.nan, regex=True)
 
@@ -83,13 +92,22 @@ def preprocessing(non_genetic_data):
   nullvals=list(df_biomarkers.isna().sum()[df_biomarkers.isna().sum()>0].index)
   df_biomarkers[nullvals]=df_biomarkers[nullvals].fillna(-9)
 
-  #onehot encoding for APOE_GENOTYPE feature
-  one_hot_encoded = pd.get_dummies(df_biomarkers.APOE_GENOTYPE)  
-  merged_df = pd.concat([df_biomarkers, one_hot_encoded],axis=1)  
-  df_biomarkers = merged_df.drop(['APOE_GENOTYPE'], axis=1)
+  #Removing rows with missing vals in proteo features
+  missing_rows = list(df_biomarkers[df_biomarkers == -777777].count()[df_biomarkers[df_biomarkers == -777777].count() > 0].index)
+  indices = []
+  for row in missing_rows:
+    for ind in list(df_biomarkers[df_biomarkers[row] == -777777].index):
+      indices.append(ind)
 
-  #removing the onehot encoded feature of missing vals
-  df_biomarkers = df_biomarkers.drop([-9], axis=1)
+  indices = [*set(indices)]
+  indices
+  df_biomarkers = df_biomarkers.drop(indices, axis=0)
+
+
+  #Tranforming extreme values in proteo features
+  # -888888(GHDL) mapped to highest possible value and LLDL mapped to least value
+  df_biomarkers = df_biomarkers.replace(-888888, 999999999)
+  df_biomarkers = df_biomarkers.replace(-999999, -1)
 
   #convert categorical object columns to floats
   categoricalcols=list(df_biomarkers.dtypes[df_biomarkers.dtypes==object].index)
@@ -101,6 +119,8 @@ def preprocessing(non_genetic_data):
   rbm_cols = list(filter(regex_rbm.match, all_cols))
   df_biomarkers = df_biomarkers[df_biomarkers[rbm_cols].apply(pd.Series.nunique, axis=1) > 1]
 
-  #removing the 2 rows where diagnosis is MCI/Other
+  #removing patient record which has 2 visits
+  df_biomarkers = df_biomarkers.drop(3217, axis=0)
+
   df_biomarkers = df_biomarkers[df_biomarkers['P1_PT_TYPE'].isin([1,2])]
   return df_biomarkers

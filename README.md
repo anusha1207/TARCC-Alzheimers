@@ -34,15 +34,15 @@ This project installs and uses the following packages.
 
 ## Folder Structure
 * `main.py` orchestrates the run and pipes data between other functions
-* `config.py` sets global variables for parameters and settings for methods
-* `data_utils.py` contains functions to load the data
+* `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
 * `requirements.txt` contains the necessary dependencies.
 * `preprocessing_blood.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker data
 *  `preprocessing_other.py` contains the function block to preprocess the data and subset it to usable features from the other diseases biomarker data
 * `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
-* `model.py` contains functions to run the different models
-* `visualization.py` contains functions that output visualizations of the data
-* `environment.yml` defines the project environment
+
+* `model.py` contains functions to run the different models (under construction)
+* `visualization.py` contains functions that output visualizations of the data (under construction)
+* `environment.yml` defines the project environment (under construction)
 
 ## Installation and Usage Instructions
 1. Clone the repository

@@ -42,7 +42,6 @@ This project installs and uses the following packages.
 
 * `model.py` contains functions to run the different models (under construction)
 * `visualization.py` contains functions that output visualizations of the data (under construction)
-* `environment.yml` defines the project environment (under construction)
 
 ## Installation and Usage Instructions
 1. Clone the repository

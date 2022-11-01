@@ -247,7 +247,7 @@ def results(name, X,y, df_features):
     ##### Combining all methods #####
     features=[]
     def combine_features():
-        features=list(mi_df['Features'])+list(chi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'])+b_df
+        features=list(mi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'])+b_df
         features=pd.DataFrame(features).reset_index(drop=True)
         features.columns = ['Features']
         counts = features['Features'].value_counts().to_frame().reset_index()

@@ -100,7 +100,8 @@ The feature selection methods we've used are as follows. <br />
 5. Random Forest 
 6. Extra Trees
 7. Decision Tree
-8. Logistic Regression <br />
+8. Logistic Regression 
+9. Deep Neural Networks (DNN) <br />
 
 - **Evaluation Metrics** <br />
 1. Recall/Sensitivity

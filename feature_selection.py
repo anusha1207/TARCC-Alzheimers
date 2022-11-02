@@ -181,21 +181,6 @@ def boruta_select(X,y):
             boruta_features.append(X.columns[i])
     return boruta_features
 
-
-
-
-
-###### Mann- Whitney ######
-# cant get this to run
-#mw=stats.mannwhitneyu(X, y, alternative = 'two-sided')
-#Choosing significant features
-#lst=np.where(mw.pvalue>0)[0].tolist()
-#Mann Whitney Feature Columns
-#mw_features=list(df.columns[lst])
-#Mann Whitney Column P values
-#mw_score=list(mw.pvalue[mw.pvalue>0])
-#mw_df, mw_plot = find_features('mann-whitney', mw_features, mw_score)
-
 ###### Mutual Info ######
 def results(name, X,y, df_features):
     mi= MIC(X,y)

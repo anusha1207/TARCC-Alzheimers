@@ -31,7 +31,6 @@ This project installs and uses the following packages.
 - [LightGBM](https://pypi.org/project/lightgbm/)
 - [XGBoost](https://pypi.org/project/xgboost/)
 - [Boruta](https://pypi.org/project/Boruta/)
-- [Keras](https://pypi.org/project/keras/)
 
 ## Folder Structure
 * `main.py` orchestrates the run and pipes data between other functions
@@ -101,8 +100,7 @@ The feature selection methods we've used are as follows. <br />
 5. Random Forest 
 6. Extra Trees
 7. Decision Tree
-8. Logistic Regression 
-9. Deep Neural Networks (DNN) <br />
+8. Logistic Regression  <br />
 
 - **Evaluation Metrics** <br />
 1. Recall/Sensitivity

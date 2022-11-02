@@ -93,3 +93,32 @@ def evaluation(y_test, y_pred):
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
     plt.show()
+    
+def main(non_genetic_df):
+
+  # pre-process the raw data
+
+  X_train, X_test, y_train, y_test = ml_prep(final_df)
+
+  # list of classifier functions
+  classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
+                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42),       
+                    XGBClassifier(colsample_bytree= 0.5460418790379824, gamma= 0.3347828767144543, max_depth= 8),                     
+                    GradientBoostingClassifier(n_estimators=300, max_depth=3), 
+                    DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
+                    LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
+                    ExtraTreesClassifier(n_estimators=500, max_depth=3)] 
+
+  # list of classifier names
+  model_name= ['Light Gradient Boosting Method', 
+               'Random Forest', 
+               'eXtreme Gradient Boosting', 
+               'Gradient Boosting', 
+               'Decision Tree', 
+               'Logistic Regression', 
+               'Extra Trees',
+               'Categorical Boosting']
+
+  # evaluate performance and feature importance for each algorithm
+  results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
+

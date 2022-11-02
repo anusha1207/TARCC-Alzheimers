@@ -31,6 +31,7 @@ This project installs and uses the following packages.
 - [LightGBM](https://pypi.org/project/lightgbm/)
 - [XGBoost](https://pypi.org/project/xgboost/)
 - [Boruta](https://pypi.org/project/Boruta/)
+- [Keras] (https://pypi.org/project/keras/) 
 
 ## Folder Structure
 * `main.py` orchestrates the run and pipes data between other functions

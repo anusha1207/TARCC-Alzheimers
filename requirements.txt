@@ -51,3 +51,4 @@ mlxtend==0.21.0
 boruta==0.3
 patsy==0.5.3
 statsmodels==0.13.2
+keras==2.10.0

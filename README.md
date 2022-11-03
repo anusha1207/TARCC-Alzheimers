@@ -31,6 +31,8 @@ This project installs and uses the following packages.
 - [LightGBM](https://pypi.org/project/lightgbm/)
 - [XGBoost](https://pypi.org/project/xgboost/)
 - [Boruta](https://pypi.org/project/Boruta/)
+- [SHAP](https://pypi.org/project/shap/)
+- [mca](https://pypi.org/project/mca/)
 
 ## Folder Structure
 * `main.py` orchestrates the run and pipes data between other functions
@@ -89,7 +91,8 @@ The feature selection methods we've used are as follows. <br />
 9. Backwards Features Elimination: Using Logistic Regression Classifier
 10. Backwards Feature Elimination: Using Decision Tree Classifer <br />
 - **OTHER METHODS** <br />
-11. Boruta Test <br />
+11. Boruta Test 
+12. Multiple Correspondence Analysis (MCA) <br />
  
 ### MODELING AND VALIDATION <br />
 - **Classification Models** <br />

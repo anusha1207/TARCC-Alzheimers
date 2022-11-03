@@ -126,31 +126,31 @@ def fb_selection(name, model, direction_name, direction):
     return ff1_features, fig1, plot
 
 
-def kruskal_select(name,X, y):
-    kruskal_features = []
-    kruskal_scores = []
-    for col in X.columns:
-        feature = X[col]
+# def kruskal_select(name,X, y):
+#     kruskal_features = []
+#     kruskal_scores = []
+#     for col in X.columns:
+#         feature = X[col]
 
-        result = stats.kruskal(list(feature), list(y))
+#         result = stats.kruskal(list(feature), list(y))
         
-        # reject null hypothesis if p <= p_value, else fail to reject null hypothesis and accept the column
-        if result.pvalue > 0:
-            kruskal_features.append(col)
-            kruskal_scores.append(result.pvalue)
+#         # reject null hypothesis if p <= p_value, else fail to reject null hypothesis and accept the column
+#         if result.pvalue > 0:
+#             kruskal_features.append(col)
+#             kruskal_scores.append(result.pvalue)
     
-    # print(kruskal_features, kruskal_scores)
-    kruskal_features= pd.DataFrame(kruskal_features)
-    kruskal_scores= pd.DataFrame(kruskal_scores)
-    kruskal_df= pd.concat([kruskal_features, kruskal_scores], axis=1)
-    kruskal_df.columns = ['Features', 'Score']
-    kruskal_df = kruskal_df.sort_values(by='Score', ascending=False)
-    kruskal_df.iloc[:30, :]
-    kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
-    plt.title('Feature Selection using Kruskall_Wallace')
-    plt.savefig(f"results/Kruskall_features_{name}.pdf", format="pdf", bbox_inches="tight")
-    kw_plot = plt.show()
-    return kruskal_df, kw_plot
+#     # print(kruskal_features, kruskal_scores)
+#     kruskal_features= pd.DataFrame(kruskal_features)
+#     kruskal_scores= pd.DataFrame(kruskal_scores)
+#     kruskal_df= pd.concat([kruskal_features, kruskal_scores], axis=1)
+#     kruskal_df.columns = ['Features', 'Score']
+#     kruskal_df = kruskal_df.sort_values(by='Score', ascending=False)
+#     kruskal_df.iloc[:30, :]
+#     kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
+#     plt.title('Feature Selection using Kruskall_Wallace')
+#     plt.savefig(f"results/Kruskall_features_{name}.pdf", format="pdf", bbox_inches="tight")
+#     kw_plot = plt.show()
+#     return kruskal_df, kw_plot
 
 ##### Boruta #####
 def boruta_select(X,y):
@@ -224,7 +224,7 @@ def results(name, X,y, df_features):
 
     ############ Kruskal-Wallis #############
 
-    kruskal_df, kw_plot = kruskal_select(name, X,y)
+#     kruskal_df, kw_plot = kruskal_select(name, X,y)
 
     ########### Boruta ############
     b_df = boruta_select(X,y)
@@ -232,7 +232,7 @@ def results(name, X,y, df_features):
     ##### Combining all methods #####
     features=[]
     def combine_features():
-        features=list(mi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+list(kruskal_df['Features'])+b_df
+        features=list(mi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+b_df
         features=pd.DataFrame(features).reset_index(drop=True)
         features.columns = ['Features']
         counts = features['Features'].value_counts().to_frame().reset_index()
@@ -241,9 +241,8 @@ def results(name, X,y, df_features):
         combined_feature_list=list(counts['Features'])
         return combined_features
     combined_features = combine_features()
-    return mi_df, mi_plot, chi_df, chi_plot, rf_df, rf_plot,rfr_df,dtr_df,kruskal_df, kw_plot,b_df, combined_features
+    return mi_df, mi_plot, chi_df, chi_plot, rf_df, rf_plot, rfr_df, dtr_df, b_df, combined_features
 
 
-mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, kruskal_dfb, kw_plotb, b_dfb, combined_featuresb = results('blood', X_blood, y_blood, df_features_blood)
-mi_dfd, mi_plotd, chi_dfd, chi_plotd, rf_dfd, rf_plotd, rfr_dfd, dtr_dfd, kruskal_dfd, kw_plotd, b_dfd, combined_featuresd = results('other', X_diag, y_diag, df_features_diag)
-# ValueError: could not convert string to float: ''
+mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, kruskal_dfb, combined_featuresb = results('blood', X_blood, y_blood, df_features_blood)
+mi_dfd, mi_plotd, chi_dfd, chi_plotd, rf_dfd, rf_plotd, rfr_dfd, dtr_dfd, kruskal_dfd, combined_featuresd = results('other', X_diag, y_diag, df_features_diag)

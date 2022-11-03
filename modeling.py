@@ -51,8 +51,7 @@ def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_n
     print(f'Evaluation for {model_name[model]}: ')
     y_pred = classifier_func[model].predict(X_test)
     evaluation(y_test, y_pred)
-    print('-'*150)
-
+    
     # plot ROC curve
     metrics.plot_roc_curve(classifier_func[model], X_test, y_test, pos_label=1)
     plt.savefig(f'{model_name[model]}_ROC_{dataset}.pdf', format="pdf", bbox_inches="tight")

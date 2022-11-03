@@ -118,7 +118,9 @@ The feature selection methods we've used are as follows. <br />
 10. Accuracy Score <br />
 
 ### INTERPRETATION AND RESULTS <br />
-- Details here <br />
+1) Correspondence Analysis and Multiple Correspondence Analysis
+2) SHAP
+<br />
 
 ## Contributors
 **Cao, Angela** <br />

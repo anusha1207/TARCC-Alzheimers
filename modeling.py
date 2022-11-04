@@ -1,15 +1,29 @@
-
+import preprocessing_blood as pb
+import preprocessing_other as po
+import feature_selection as fs
+import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_classification
-from sklearn.metrics import make_scorer
+from sklearn.metrics import make_scorer, accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression #linear_model.LogisticRegression (setting multi_class=”multinomial”)
+from sklearn.ensemble import GradientBoostingClassifier
+from catboost import CatBoostClassifier
+from xgboost import XGBClassifier
+import matplotlib.pyplot as plt
+import seaborn as sns
+#import lightgbm
 import copy
 from sklearn.metrics import precision_recall_curve, auc, confusion_matrix, classification_report, precision_score, recall_score, roc_auc_score, f1_score, fbeta_score
 from sklearn import metrics
 
 def get_data(non_genetic_df):
 
-  df_blood = preprocessing_blood(non_genetic_df)
-  df_diagnosis = preprocessing_other(non_genetic_df)
+  df_blood = pb.preprocessing(non_genetic_df)
+  df_diagnosis = po.preprocessing(non_genetic_df)
 
   #remove patient ID while doing feature selection
   df_features_blood = df_blood.drop(['PATID'], axis=1)
@@ -54,7 +68,7 @@ def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_n
     
     # plot ROC curve
     metrics.plot_roc_curve(classifier_func[model], X_test, y_test, pos_label=1)
-    plt.savefig(f'{model_name[model]}_ROC_{dataset}.pdf', format="pdf", bbox_inches="tight")
+    plt.savefig(f'results/{model_name[model]}_ROC_{dataset}.pdf', format="pdf", bbox_inches="tight")
     plt.show()
     print() 
 
@@ -127,7 +141,7 @@ def model_main(non_genetic_df, dataset='blood'):
   if dataset=='blood':
     
     # getting combined features after performing feature selection
-    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresb = results('blood', X_blood, y_blood, df_features_blood)
+    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresb = fs.results('blood', X_blood, y_blood, df_features_blood)
 
     # convert features to list
     combined_features_list_blood = combined_featuresb['Features'].to_list()
@@ -142,8 +156,8 @@ def model_main(non_genetic_df, dataset='blood'):
 
     # list of classifier functions
     classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
-                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42),       
-                    XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                     
+                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
+                    XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
                     GradientBoostingClassifier(n_estimators=300, max_depth=3), 
                     DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
                     LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
@@ -151,9 +165,9 @@ def model_main(non_genetic_df, dataset='blood'):
                     CatBoostClassifier(random_state=42)]  
 
     # list of classifier names
-    model_name= ['Light Gradient Boosting Method', 
+    model_name= ['Light Gradient Boosting Method',
               'Random Forest', 
-              'eXtreme Gradient Boosting', 
+              'eXtreme Gradient Boosting',
               'Gradient Boosting', 
               'Decision Tree', 
               'Logistic Regression', 
@@ -166,7 +180,7 @@ def model_main(non_genetic_df, dataset='blood'):
   elif dataset=='other':
 
     # getting combined features after performing feature selection
-    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresd = results('other', X_diag, y_diag, df_features_diag)
+    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresd = fs.results('other', X_diag, y_diag, df_features_diag)
 
     # convert features to list
     combined_features_list_diagnosis = combined_featuresd['Features'].to_list()
@@ -183,8 +197,8 @@ def model_main(non_genetic_df, dataset='blood'):
 
     # list of classifier functions; need to fine tune and re-train
     classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
-                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42),       
-                    XGBClassifier(colsample_bytree= 0.5460418790379824, gamma= 0.3347828767144543, max_depth= 8),                     
+                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
+                    XGBClassifier(colsample_bytree= 0.5460418790379824, gamma= 0.3347828767144543, max_depth= 8),                    
                     GradientBoostingClassifier(n_estimators=300, max_depth=3), 
                     DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
                     LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
@@ -192,18 +206,18 @@ def model_main(non_genetic_df, dataset='blood'):
                     CatBoostClassifier(random_state=42)] 
 
     # list of classifier names
-    model_name= ['Light Gradient Boosting Method', 
-                'Random Forest', 
-                'eXtreme Gradient Boosting', 
-                'Gradient Boosting', 
-                'Decision Tree', 
-                'Logistic Regression', 
-                'Extra Trees',
-                'Categorical Boosting']
+    model_name= ['Light Gradient Boosting Method',
+              'Random Forest', 
+              'eXtreme Gradient Boosting',
+              'Gradient Boosting', 
+              'Decision Tree', 
+              'Logistic Regression', 
+              'Extra Trees',
+              'Categorical Boosting']
 
     # evaluate performance and feature importance for each algorithm
     model_results(final_df_diagnosis, X_train, X_test, y_train, y_test, classifier_func, model_name, dataset)
 
     
-    
-    
+
+

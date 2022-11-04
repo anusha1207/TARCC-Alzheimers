@@ -1,5 +1,3 @@
-import preprocessing_blood as pb
-import preprocessing_other as p
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
@@ -18,29 +16,10 @@ from sklearn.feature_selection import RFE
 from sklearn.feature_selection import chi2
 from sklearn.ensemble import RandomForestRegressor
 from boruta import BorutaPy
-import config
 # from sklearn import externals
 # import joblib
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
 from pyparsing import printables
-
-### Load data
-data = pd.read_csv(config.DATA, low_memory=False)
-
-df_blood = pb.preprocessing(data)
-df_diagnosis = p.preprocessing(data)
-
-#remove patient ID while doing feature selection
-df_features_blood = df_blood.drop(['PATID'], axis=1)
-##### Split features and target variable #####
-X_blood = df_features_blood.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-y_blood = df_features_blood['P1_PT_TYPE']
-
-df_features_diag = df_diagnosis.drop(['PATID'], axis=1)
-##### Split features and target variable #####
-X_diag = df_features_diag.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-y_diag = df_features_diag['P1_PT_TYPE']
-
 
 def find_features(model, features, score):
     """
@@ -181,8 +160,12 @@ def boruta_select(X,y):
             boruta_features.append(X.columns[i])
     return boruta_features
 
-###### Mutual Info ######
+
 def results(name, X,y, df_features):
+    """
+    This function returns the top features of each selection method and the overall top features
+    """
+    ###### Mutual Info ######
     mi= MIC(X,y)
     #Mutual Info Features
     mi_cols=list(X.columns)
@@ -244,5 +227,3 @@ def results(name, X,y, df_features):
     return mi_df, mi_plot, chi_df, chi_plot, rf_df, rf_plot, rfr_df, dtr_df, b_df, combined_features
 
 
-mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, kruskal_dfb, combined_featuresb = results('blood', X_blood, y_blood, df_features_blood)
-mi_dfd, mi_plotd, chi_dfd, chi_plotd, rf_dfd, rf_plotd, rfr_dfd, dtr_dfd, kruskal_dfd, combined_featuresd = results('other', X_diag, y_diag, df_features_diag)

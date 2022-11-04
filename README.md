@@ -42,8 +42,7 @@ This project installs and uses the following packages.
 *  `preprocessing_other.py` contains the function block to preprocess the data and subset it to usable features from the other diseases biomarker data
 * `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
 
-* `model.py` contains functions to run the different models (under construction)
-* `visualization.py` contains functions that output visualizations of the data (under construction)
+* `modeling.py` contains functions to run the different models
 
 ## Installation and Usage Instructions
 1. Clone the repository

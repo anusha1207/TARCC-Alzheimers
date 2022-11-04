@@ -43,6 +43,8 @@ This project installs and uses the following packages.
 * `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
 
 * `modeling.py` contains functions to run the different models
+* `results` contains plots of feature selections, ROC curves
+
 
 ## Installation and Usage Instructions
 1. Clone the repository

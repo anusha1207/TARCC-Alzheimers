@@ -35,15 +35,15 @@ This project installs and uses the following packages.
 - [mca](https://pypi.org/project/mca/)
 
 ## Folder Structure
-* `main.py` orchestrates the run and pipes data between other functions
-* `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
-* `requirements.txt` contains the necessary dependencies.
-* `preprocessing_blood.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker data
-*  `preprocessing_other.py` contains the function block to preprocess the data and subset it to usable features from the other diseases biomarker data
-* `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
+* main: `main.py` orchestrates the run and pipes data between other functions
+* Configurations: `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
+* Configurations: `requirements.txt` contains the necessary dependencies.
+* Data Preprocessing & Feature Selection: `preprocessing_blood.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker data
+* Data Preprocessing & Feature Selection: `preprocessing_other.py` contains the function block to preprocess the data and subset it to usable features from the other diseases biomarker data
+* Data Preprocessing & Feature Selection: `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
 
-* `modeling.py` contains functions to run the different models
-* `results` contains plots of feature selections, ROC curves
+* Modeling: `modeling.py` contains functions to run the different models
+* results: contains plots of feature selections, ROC curves
 
 
 ## Installation and Usage Instructions

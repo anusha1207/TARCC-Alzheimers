@@ -2,9 +2,9 @@
 #This main module is to run all dependent modules
 ###
 
-import modeling as m
+from Modeling import modeling as m
 import pandas as pd
-import config
+from Configurations import config
 
 non_genetic_df = pd.read_csv(config.DATA, low_memory=False)
 

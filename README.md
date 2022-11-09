@@ -1,15 +1,4 @@
-  1) Determine biological and non-biological risk factors for
-     Alzheimer’s and analyze the weight of influence of
-     these factors in developing or resisting the progress of
-     Alzheimer’s Disease.
-     
-  2) Develop an effective and economically viable analysis
-     method to predict the risk of early-onset Alzheimer’s
-     disease, with an intent to replace PET, MRI and CT scans
-     in the future.
-     
- Please visit our team's branch individually for further examination and analyses of our scopes. 
-=======
+
 # Texas Alzheimers' Research Care and Consortium: Team TARCC 'F22
 
 ## Table of Contents

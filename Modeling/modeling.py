@@ -1,6 +1,6 @@
-import preprocessing_blood as pb
-import preprocessing_other as po
-import feature_selection as fs
+from Preprocessing_Feature_Selection import preprocessing_blood as pb
+from Preprocessing_Feature_Selection import preprocessing_other as po
+from Preprocessing_Feature_Selection import feature_selection as fs
 import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split

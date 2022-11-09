@@ -53,7 +53,7 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 2. Install dependencies
 ```
-pip install -r requirements.txt
+pip install -r Configurations/requirements.txt
 ```
 3. Run main.py
 ```

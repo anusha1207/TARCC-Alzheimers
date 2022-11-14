@@ -125,7 +125,7 @@ The feature selection methods we've used are as follows. <br />
 
 ## Contributors
 **Cao, Angela** <br />
-**Mudappatti, Anusha** <br />
+**Muddapati, Anusha** <br />
 **Gan, Wei Ren** <br />
 **Prieto, Sophia** <br />
 **Viswanathan, Tejeshwine** <br /> 

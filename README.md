@@ -81,20 +81,19 @@ The correlation of other mental ailments such as depression, anxiety, delusion e
 The feature selection methods we've used are as follows. <br />
 - **STAT BASED FEATURE SELECTION**
 1. Chi Square Test
-2. Mutual Information Test
-3. Kruskal Wallis Test <br />
+2. Mutual Information Test <br />
 - **EMBEDDED FEATURE SELECTION** <br />
-4. Random Forest <br />
+3. Random Forest <br />
 - **WRAPPER BASED** <br />
-5. Recursive Feature Elimination: Using Decision Tree Classifier 
-6. Recursive Feature Elimination: Using Random Forest Classifier
-7. Forward Feature Selection: Using Decision Tree Classifier
-8. Forward Feature Selection: Using Random Forest Classifier 
-9. Backwards Features Elimination: Using Logistic Regression Classifier
-10. Backwards Feature Elimination: Using Decision Tree Classifer <br />
+4. Recursive Feature Elimination: Using Decision Tree Classifier 
+5. Recursive Feature Elimination: Using Random Forest Classifier
+6. Forward Feature Selection: Using Decision Tree Classifier
+7. Forward Feature Selection: Using Random Forest Classifier 
+8. Backwards Features Elimination: Using Logistic Regression Classifier
+9. Backwards Feature Elimination: Using Decision Tree Classifer <br />
 - **OTHER METHODS** <br />
-11. Boruta Test 
-12. Multiple Correspondence Analysis (MCA) <br />
+10. Boruta Test 
+11. Multiple Correspondence Analysis (MCA) <br />
  
 ### MODELING AND VALIDATION <br />
 - **Classification Models** <br />

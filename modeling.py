@@ -1,5 +1,4 @@
-import preprocessing_blood as pb
-import preprocessing_other as po
+import preprocessing as pp
 import feature_selection as fs
 import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
@@ -15,15 +14,16 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
-#import lightgbm
+import pickle
+import lightgbm as lgbm
 import copy
 from sklearn.metrics import precision_recall_curve, auc, confusion_matrix, classification_report, precision_score, recall_score, roc_auc_score, f1_score, fbeta_score
 from sklearn import metrics
 
 def get_data(non_genetic_df):
 
-  df_blood = pb.preprocessing(non_genetic_df)
-  df_diagnosis = po.preprocessing(non_genetic_df)
+  df_blood = pp.preprocessing(non_genetic_df)
+  # df_diagnosis = po.preprocessing(non_genetic_df)
 
   #remove patient ID while doing feature selection
   df_features_blood = df_blood.drop(['PATID'], axis=1)
@@ -31,12 +31,12 @@ def get_data(non_genetic_df):
   X_blood = df_features_blood.drop(['P1_PT_TYPE'], axis=1, inplace = False)
   y_blood = df_features_blood['P1_PT_TYPE']
 
-  df_features_diag = df_diagnosis.drop(['PATID'], axis=1)
+  # df_features_diag = df_diagnosis.drop(['PATID'], axis=1)
   ##### Split features and target variable #####
-  X_diag = df_features_diag.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-  y_diag = df_features_diag['P1_PT_TYPE']
+  # X_diag = df_features_diag.drop(['P1_PT_TYPE'], axis=1, inplace = False)
+  # y_diag = df_features_diag['P1_PT_TYPE']
 
-  return df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag
+  return df_features_blood, X_blood, y_blood
 
 
 def ml_prep(final_df):
@@ -54,7 +54,7 @@ def ml_prep(final_df):
   return X_train, X_test, y_train, y_test
 
 
-def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name, dataset='blood'):
+def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name):
 
   # perform evaluation on various models
 
@@ -68,7 +68,7 @@ def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_n
     
     # plot ROC curve
     metrics.plot_roc_curve(classifier_func[model], X_test, y_test, pos_label=1)
-    plt.savefig(f'results/{model_name[model]}_ROC_{dataset}.pdf', format="pdf", bbox_inches="tight")
+    plt.savefig(f'results/{model_name[model]}_ROC.pdf', format="pdf", bbox_inches="tight")
     plt.show()
     print() 
 
@@ -133,31 +133,31 @@ def evaluation(y_test, y_pred):
 # Note: Use micro-average if classes are imbalance
 
 
-def model_main(non_genetic_df, dataset='blood'):
+def model_main(non_genetic_df):
 
   # pre-process the raw data
-  df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag = get_data(non_genetic_df)
+  df_features_blood, X_blood, y_blood = get_data(non_genetic_df)
 
-  if dataset=='blood':
+  # if dataset=='blood':
     
     # getting combined features after performing feature selection
-    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresb = fs.results('blood', X_blood, y_blood, df_features_blood)
-
+    # mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresb = fs.results('blood', X_blood, y_blood, df_features_blood)
+  combined_featuresb = pickle.load(open("final_features", "rb" ))
     # convert features to list
-    combined_features_list_blood = combined_featuresb['Features'].to_list()
+  combined_features_list_blood = combined_featuresb['Features'][:15].to_list()
     # getting only top features after feature selection
-    final_features_df_blood = df_features_blood[combined_features_list_blood]
+  final_features_df_blood = df_features_blood[combined_features_list_blood]
     # merge the dataset for machine learning model
-    frames_blood = [final_features_df_blood, y_blood]
-    final_df_blood = pd.concat(frames_blood, axis=1)
+  frames_blood = [final_features_df_blood, y_blood]
+  final_df_blood = pd.concat(frames_blood, axis=1)
 
     # perform train_test_split
-    X_train, X_test, y_train, y_test = ml_prep(final_df_blood)
+  X_train, X_test, y_train, y_test = ml_prep(final_df_blood)
 
     # list of classifier functions
-    classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
+  classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
                     RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
-                    XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
+                    # XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
                     GradientBoostingClassifier(n_estimators=300, max_depth=3), 
                     DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
                     LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
@@ -165,7 +165,7 @@ def model_main(non_genetic_df, dataset='blood'):
                     CatBoostClassifier(random_state=42)]  
 
     # list of classifier names
-    model_name= ['Light Gradient Boosting Method',
+  model_name= ['Light Gradient Boosting Method',
               'Random Forest', 
               'eXtreme Gradient Boosting',
               'Gradient Boosting', 
@@ -175,49 +175,7 @@ def model_main(non_genetic_df, dataset='blood'):
               'Categorical Boosting']
 
     # evaluate performance and feature importance for each algorithm
-    model_results(final_df_blood, X_train, X_test, y_train, y_test, classifier_func, model_name, dataset)
+  model_results(final_df_blood, X_train, X_test, y_train, y_test, classifier_func, model_name)
 
-  elif dataset=='other':
-
-    # getting combined features after performing feature selection
-    mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_featuresd = fs.results('other', X_diag, y_diag, df_features_diag)
-
-    # convert features to list
-    combined_features_list_diagnosis = combined_featuresd['Features'].to_list()
-
-    # getting only top features after feature selection
-    final_features_df_diagnosis = df_features_diag[combined_features_list_diagnosis]
-
-    # merge the dataset for machine learning model
-    frames_diagnosis = [final_features_df_diagnosis, y_diag]
-    final_df_diagnosis= pd.concat(frames_diagnosis, axis=1)
-          
-    # perform train_test_split
-    X_train, X_test, y_train, y_test = ml_prep(final_df_diagnosis)
-
-    # list of classifier functions; need to fine tune and re-train
-    classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
-                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
-                    XGBClassifier(colsample_bytree= 0.5460418790379824, gamma= 0.3347828767144543, max_depth= 8),                    
-                    GradientBoostingClassifier(n_estimators=300, max_depth=3), 
-                    DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
-                    LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
-                    ExtraTreesClassifier(n_estimators=500, max_depth=3),
-                    CatBoostClassifier(random_state=42)] 
-
-    # list of classifier names
-    model_name= ['Light Gradient Boosting Method',
-              'Random Forest', 
-              'eXtreme Gradient Boosting',
-              'Gradient Boosting', 
-              'Decision Tree', 
-              'Logistic Regression', 
-              'Extra Trees',
-              'Categorical Boosting']
-
-    # evaluate performance and feature importance for each algorithm
-    model_results(final_df_diagnosis, X_train, X_test, y_train, y_test, classifier_func, model_name, dataset)
-
-    
-
+  
 

@@ -200,7 +200,7 @@ def model_main(non_genetic_df, dataset='blood'):
                     DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
                     LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
                     ExtraTreesClassifier(n_estimators=500, max_depth=3),
-                    CatBoostClassifier(random_state=42)] 
+                    CatBoostClassifier(border_count = 154.8567100863134, depth = 5.0, l2_leaf_reg = 4.566647107918857, learning_rate = 0.00940537733028423)] 
 
     # list of classifier names
     model_name= ['Random Forest', 

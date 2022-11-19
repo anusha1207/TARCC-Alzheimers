@@ -7,7 +7,10 @@ import feature_selection as fs
 def shap_tree(model, model_name, X_train, y_train, input_df):
     model.fit(X_train, y_train)
     return shap.TreeExplainer(model).shap_values(input_df)
-
+    
+def shap_explainer(model, model_name, X_train, y_train, input_df):
+    model.fit(X_train, y_train)
+    return shap.Explainer(model, input_df, feature_names=input_df.columns)
 
 def shap_plot(model):
     return

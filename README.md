@@ -106,6 +106,10 @@ The feature selection methods we've used are as follows. <br />
 7. Decision Tree
 8. Logistic Regression  <br />
 
+- **Hyperparameter Tuning** <br />
+1. Hyperoptimization (Hyperopt)
+2. Bayesian Optimization (BayesSearchCV) <br />
+
 - **Evaluation Metrics** <br />
 1. Recall/Sensitivity
 2. Specificity

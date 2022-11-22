@@ -48,10 +48,12 @@ def ml_prep(final_df):
   scaler = StandardScaler()
   X = scaler.fit_transform(features)
 
-  # train_test_split (80/20)
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+  # train_test_split
+  # split data into train, valid, and test data (80/10/10)
+  X_train, X_data, y_train, y_data = train_test_split(X, y, test_size=0.20, random_state=42)
+  X_valid, X_test, y_valid, y_test = train_test_split(X_data, y_data, test_size=0.50, random_state=42)
 
-  return X_train, X_test, y_train, y_test
+  return X_train, X_valid, X_test, y_train, y_valid, y_test
 
 
 def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name):
@@ -152,7 +154,7 @@ def model_main(non_genetic_df):
   final_df_blood = pd.concat(frames_blood, axis=1)
 
     # perform train_test_split
-  X_train, X_test, y_train, y_test = ml_prep(final_df_blood)
+  X_train, X_valid, X_test, y_train, y_valid, y_test = ml_prep(final_df_blood)
 
     # list of classifier functions
   classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
@@ -169,7 +171,7 @@ def model_main(non_genetic_df):
               'Random Forest', 
               # 'eXtreme Gradient Boosting',
               # 'Gradient Boosting',
-              # 'Decision Tree', 
+              # 'Decision Tree',
               'Logistic Regression', 
               'Extra Trees',
               'Categorical Boosting']

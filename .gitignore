@@ -28,3 +28,4 @@ __pycache__
 *.tsv
 *.tfevents
 catboost_info
+catboost_info/catboost_training.json

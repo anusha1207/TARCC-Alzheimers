@@ -27,3 +27,4 @@ __pycache__
 *.sw*
 *.tsv
 *.tfevents
+catboost_info

@@ -158,8 +158,8 @@ def model_main(non_genetic_df):
   classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
                     RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
                     # XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
-                    GradientBoostingClassifier(n_estimators=300, max_depth=3), 
-                    DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
+                    # GradientBoostingClassifier(n_estimators=300, max_depth=3),
+                    # DecisionTreeClassifier(ccp_alpha=0.01, max_depth=6, max_features='log2', random_state=42),
                     LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
                     ExtraTreesClassifier(n_estimators=500, max_depth=3),
                     CatBoostClassifier(random_state=42)]  
@@ -167,9 +167,9 @@ def model_main(non_genetic_df):
     # list of classifier names
   model_name= ['Light Gradient Boosting Method',
               'Random Forest', 
-              'eXtreme Gradient Boosting',
-              'Gradient Boosting', 
-              'Decision Tree', 
+              # 'eXtreme Gradient Boosting',
+              # 'Gradient Boosting',
+              # 'Decision Tree', 
               'Logistic Regression', 
               'Extra Trees',
               'Categorical Boosting']

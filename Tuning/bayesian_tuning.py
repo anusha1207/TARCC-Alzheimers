@@ -50,7 +50,8 @@ def bayesian_optimization(X_train, y_train, model, params, n_iter, random_state)
         model,
         params,
         n_iter=n_iter,
-        random_state=random_state
+        random_state=random_state, 
+        scoring='roc_auc'
     )
     opt = opt.fit(X_train, y_train)
     return opt.best_params_

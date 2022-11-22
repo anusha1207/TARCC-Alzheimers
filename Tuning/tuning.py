@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 from hyperopt import tpe,hp,Trials
 from hyperopt.fmin import fmin
-from Preprocessing_Feature_Selection import feature_selection as fs
-from Preprocessing_Feature_Selection import preprocessing_blood as pb
-from Preprocessing_Feature_Selection import preprocessing_other as po
+import feature_selection as fs
+import preprocessing as pre
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -15,13 +14,13 @@ from sklearn.ensemble import GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.ensemble import ExtraTreesClassifier
+import pickle
 
 
 
 def get_data(non_genetic_df):
 
-  df_blood = pb.preprocessing(non_genetic_df)
-  df_diagnosis = po.preprocessing(non_genetic_df)
+  df_blood = pre.preprocessing(non_genetic_df)
 
   #remove patient ID while doing feature selection
   df_features_blood = df_blood.drop(['PATID'], axis=1)
@@ -29,13 +28,19 @@ def get_data(non_genetic_df):
   X_blood = df_features_blood.drop(['P1_PT_TYPE'], axis=1, inplace = False)
   y_blood = df_features_blood['P1_PT_TYPE']
 
-  df_features_diag = df_diagnosis.drop(['PATID'], axis=1)
-  ##### Split features and target variable #####
-  X_diag = df_features_diag.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-  y_diag = df_features_diag['P1_PT_TYPE']
+  return df_features_blood, X_blood, y_blood
 
-  return df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag
+non_genetic_df = pd.read_csv('20220916 updated TARCC Data for Dr Broussard.csv')
+df_features_blood, X_blood, y_blood = get_data(non_genetic_df)
 
+combined_featuresb = pickle.load(open("final_features", "rb" ))
+    # convert features to list
+combined_features_list_blood = combined_featuresb['Features'][:15].to_list()
+    # getting only top features after feature selection
+final_features_df_blood = df_features_blood[combined_features_list_blood]
+    # merge the dataset for machine learning model
+frames_blood = [final_features_df_blood, y_blood]
+final_df_blood = pd.concat(frames_blood, axis=1)
 
 def ml_prep(final_df):
   
@@ -51,6 +56,7 @@ def ml_prep(final_df):
 
   return X_train, X_test, y_train, y_test
 
+X_train, X_test, y_train, y_test = ml_prep(final_df_blood)
 
 ### Random Forest
 seed=2
@@ -74,8 +80,7 @@ def optimize(trial):
     return best
 
 
-non_genetic_df = pd.read_csv('20220916 updated TARCC Data for Dr Broussard.csv')
-df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag = get_data(non_genetic_df)
+
 X_train, X_test, y_train, y_test = ml_prep(df_features_blood)
 
 trial=Trials()
@@ -161,21 +166,25 @@ best=optimize(trial)
 print('Decision Tree parameters: ', best)
 
 ### Logistic Regression
-
+seed = 2
 def objective(params):
-    cw=int(params['class_weight'])
+    cw=params['class_weight']
     mi=int(params['max_iter'])
     solv = params['solver']
-    model=LogisticRegression(class_weight=cw, max_iter=mi, random_state=42, solver=solv)
+    pen = params['penalty']
+    c = int(params['C'])
+    model=LogisticRegression(class_weight=cw, max_iter=mi, random_state=42, solver=solv, penalty = pen, C = c)
     model.fit(X_train,y_train)
     pred=model.predict(X_test)
     score=fbeta_score(y_test, pred, beta = 1)
-    return score
+    return -1 * score
 
 def optimize(trial):
     params={'class_weight':hp.choice('class_weight',['balanced', None]),
            'max_iter':hp.uniform('max_iter', 1, 14),
-           'solver': hp.choice('solver', ["newton-cg", "lbfgs", "liblinear", "sag", "saga"])}
+           'solver': hp.choice('solver', ["lbfgs"]),
+           'penalty' : hp.choice('penalty', ["l2", "none"]),
+           'C' : hp.uniform('C', 0.01, 100)}
     best=fmin(fn=objective,space=params,algo=tpe.suggest,trials=trial,max_evals=500,rstate=np.random.default_rng(seed))
     return best
 
@@ -219,7 +228,7 @@ def objective(params):
     model.fit(X_train,y_train)
     pred=model.predict(X_test)
     score=fbeta_score(y_test, pred, beta = 1)
-    return score
+    return -1 * score
 
 def optimize(trial):
     params={

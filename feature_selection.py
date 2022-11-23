@@ -18,6 +18,7 @@ from sklearn.ensemble import RandomForestRegressor
 from boruta import BorutaPy
 # from sklearn import externals
 # import joblib
+
 from mlxtend.feature_selection import SequentialFeatureSelector as sfs
 from pyparsing import printables
 
@@ -31,7 +32,7 @@ def find_features(model, features, score):
     df=df[:20]
     df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for {model}')
-    plt.savefig(f'results/{model}_features.pdf', format="pdf", bbox_inches="tight")
+    # plt.savefig(f'results/{model}_features.pdf', format="pdf", bbox_inches="tight")
     plot = plt.show()
     return df, plot
 
@@ -40,7 +41,7 @@ def random_forest_select(name, X,y):
     """
     This function lists and plots random forest feature selection
     """
-    X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
+    X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3, random_state=42)
     
     #Standard Scaling
     sc=StandardScaler()
@@ -68,7 +69,7 @@ def random_forest_select(name, X,y):
     rf_df=rf_df.head(30)
     rf_df.plot.bar(x='Features',y='Score')
     plt.title(f'Feature Importance for Random Forest')
-    plt.savefig(f"results/RandomForest_features_{name}.pdf", format="pdf", bbox_inches="tight")
+    # plt.savefig(f"results/RandomForest_features_{name}.pdf", format="pdf", bbox_inches="tight")
     rf_plot = plt.show()
     return rf_df, rf_plot
 
@@ -98,38 +99,12 @@ def fb_selection(name, model, direction_name, direction):
     ff1_df = pd.DataFrame.from_dict(ff1_dict).T
     fig1=plot_sfs(ff1_dict, kind='ci')
     plt.title(f'{direction_name} Feature Selection using {model} (With confidence interval)')
-    plt.savefig(f'results/{model}_features_{name}.pdf', format="pdf", bbox_inches="tight")
+    # plt.savefig(f'results/{model}_features_{name}.pdf', format="pdf", bbox_inches="tight")
     plt.grid()
     plot = plt.show()
     ff1_features=list(ff1_df['feature_names'][30])
     return ff1_features, fig1, plot
 
-
-# def kruskal_select(name,X, y):
-#     kruskal_features = []
-#     kruskal_scores = []
-#     for col in X.columns:
-#         feature = X[col]
-
-#         result = stats.kruskal(list(feature), list(y))
-        
-#         # reject null hypothesis if p <= p_value, else fail to reject null hypothesis and accept the column
-#         if result.pvalue > 0:
-#             kruskal_features.append(col)
-#             kruskal_scores.append(result.pvalue)
-    
-#     # print(kruskal_features, kruskal_scores)
-#     kruskal_features= pd.DataFrame(kruskal_features)
-#     kruskal_scores= pd.DataFrame(kruskal_scores)
-#     kruskal_df= pd.concat([kruskal_features, kruskal_scores], axis=1)
-#     kruskal_df.columns = ['Features', 'Score']
-#     kruskal_df = kruskal_df.sort_values(by='Score', ascending=False)
-#     kruskal_df.iloc[:30, :]
-#     kruskal_df.iloc[:30,:].plot.bar(x='Features',y='Score')
-#     plt.title('Feature Selection using Kruskall_Wallace')
-#     plt.savefig(f"results/Kruskall_features_{name}.pdf", format="pdf", bbox_inches="tight")
-#     kw_plot = plt.show()
-#     return kruskal_df, kw_plot
 
 ##### Boruta #####
 def boruta_select(X,y):
@@ -197,18 +172,6 @@ def results(name, X,y, df_features):
     dtr = RFE(estimator=DecisionTreeClassifier(), n_features_to_select=30)
     dtr_df = recursive_selection(dtr, X, y)
 
-    ###### Forward and Backward selection ######
-    # these take so long to run
-    #dtf_df, dtf_fig, dtf_plot = fb_selection(model = DecisionTreeClassifier(), direction_name = 'Forward', direction = True)
-    #rff_df, rff_fig, rff_plot =fb_selection(model = RandomForestClassifier(), direction_name = 'Forward', direction = True)
-
-    #lrb_df, lrb_fig, lrb_plot = fb_selection(model = LogisticRegression(), direction_name = 'Backward', direction = False)
-    #dtb_df, dtb_fig, dtb_plot = fb_selection(model = DecisionTreeClassifier(), direction_name = 'Backward', direction = False)
-
-    ############ Kruskal-Wallis #############
-
-#     kruskal_df, kw_plot = kruskal_select(name, X,y)
-
     ########### Boruta ############
     b_df = boruta_select(X,y)
 
@@ -225,5 +188,3 @@ def results(name, X,y, df_features):
         return combined_features
     combined_features = combine_features()
     return mi_df, mi_plot, chi_df, chi_plot, rf_df, rf_plot, rfr_df, dtr_df, b_df, combined_features
-
-

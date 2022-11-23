@@ -66,7 +66,7 @@ def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_n
     y_pred = classifier_func[model].predict(X_test)
     evaluation(y_test, y_pred)
     
-    # plot ROC curve
+    # plot ROC curve; will have a separate function for this once we have all models with best parameters gathered
     metrics.plot_roc_curve(classifier_func[model], X_test, y_test, pos_label=1)
     plt.savefig(f'results/{model_name[model]}_ROC.pdf', format="pdf", bbox_inches="tight")
     plt.show()
@@ -133,7 +133,7 @@ def evaluation(y_test, y_pred):
 # Note: Use micro-average if classes are imbalance
 
 
-def model_main(non_genetic_df, dataset_name='combined'):
+def model_main(non_genetic_df):
 
   # pre-process the raw data
   df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
@@ -168,7 +168,7 @@ def model_main(non_genetic_df, dataset_name='combined'):
               'Categorical Boosting']
 
   # evaluate performance and feature importance for each algorithm
-  model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name, dataset_name)
+  model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
 
   
 

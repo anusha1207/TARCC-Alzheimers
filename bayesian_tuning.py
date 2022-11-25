@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 from skopt import BayesSearchCV
 from skopt.space import Real, Categorical, Integer
-from Preprocessing_Feature_Selection import feature_selection as fs
-from Preprocessing_Feature_Selection import preprocessing_blood as pb
-from Preprocessing_Feature_Selection import preprocessing_other as po
+# import feature_selection as fs
+import preprocessing as pb
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -13,107 +12,252 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 
-
 def get_data(non_genetic_df):
-    df_blood = pb.preprocessing(non_genetic_df)
-    df_diagnosis = po.preprocessing(non_genetic_df)
 
-    # remove patient ID while doing feature selection
-    df_features_blood = df_blood.drop(['PATID'], axis=1)
-    ##### Split features and target variable #####
-    X_blood = df_features_blood.drop(['P1_PT_TYPE'], axis=1, inplace=False)
-    y_blood = df_features_blood['P1_PT_TYPE']
+  df_combined = pb.preprocessing(non_genetic_df)
 
-    df_features_diag = df_diagnosis.drop(['PATID'], axis=1)
-    ##### Split features and target variable #####
-    X_diag = df_features_diag.drop(['P1_PT_TYPE'], axis=1, inplace=False)
-    y_diag = df_features_diag['P1_PT_TYPE']
+  #remove patient ID while doing feature selection
+  df_features_comb = df_combined.drop(['PATID'], axis=1)
+  ##### Split features and target variable #####
+  X_comb = df_features_comb.drop(['P1_PT_TYPE'], axis=1, inplace = False)
+  y_comb = df_features_comb['P1_PT_TYPE']
 
-    return df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag
+  return df_features_comb, X_comb, y_comb
+
+def get_data(final_df):
+      
+  features = final_df.loc[:, final_df.columns != 'P1_PT_TYPE']
+  y = final_df['P1_PT_TYPE']
+
+  # standard scaling
+  scaler = StandardScaler()
+  X = scaler.fit_transform(features)
+
+  print(features)
+
+  # manually split: 80% train, 10% validation, 10% test sets
+  X_train = features[:math.ceil(0.8*final_df.shape[0])+1]
+  y_train = y[:math.ceil(0.8*final_df.shape[0])+1]
+  X_val = features[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  y_val = y[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  X_test = features[-math.floor(0.1*final_df.shape[0]):]
+  y_test = y[-math.floor(0.1*final_df.shape[0]):]
+
+  return X_train, y_train, X_val, y_val, X_test, y_test
 
 
 def ml_prep(final_df):
-    features = final_df.loc[:, final_df.columns != 'P1_PT_TYPE']
-    y = final_df['P1_PT_TYPE']
+  
+  features = final_df.loc[:, final_df.columns != 'P1_PT_TYPE']
+  y = final_df['P1_PT_TYPE']
 
-    # standard scaling
-    scaler = StandardScaler()
-    X = scaler.fit_transform(features)
+  # standard scaling
+  scaler = StandardScaler()
+  X = scaler.fit_transform(features)
 
-    # train_test_split (80/20)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+  print(features)
 
-    return X_train, X_test, y_train, y_test
+  # manually split: 80% train, 10% validation, 10% test sets
+  X_train = features[:math.ceil(0.8*final_df.shape[0])+1]
+  y_train = y[:math.ceil(0.8*final_df.shape[0])+1]
+  X_val = features[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  y_val = y[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  X_test = features[-math.floor(0.1*final_df.shape[0]):]
+  y_test = y[-math.floor(0.1*final_df.shape[0]):]
 
-def bayesian_optimization(X_train, y_train, model, params, n_iter, random_state):
-    opt = BayesSearchCV(
-        model,
-        params,
-        n_iter=n_iter,
-        random_state=random_state, 
-        scoring='roc_auc'
-    )
-    opt = opt.fit(X_train, y_train)
-    return opt.best_params_
+  return X_train, y_train, X_val, y_val, X_test, y_test
 
-def bayesian_results(X_train, y_train, classifier_func, classifier_params, model_names, n_iter, random_state):
-    model_best_params = {}
-    for model_index in range(0, len(classifier_func)):
-        model = classifier_func[model_index]
-        params = classifier_params[model_index]
-        name = model_names[model_index]
-        best_params = bayesian_optimization(X_train, y_train, model, params, n_iter, random_state)
-        model_best_params[name] = best_params
-    return model_best_params
+non_genetic_df = pd.read_csv('20220916 updated TARCC Data for Dr Broussard.csv', low_memory=False)
 
-def bayesian_tuning_main(df):
-    df_features_blood, df_features_diag, X_blood, y_blood, X_diag, y_diag = get_data(df)
-    X_train, X_test, y_train, y_test = ml_prep(df_features_blood)
-    classifier_func = [
-        RandomForestClassifier(),
-        LogisticRegression(),
-        ExtraTreesClassifier(),
-        XGBClassifier(),
-        CatBoostClassifier()
-    ]
-    classifier_params = [
-        {
-            'n_estimators': Integer(100, 500),
-            'max_depth': Integer(5, 20),
-            'min_samples_leaf': Integer(1, 5),
-            'min_samples_split': Integer(2, 6)
-        },
-        {
-            'class_weight': Categorical(['balanced', None]),
-            'max_iter': Integer(1, 14),
-            'solver': Categorical(["newton-cg", "lbfgs", "liblinear", "sag", "saga"])
-        },
-        {
-            'n_estimators': Integer(100, 1000),
-            'max_depth': Integer(1, 14)
-        },
-        {
-            'n_estimators': Integer(100, 1000),
-            'max_depth': Integer(1, 14),
-            'colsample_bytree': Real(0.5, 1.0),
-            'gamma': Real(0.5, 1.0)
-        },
-        {
-            'depth': Integer(1, 6),
-            'border_count': Integer(32, 255),
-            'learning_rate': Real(-5.0, -2),
-            'l2_leaf_reg': Integer(3, 8)
-        }
-    ]
-    model_names = [
-        'Random Forest',
-        'Logistic Regression',
-        'Extra Trees',
-        'eXtreme Gradient Boost',
-        'Categorical Boosting'
-    ]
-    bayesian_results(X_train, y_train, classifier_func, classifier_params, model_names, n_iter=500, random_state=2)
+# pre-process the raw data
+df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
+    
+# retrieve pickled combined features list
+combined_features_list = pickle.load(open("pickled_combined_features_list.pkl", "rb" ))
 
-non_genetic_df = pd.read_csv('20220916 updated TARCC Data for Dr Broussard.csv')
-bayesian_tuning_main(non_genetic_df)
+# getting only top features after feature selection
+final_features_df = df_features_comb[combined_features_list]
+# merge the dataset for machine learning model
+frames = [final_features_df, y_comb]
+final_df = pd.concat(frames, axis=1)
 
+# perform train_test_split
+X_train, y_train, X_val, y_val, X_test, y_test = ml_prep(final_df)
+
+def black_box_random_forest(n_estimators, max_depth, min_samples_leaf, min_samples_split):
+  assert type(n_estimators) == int
+  assert type(max_depth) == int
+  assert type(min_samples_leaf) == int
+  assert type(min_samples_split) == int
+  clf_rf = RandomForestClassifier(n_estimators=n_estimators,
+                                  max_depth=max_depth,
+                                  min_samples_leaf=min_samples_leaf,
+                                  min_samples_split=min_samples_split)
+  clf_rf.fit(X_train, y_train)
+  y_score = clf_rf.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def random_forest_int_params(param_one, param_two, param_three, param_four):
+  n_estimators = int(param_one)
+  max_depth = int(param_two)
+  min_samples_leaf = int(param_three)
+  min_samples_split = int(param_four)
+  print(n_estimators)
+  return black_box_random_forest(n_estimators, max_depth, min_samples_leaf, min_samples_split)
+
+def random_forest_optimize(iterations):
+  pbounds = {
+    'param_one': (100, 500),
+    'param_two': (5, 20),
+    'param_three': (1, 5),
+    'param_four': (2, 6)
+  }
+  optimizer = BayesianOptimization(f=random_forest_int_params,
+                                   pbounds=pbounds, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "n_estimators": int(max_params["param_one"]),
+      "max_depth": int(max_params["param_two"]),
+      "min_samples_leaf": int(max_params["param_three"]),
+      "min_samples_split": int(max_params["param_four"])
+  }
+  return best_params
+
+random_forest_optimize(iterations=5)
+
+def black_box_extra_trees_classifier(n_estimator, max_depth):
+  assert type(n_estimator) == int
+  assert type(max_depth) == int
+  clf_et = ExtraTreesClassifier(n_estimators=n_estimator,
+                                max_depth=max_depth)
+  clf_et.fit(X_train, y_train)
+  y_score = clf_et.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def extra_trees_classifier_int_params(param_one, param_two):
+  n_estimator=int(param_one)
+  max_depth=int(param_two)
+  return black_box_extra_trees_classifier(n_estimator, max_depth)
+
+def extra_trees_optimize(iterations):
+  params = {
+    'param_one': [100, 1000],
+    'param_two': [1, 14]
+  }
+  optimizer = BayesianOptimization(f=extra_trees_classifier_int_params,
+                                   pbounds=params, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "n_estimators": int(max_params["param_one"]),
+      "max_depth": int(max_params["param_two"])
+  }
+  return best_params
+
+extra_trees_optimize(iterations=5)
+
+def black_box_extra_trees_classifier(n_estimator, max_depth):
+  assert type(n_estimator) == int
+  assert type(max_depth) == int
+  clf_et = ExtraTreesClassifier(n_estimators=n_estimator,
+                                max_depth=max_depth)
+  clf_et.fit(X_train, y_train)
+  y_score = clf_et.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def extra_trees_classifier_int_params(param_one, param_two):
+  n_estimator=int(param_one)
+  max_depth=int(param_two)
+  return black_box_extra_trees_classifier(n_estimator, max_depth)
+
+def extra_trees_optimize(iterations):
+  params = {
+    'param_one': [100, 1000],
+    'param_two': [1, 14]
+  }
+  optimizer = BayesianOptimization(f=extra_trees_classifier_int_params,
+                                   pbounds=params, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "n_estimators": int(max_params["param_one"]),
+      "max_depth": int(max_params["param_two"])
+  }
+  return best_params
+
+extra_trees_optimize(iterations=5)
+
+def black_box_xgb_classifier(n_estimator, max_depth, colsample_bytree, gamma):
+  assert type(n_estimator) == int
+  assert type(max_depth) == int
+  clf_et = ExtraTreesClassifier(n_estimators=n_estimator,
+                                max_depth=max_depth)
+  clf_et.fit(X_train, y_train)
+  y_score = clf_et.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def xgb_classifier_int_params(param_one, param_two, colsample_bytree, gamma):
+  max_iter=int(param_one)
+  max_depth=int(param_two)
+  return black_box_xgb_classifier(max_iter, max_depth, colsample_bytree, gamma)
+
+def xgb_optimize(iterations):
+  params = {
+    'param_one': [100, 1000],
+    'param_two': [1, 14],
+    'colsample_bytree': [0.5, 1.0],
+    'gamma': [0.5, 1.0]
+  }
+  optimizer = BayesianOptimization(f=xgb_classifier_int_params,
+                                   pbounds=params, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "n_estimators": int(max_params["param_one"]),
+      "max_depth": int(max_params["param_two"]),
+      "colsample_bytree": max_params["colsample_bytree"],
+      "gamma": max_params["gamma"]
+  }
+  return best_params
+
+xgb_optimize(iterations=5)
+
+def black_box_catboost_classifier(depth, border_count, learning_rate, l2_leaf_reg):
+  assert type(depth) == int
+  assert type(border_count) == int
+  assert type(l2_leaf_reg) == int
+  clf_cb = CatBoostClassifier(depth=depth,
+                              border_count=border_count,
+                              learning_rate=learning_rate,
+                              l2_leaf_reg=l2_leaf_reg)
+  clf_cb.fit(X_train, y_train)
+  y_score = clf_cb.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def catboost_classifier_int_params(param_one, param_two, learning_rate, param_four):
+  depth=int(param_one)
+  border_count=int(param_two)
+  l2_leaf_reg=int(param_four)
+  return black_box_catboost_classifier(depth, border_count, learning_rate, l2_leaf_reg)
+
+def catboost_optimize(iterations):
+  params = {
+    'param_one': [1, 6],
+    'param_two': [32, 255],
+    'learning_rate': [-5.0, -2],
+    'param_four': [3, 8]
+  }
+  optimizer = BayesianOptimization(f=catboost_classifier_int_params,
+                                   pbounds=params, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "depth": int(max_params["param_one"]),
+      "border_count": int(max_params["param_two"]),
+      "learning_rate": max_params["learning_rate"],
+      "l2_leaf_reg": int(max_params["param_four"])
+  }
+  return best_params
+
+catboost_optimize(iterations=5)

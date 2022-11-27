@@ -20,6 +20,7 @@ import lightgbm as lgbm
 import copy
 from sklearn.metrics import precision_recall_curve, auc, confusion_matrix, classification_report, precision_score, recall_score, roc_auc_score, f1_score, fbeta_score
 from sklearn import metrics
+from bayes_opt import BayesianOptimization 
 
 def get_data(non_genetic_df):
 

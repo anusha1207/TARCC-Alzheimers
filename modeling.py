@@ -463,12 +463,12 @@ def model_main(non_genetic_df):
               'Categorical Boosting']
               
   # list of optimized classifier functions
-  model_optimizers = [lgbm_optimize_classifier(lgbm_optimize(5, X_train, y_train, X_val, y_val)),
-                      random_forest_optimize_classifier(random_forest_optimize(5, X_train, y_train, X_val, y_val)),
-                      xgb_optimize_classifier(xgb_optimize(5, X_train, y_train, X_val, y_val)),
-                      logistic_regression_optimize_classifier(logistic_regression_optimize(5, X_train, y_train, X_val, y_val)),
-                      extra_trees_optimize_classifier(extra_trees_optimize(5, X_train, y_train, X_val, y_val)),
-                      catboost_optimize_classifier(catboost_optimize(5, X_train, y_train, X_val, y_val))]
+  model_optimizers = [lgbm_optimize_classifier(lgbm_optimize(500, X_train, y_train, X_val, y_val)),
+                      random_forest_optimize_classifier(random_forest_optimize(500, X_train, y_train, X_val, y_val)),
+                      xgb_optimize_classifier(xgb_optimize(500, X_train, y_train, X_val, y_val)),
+                      logistic_regression_optimize_classifier(logistic_regression_optimize(500, X_train, y_train, X_val, y_val)),
+                      extra_trees_optimize_classifier(extra_trees_optimize(500, X_train, y_train, X_val, y_val)),
+                      catboost_optimize_classifier(catboost_optimize(500, X_train, y_train, X_val, y_val))]
 
   # evaluate performance and feature importance for each algorithm
   # model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)

@@ -84,6 +84,43 @@ final_df = pd.concat(frames, axis=1)
 # perform train_test_split
 X_train, y_train, X_val, y_val, X_test, y_test = ml_prep(final_df)
 
+def black_box_lgbm_classifier(n_estimator, max_depth, colsample_bytree, num_leaves):
+  assert type(n_estimator) == int
+  assert type(max_depth) == int
+  assert type(num_leaves) == int
+  clf_lgbm = lgbm.LGBMClassifier(n_estimators=n_estimator,
+                                 max_depth=max_depth,
+                                 colsample_bytree=colsample_bytree,
+                                 num_leaves=num_leaves)
+  clf_lgbm.fit(X_train, y_train)
+  y_score = clf_lgbm.predict_proba(X_val)[:, 1]
+  return roc_auc_score(y_val, y_score)
+
+def lgbm_classifier_int_params(param_one, param_two, colsample_bytree, param_four):
+  n_estimator=int(param_one)
+  max_depth=int(param_two)
+  num_leaves=int(param_four)
+  return black_box_lgbm_classifier(n_estimator, max_depth, colsample_bytree, num_leaves)
+
+def lgbm_optimize(iterations):
+  params = {
+      'param_one': [100, 1000],
+      'param_two': [1, 14],
+      'colsample_bytree': [0.5, 1.0],
+      'param_four': [2, 200]
+  }
+  optimizer = BayesianOptimization(f=lgbm_classifier_int_params,
+                                   pbounds=params, random_state=42)
+  optimizer.maximize(n_iter=iterations)
+  max_params = optimizer.max["params"]
+  best_params = {
+      "n_estimators": int(max_params['param_one']),
+      "max_depth": int(max_params['param_two']),
+      "colsample_bytree": max_params["colsample_bytree"],
+      "num_leaves": int(max_params['param_four'])
+  }
+  return best_params
+
 def black_box_random_forest(n_estimators, max_depth, min_samples_leaf, min_samples_split):
   assert type(n_estimators) == int
   assert type(max_depth) == int
@@ -191,8 +228,10 @@ extra_trees_optimize(iterations=5)
 def black_box_xgb_classifier(n_estimator, max_depth, colsample_bytree, gamma):
   assert type(n_estimator) == int
   assert type(max_depth) == int
-  clf_et = ExtraTreesClassifier(n_estimators=n_estimator,
-                                max_depth=max_depth)
+  clf_et = XGBClassifier(n_estimators=n_estimator,
+                         max_depth=max_depth,
+                         colsample_bytree=colsample_bytree,
+                         gamma=gamma)
   clf_et.fit(X_train, y_train)
   y_score = clf_et.predict_proba(X_val)[:, 1]
   return roc_auc_score(y_val, y_score)
@@ -219,7 +258,7 @@ def xgb_optimize(iterations):
       "colsample_bytree": max_params["colsample_bytree"],
       "gamma": max_params["gamma"]
   }
-  return best_params
+  return best_params 
 
 xgb_optimize(iterations=5)
 

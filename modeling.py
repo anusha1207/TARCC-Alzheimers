@@ -54,7 +54,8 @@ def ml_prep(final_df):
   return X_train, y_train, X_val, y_val, X_test, y_test
 
 # Bayesian Tuning Methods
-
+# Still fixing Bayesian Tuning Methods (but will be implemented here anyways)
+"""
 ## Light Gradient Boosting (LGBM)
 def black_box_lgbm_classifier(n_estimator, max_depth, colsample_bytree, num_leaves):
   assert type(n_estimator) == int
@@ -337,7 +338,7 @@ def catboost_optimize_classifier(params):
                             border_count=params["border_count"],
                             learning_rate=params["learning_rate"],
                             l2_leaf_reg=params["l2_leaf_reg"])
-
+"""
 def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name):
 
   # perform evaluation on various models
@@ -452,16 +453,19 @@ def model_main(non_genetic_df):
               'Categorical Boosting']
               
   # list of optimized classifier functions
+  # Bayesian Tuning Methods still under construction
+  """
   model_optimizers = [lgbm_optimize_classifier(lgbm_optimize(iterations=500)),
                       random_forest_optimize_classifier(random_forest_optimize(iterations=500)),
                       xgb_optimize_classifier(xgb_optimize(iterations=500)),
                       logistic_regression_optimize_classifier(logistic_regression_optimize(iterations=500)),
                       extra_trees_optimize_classifier(extra_trees_optimize(iterations=500)),
                       catboost_optimize_classifier(catboost_optimize(iterations=500))]
+  """
 
   # evaluate performance and feature importance for each algorithm
-  # model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
-  model_results(final_df, X_train, X_test, y_train, y_test, model_optimizers, model_name)
+  model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
+  # model_results(final_df, X_train, X_test, y_train, y_test, model_optimizers, model_name)
 
   
 

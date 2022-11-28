@@ -24,7 +24,7 @@ from bayes_opt import BayesianOptimization
 
 def get_data(non_genetic_df):
 
-  df_combined = preprocessing(non_genetic_df)
+  df_combined = pp.preprocessing(non_genetic_df)
 
   #remove patient ID while doing feature selection
   df_features_comb = df_combined.drop(['PATID'], axis=1)
@@ -44,13 +44,13 @@ def ml_prep(final_df):
   X = scaler.fit_transform(features)
 
   # manually split: 80% train, 10% validation, 10% test sets
-  X_train = features[:math.ceil(0.8*final_df.shape[0])+1]
-  y_train = y[:math.ceil(0.8*final_df.shape[0])+1]
-  X_val = features[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
-  y_val = y[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
-  X_test = features[-math.floor(0.1*final_df.shape[0])]
-  y_test = y[-math.floor(0.1*final_df.shape[0])]
-
+  X_train = features.iloc[:math.ceil(0.8*final_df.shape[0])+1]
+  y_train = y.iloc[:math.ceil(0.8*final_df.shape[0])+1]
+  X_val = features.iloc[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  y_val = y.iloc[math.ceil(0.8*final_df.shape[0])+1:-math.floor(0.1*final_df.shape[0])]
+  X_test = features.iloc[-math.floor(0.1*final_df.shape[0]):]
+  y_test = y.iloc[-math.floor(0.1*final_df.shape[0]):]
+  
   return X_train, y_train, X_val, y_val, X_test, y_test
 
 # Bayesian Tuning Methods
@@ -330,6 +330,7 @@ def catboost_optimize(iterations, X_train, y_train, X_val, y_val):
     'learning_rate': [-5.0, -2],
     'param_four': [3, 8]
   }
+  
   optimizer = BayesianOptimization(f=catboost_classifier_int_params,
                                    pbounds=params, random_state=42)
   optimizer.maximize(n_iter=iterations)
@@ -352,7 +353,6 @@ def catboost_optimize_classifier(params):
 def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name):
 
   # perform evaluation on various models
-
   for model in range(len(classifier_func[:])):
     classifier_func[model].fit(X_train, y_train)
 
@@ -434,7 +434,7 @@ def model_main(non_genetic_df):
   df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
     
   # retrieve pickled combined features list
-  combined_features_list = pickle.load(open("pickled_combined_features_list.pkl", "rb" ))
+  combined_features_list = pickle.load(open("data/pickled_combined_features_list.pkl", "rb" ))
 
   # getting only top features after feature selection
   final_features_df = df_features_comb[combined_features_list]

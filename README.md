@@ -37,13 +37,12 @@ This project installs and uses the following packages.
 
 ## Folder Structure
 * main: `main.py` orchestrates the run and pipes data between other functions
-* Configurations: `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
-* Configurations: `requirements.txt` contains the necessary dependencies.
-* Data Preprocessing & Feature Selection: `preprocessing_blood.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker data
-* Data Preprocessing & Feature Selection: `preprocessing_other.py` contains the function block to preprocess the data and subset it to usable features from the other diseases biomarker data
-* Data Preprocessing & Feature Selection: `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
-
-* Modeling: `modeling.py` contains functions to run the different models
+* data: contains the pickled files of the top features after performing feature selection and the pickled files of the tuned models. This is where the TARCC data has to be copied to run the project.  
+* config: `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
+* config: `requirements.txt` contains the necessary dependencies.
+* preprocessing: `preprocessing.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker and diseases data
+* feature selection: `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
+* modeling: `modeling.py` contains functions to run the different models
 * results: contains plots of feature selections, ROC curves
 
 
@@ -56,7 +55,9 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 pip install -r config/requirements.txt
 ```
-3. Run main.py
+3. Copy TARCC's .csv file under the data folder and rename it as 'non_genomic_data.csv'
+
+4. Run main.py
 ```
 python main.py
 ```

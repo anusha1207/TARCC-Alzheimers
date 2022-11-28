@@ -34,6 +34,7 @@ This project installs and uses the following packages.
 - [Boruta](https://pypi.org/project/Boruta/)
 - [SHAP](https://pypi.org/project/shap/)
 - [mca](https://pypi.org/project/mca/)
+- [bayesian-optimization](https://pypi.org/project/bayesian-optimization/) 
 
 ## Folder Structure
 * main: `main.py` orchestrates the run and pipes data between other functions

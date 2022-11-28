@@ -27,3 +27,8 @@ __pycache__
 *.sw*
 *.tsv
 *.tfevents
+
+#Ignore model related files
+catboost_info
+*.tsv
+

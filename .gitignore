@@ -29,3 +29,8 @@ __pycache__
 *.tfevents
 catboost_info
 
+tuning.py
+results/Categorical Boosting_ROC.pdf
+results/Extra Trees_ROC.pdf
+results/Logistic Regression_ROC.pdf
+results/Random Forest_ROC.pdf

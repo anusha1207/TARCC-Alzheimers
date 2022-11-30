@@ -12,7 +12,7 @@ def shap_function(classifier_func, model_name, final_features_df):
         shap_values = shap.TreeExplainer(classifier_func[model]).shap_values(final_features_df)
         #print(model_name[model])
         #print(shap_values)
-        shap.summary_plot(shap_values, final_features_df, plot_type='bar', show=False)
+        shap.summary_plot(shap_values, final_features_df, show=False)
         title = "SHAP Graph of " + model_name[model] + " Model"
         plt.title(title)
         plt_title = model_name[model] + "_SHAP.pdf"

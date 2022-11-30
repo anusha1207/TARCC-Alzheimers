@@ -55,8 +55,6 @@ def ml_prep(final_df):
 
 # Bayesian Tuning Methods
 # Light Gradient Boosting (LGBM)
-# LGBM doesn't work when running terminal
-"""
 def lgbm_optimize(iterations, X_train, y_train, X_val, y_val):
   def black_box_lgbm_classifier(n_estimator, max_depth, colsample_bytree, num_leaves):
     assert type(n_estimator) == int
@@ -101,7 +99,6 @@ def lgbm_optimize_classifier(params):
                              colsample_bytree=params["colsample_bytree"],
                              num_leaves=params["num_leaves"],
                              random_state=42)
-"""
 
 # Random Forests
 def random_forest_optimize(iterations, X_train, y_train, X_val, y_val):
@@ -153,6 +150,8 @@ def random_forest_optimize_classifier(params):
                                 random_state=42)
 
 # Logistic Regression
+# We decided not to use Logistic Regression as a final model 
+"""
 def logistic_regression_optimize(iterations, X_train, y_train, X_val, y_val):
   def black_box_logistic_regression(class_weight, max_iter, solver):
     assert type(max_iter) == int
@@ -225,6 +224,7 @@ def logistic_regression_optimize_classifier(params):
                             max_iter=params["max_iter"],
                             solver=params["solver"],
                             random_state=42)
+"""
 
 # Extra Trees
 def extra_trees_optimize(iterations, X_train, y_train, X_val, y_val):
@@ -263,8 +263,6 @@ def extra_trees_optimize_classifier(params):
                               random_state=42)
 
 # eXtra Gradient Boosting (XGB)
-# XGBoost classifier doesn't work when running with terminal.
-"""
 def xgb_optimize(iterations, X_train, y_train, X_val, y_val):
   def black_box_xgb_classifier(n_estimator, max_depth, colsample_bytree, gamma):
     assert type(n_estimator) == int
@@ -307,7 +305,6 @@ def xgb_optimize_classifier(params):
                        colsample_bytree=params["colsample_bytree"],
                        gamma=params["gamma"],
                        random_state=42)
-"""
 
 # Categorical Boosting (Catboost)
 def catboost_optimize(iterations, X_train, y_train, X_val, y_val):
@@ -452,27 +449,28 @@ def model_main(non_genetic_df):
   X_train, y_train, X_val, y_val, X_test, y_test = ml_prep(final_df)
 
 
+  # We decided not to use logistic regression as a final model 
   # list of classifier functions
-  classifier_func = [#lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
+  classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
                     RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
-                    #XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
-                    LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
+                    XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
+                    #LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
                     ExtraTreesClassifier(n_estimators=500, max_depth=3),
                     CatBoostClassifier(random_state=42)]  
 
   # list of classifier names
-  model_name= [#'Light Gradient Boosting Method',
+  model_name= ['Light Gradient Boosting Method',
               'Random Forest', 
-              #'eXtreme Gradient Boosting',
-              'Logistic Regression', 
+              'eXtreme Gradient Boosting',
+              #'Logistic Regression', 
               'Extra Trees',
               'Categorical Boosting']
               
   # list of optimized classifier functions
-  model_optimizers = [#lgbm_optimize_classifier(lgbm_optimize(500, X_train, y_train, X_val, y_val)),
+  model_optimizers = [lgbm_optimize_classifier(lgbm_optimize(500, X_train, y_train, X_val, y_val)),
                       random_forest_optimize_classifier(random_forest_optimize(500, X_train, y_train, X_val, y_val)),
-                      #xgb_optimize_classifier(xgb_optimize(500, X_train, y_train, X_val, y_val)),
-                      logistic_regression_optimize_classifier(logistic_regression_optimize(500, X_train, y_train, X_val, y_val)),
+                      xgb_optimize_classifier(xgb_optimize(500, X_train, y_train, X_val, y_val)),
+                      #logistic_regression_optimize_classifier(logistic_regression_optimize(500, X_train, y_train, X_val, y_val)),
                       extra_trees_optimize_classifier(extra_trees_optimize(500, X_train, y_train, X_val, y_val)),
                       catboost_optimize_classifier(catboost_optimize(500, X_train, y_train, X_val, y_val))]
 

@@ -24,7 +24,7 @@ def interpretation_main(non_genetic_df):
     df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
     
     # retrieve pickled combined features list
-    combined_features_list = pickle.load(open("pickled_combined_features_list.pkl", "rb" ))
+    combined_features_list = pickle.load(open("data/pickled_combined_features_list.pkl", "rb" ))
 
     # getting only top features after feature selection
     final_features_df = df_features_comb[combined_features_list]
@@ -32,11 +32,11 @@ def interpretation_main(non_genetic_df):
     frames = [final_features_df, y_comb]
     final_df = pd.concat(frames, axis=1)
 
-    lgbm_model = pickle.load(open("lgbm_model_8929%.pkl", "rb"))
-    rf_model = pickle.load(open("rf_model_8750%.pkl", "rb"))
-    xgb_model = pickle.load(open("xgb_model_8571%.pkl", "rb"))
-    extratrees_model = pickle.load(open("extratrees_model_8636%.pkl", "rb"))
-    catboost_model = pickle.load(open("catboost_model_8712%.pkl", "rb"))
+    lgbm_model = pickle.load(open("data/lgbm_model_f_beta_7377%.pkl", "rb"))
+    rf_model = pickle.load(open("data/rf_model_f_beta_7937%.pkl", "rb"))
+    xgb_model = pickle.load(open("data/xgb_model_f_beta_7500%.pkl", "rb"))
+    extratrees_model = pickle.load(open("data/extratrees_model_7091fb%.pkl", "rb"))
+    catboost_model = pickle.load(open("data/catboost_model_7500fb%.pkl", "rb"))
 
     classifier_func = [lgbm_model, rf_model, xgb_model, extratrees_model, catboost_model]
     model_name = ['Light Gradient Boosting Method',

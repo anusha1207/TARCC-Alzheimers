@@ -1,1 +1,124 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"provenance":[],"authorship_tag":"ABX9TyNiJGckE6UXmUAotP7Yobty"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"code","execution_count":null,"metadata":{"id":"hjqhse0Q2rPp"},"outputs":[],"source":["import pandas as pd\n","import numpy as np\n","from hyperopt import tpe,hp,Trials\n","from hyperopt.fmin import fmin\n","from sklearn.metrics import make_scorer\n","from sklearn.ensemble import RandomForestClassifier\n","from sklearn.preprocessing import StandardScaler\n","from sklearn.model_selection import train_test_split\n","from sklearn.metrics import fbeta_score\n","from catboost import CatBoostClassifier\n","from xgboost import XGBClassifier\n","\n","### Tune Random Forest model\n","def objective(params):\n","\n","    est=int(params['n_estimators'])\n","    #feat= params['max_features']\n","    md=int(params['max_depth'])\n","    msl=int(params['min_samples_leaf'])\n","    mss=int(params['min_samples_split'])\n","\n","    model=RandomForestClassifier(n_estimators=est, max_depth=md, min_samples_leaf=msl,min_samples_split=mss, random_state=42)\n","    model.fit(X_train,y_train)\n","    pred=model.predict(X_val)\n","    score=fbeta_score(y_val, pred, beta = 1.5)\n","    print(\"F_beta {:.3f} params {}\".format(score, params))\n","    \n","    return score\n","\n","def optimize(trial):\n","    params={'n_estimators':hp.quniform('n_estimators',100,1100, 100),\n","            #'max_features': hp.choice('max_features', ['auto', 'sqrt', 'log2', None]),\n","           'max_depth':hp.quniform('max_depth',5,50, 5),\n","           'min_samples_leaf':hp.quniform('min_samples_leaf',1,10, 1),\n","           'min_samples_split':hp.quniform('min_samples_split',2,10,1)}\n","    best=fmin(fn=objective,space=params,algo=tpe.suggest,trials=trial,max_evals=500)\n","    return best\n","\n","trial=Trials()\n","best=optimize(trial)\n","\n","print('Random Forest parameters: ', best)\n","\n","############################################################################################################\n","\n","### tune XGboost model\n","def objective(params):\n","    params={\n","        # 'n_estimators':int(params['n_estimators']),\n","            'max_depth':int(params['max_depth']),\n","            'colsample_bytree':float(params['colsample_bytree']),\n","            'gamma':float(params['gamma']),}\n","            # 'min_child_weight':int(params['min_child_weight']),\n","            # 'eta':float(params['eta']),}\n","            # 'subsample':int(params['subsample'])}\n","\n","    model=XGBClassifier(**params, random_state=42)\n","    model.fit(X_train,y_train)\n","    pred=model.predict(X_val)\n","    score=fbeta_score(y_val, pred, beta = 1.5)\n","    print(\"F_beta {:.3f} params {}\".format(score, params))\n","\n","    return score\n","\n","def optimize(trial):\n","    space={\n","        # 'n_estimators':hp.quniform('n_estimators',100,1000, 100),\n","           'max_depth':hp.quniform('max_depth', 1, 12, 2),\n","           'colsample_bytree':hp.uniform('colsample_bytree',0.3,1),\n","           'gamma':hp.uniform('gamma', 0, 1),}\n","          #  'min_child_weight':hp.quniform('min_child_weight', 1, 12, 2),\n","          #  'eta':hp.uniform('eta', 0.1, 0.5),\n","          #  'subsample':hp.quniform('subsample', 0.5, 1, 0.05) }\n","          \n","    best=fmin(fn=objective,space=space,algo=tpe.suggest,trials=trial,max_evals=500)\n","\n","    return best\n","\n","trial=Trials()\n","best=optimize(trial)\n","\n","print('XGboost parameters: ', best)\n","\n","############################################################################################################\n","\n","### tune LGBM model\n","def objective(params):\n","\n","  params={\n","  'colsample_bytree':float(params['colsample_bytree']),\n","\n","  # 'learning_rate':float(params['learning_rate']),\n","  'max_depth': int(params['max_depth']),\n","  # 'max_bin': int(params['max_bin']),\n","  # 'min_data_in_leaf': int(params['min_data_in_leaf']),\n","  # 'subsample': float(params['subsample']),\n","  'num_leaves': int(params['num_leaves'])}\n","\n","  lgbm_model = lgbm.LGBMClassifier(n_jobs=-1,early_stopping_rounds=None,**params, random_state=42)\n","  lgbm_model.fit(X_train,y_train)\n","  pred=lgbm_model.predict(X_val)\n","  score=fbeta_score(y_val, pred, beta = 1.5)\n","  print(\"F_beta {:.3f} params {}\".format(score, params))\n","\n","  return score\n","\n","def optimize(trial):\n","\n","    space = {\n","    'colsample_bytree': hp.uniform('colsample_bytree',0.3,1),\n","    # 'learning_rate': hp.uniform('learning_rate',0.01,1),\n","    'max_depth': hp.choice('max_depth', np.arange(2, 100, 1, dtype=int)),\n","    # 'max_bin': hp.uniform('max_bin',20,90),\n","    # 'min_data_in_leaf': hp.uniform('min_data_in_leaf', 20,80),\n","    # 'subsample': hp.uniform('subsample', 0.01, 1),\n","    'num_leaves': hp.choice('num_leaves', np.arange(8, 200, 1, dtype=int))}\n","   \n","    best=fmin(fn=objective,space=space,algo=tpe.suggest,trials=trial,max_evals=500)\n","    return best\n","\n","trial=Trials()\n","best=optimize(trial)\n","\n","print(\"LGBM estimated optimum {}\".format(best))"]}]}
+import pandas as pd
+import numpy as np
+from hyperopt import tpe,hp,Trials
+from hyperopt.fmin import fmin
+from sklearn.metrics import make_scorer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import fbeta_score
+from catboost import CatBoostClassifier
+from xgboost import XGBClassifier
+
+### Tune Random Forest model
+def objective(params):
+
+    est=int(params['n_estimators'])
+    #feat= params['max_features']
+    md=int(params['max_depth'])
+    msl=int(params['min_samples_leaf'])
+    mss=int(params['min_samples_split'])
+
+    model=RandomForestClassifier(n_estimators=est, max_depth=md, min_samples_leaf=msl,min_samples_split=mss, random_state=42)
+    model.fit(X_train,y_train)
+    pred=model.predict(X_val)
+    score=fbeta_score(y_val, pred, beta = 1.5)
+    print("F_beta {:.3f} params {}".format(score, params))
+    
+    return score
+
+def optimize(trial):
+    params={'n_estimators':hp.quniform('n_estimators',100,1100, 100),
+            #'max_features': hp.choice('max_features', ['auto', 'sqrt', 'log2', None]),
+           'max_depth':hp.quniform('max_depth',5,50, 5),
+           'min_samples_leaf':hp.quniform('min_samples_leaf',1,10, 1),
+           'min_samples_split':hp.quniform('min_samples_split',2,10,1)}
+    best=fmin(fn=objective,space=params,algo=tpe.suggest,trials=trial,max_evals=500)
+    return best
+
+trial=Trials()
+best=optimize(trial)
+
+print('Random Forest parameters: ', best)
+
+############################################################################################################
+
+### tune XGboost model
+def objective(params):
+    params={
+        # 'n_estimators':int(params['n_estimators']),
+            'max_depth':int(params['max_depth']),
+            'colsample_bytree':float(params['colsample_bytree']),
+            'gamma':float(params['gamma']),}
+            # 'min_child_weight':int(params['min_child_weight']),
+            # 'eta':float(params['eta']),}
+            # 'subsample':int(params['subsample'])}
+
+    model=XGBClassifier(**params, random_state=42)
+    model.fit(X_train,y_train)
+    pred=model.predict(X_val)
+    score=fbeta_score(y_val, pred, beta = 1.5)
+    print("F_beta {:.3f} params {}".format(score, params))
+
+    return score
+
+def optimize(trial):
+    space={
+        # 'n_estimators':hp.quniform('n_estimators',100,1000, 100),
+           'max_depth':hp.quniform('max_depth', 1, 12, 2),
+           'colsample_bytree':hp.uniform('colsample_bytree',0.3,1),
+           'gamma':hp.uniform('gamma', 0, 1),}
+          #  'min_child_weight':hp.quniform('min_child_weight', 1, 12, 2),
+          #  'eta':hp.uniform('eta', 0.1, 0.5),
+          #  'subsample':hp.quniform('subsample', 0.5, 1, 0.05) }
+          
+    best=fmin(fn=objective,space=space,algo=tpe.suggest,trials=trial,max_evals=500)
+
+    return best
+
+trial=Trials()
+best=optimize(trial)
+
+print('XGboost parameters: ', best)
+
+############################################################################################################
+
+### tune LGBM model
+def objective(params):
+
+  params={
+  'colsample_bytree':float(params['colsample_bytree']),
+
+  # 'learning_rate':float(params['learning_rate']),
+  'max_depth': int(params['max_depth']),
+  # 'max_bin': int(params['max_bin']),
+  # 'min_data_in_leaf': int(params['min_data_in_leaf']),
+  # 'subsample': float(params['subsample']),
+  'num_leaves': int(params['num_leaves'])}
+
+  lgbm_model = lgbm.LGBMClassifier(n_jobs=-1,early_stopping_rounds=None,**params, random_state=42)
+  lgbm_model.fit(X_train,y_train)
+  pred=lgbm_model.predict(X_val)
+  score=fbeta_score(y_val, pred, beta = 1.5)
+  print("F_beta {:.3f} params {}".format(score, params))
+
+  return score
+
+def optimize(trial):
+
+    space = {
+    'colsample_bytree': hp.uniform('colsample_bytree',0.3,1),
+    # 'learning_rate': hp.uniform('learning_rate',0.01,1),
+    'max_depth': hp.choice('max_depth', np.arange(2, 100, 1, dtype=int)),
+    # 'max_bin': hp.uniform('max_bin',20,90),
+    # 'min_data_in_leaf': hp.uniform('min_data_in_leaf', 20,80),
+    # 'subsample': hp.uniform('subsample', 0.01, 1),
+    'num_leaves': hp.choice('num_leaves', np.arange(8, 200, 1, dtype=int))}
+   
+    best=fmin(fn=objective,space=space,algo=tpe.suggest,trials=trial,max_evals=500)
+    return best
+
+trial=Trials()
+best=optimize(trial)
+
+print("LGBM estimated optimum {}".format(best))

@@ -1,11 +1,11 @@
 ### Plotting ROC_AUC curve from all models into one plot 
 
 # load pickled models
-lgbm_model = pickle.load(open('/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/lgbm_model_f_beta_7377%.pkl','rb'))
-catboost_model = pickle.load(open('/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/catboost_model_7500fb%.pkl','rb'))
-rf_model = pickle.load(open('/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/rf_model_f_beta_7937%.pkl','rb'))
-xgb_model = pickle.load(open('/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/xgb_model_f_beta_7500%.pkl','rb'))
-et_model = pickle.load(open('/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/extratrees_model_7091fb%.pkl','rb'))
+lgbm_model = pickle.load(open('script/lgbm_model_f_beta_7377%.pkl','rb'))
+catboost_model = pickle.load(open('script/catboost_model_7500fb%.pkl','rb'))
+rf_model = pickle.load(open('script/rf_model_f_beta_7937%.pkl','rb'))
+xgb_model = pickle.load(open('script/xgb_model_f_beta_7500%.pkl','rb'))
+et_model = pickle.load(open('script/extratrees_model_7091fb%.pkl','rb'))
 
 # ROC Curve
 # LGBM

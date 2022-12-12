@@ -218,3 +218,12 @@ def results(df_features):
         return combined_features
     combined_features = combine_features()
     return mi_df, mi_plot, chi_df, chi_plot, rf_df, rf_plot, rfr_df, dtr_df, b_df, combined_features
+
+# run to pickle features
+# getting combined features after performing feature selection
+"""
+mi_dfb, mi_plotb, chi_dfb, chi_plotb, rf_dfb, rf_plotb, rfr_dfb, dtr_dfb, b_dfb, combined_features = results(df_features)
+# convert features to list
+combined_features_list= combined_features['Features'][:15].to_list()
+pickle.dump(combined_features_list, open('pickled_combined_features_list.pkl','wb'))
+"""

@@ -12,9 +12,6 @@ logs
 #Ignore the data science pipeline image on the README.md
 *.png
 
-# The file(s) containing the data
-*.csv
-
 
 #The files from Desktop Services Store containing meta info
 *.DS_Store

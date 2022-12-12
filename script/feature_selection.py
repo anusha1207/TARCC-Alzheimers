@@ -25,6 +25,13 @@ from pyparsing import printables
 def find_features(model, features, score):
     """
     This function lists and plots the top features
+    INPUTS:
+         model -- <str> name of model
+         features -- <list> list of features
+         score -- <list> score of features
+    OUTPUTS:
+        df -- <pd.DataFrame> features and their scores
+        plot -- <pd.DataFrame.plot.bar> plot of top 20 features and scores
     """
     dict = {'Features':features,'Score':score}
     df=pd.DataFrame(dict)
@@ -37,9 +44,15 @@ def find_features(model, features, score):
     return df, plot
 
 
-def random_forest_select(name, X,y):
+def random_forest_select(X,y):
     """
     This function lists and plots random forest feature selection
+    INPUTS:
+        X -- <pd.DataFrame> features
+        y -- <pd.Series> target variable
+    OUTPUTS:
+        rf_df -- <pd.DataFrame> features and their scores
+        rf_plot -- <pd.DataFrame.plot.bar> plot of top 30 features and scores
     """
     X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3, random_state=42)
     
@@ -77,6 +90,12 @@ def random_forest_select(name, X,y):
 def recursive_selection(rfe, X, y):
     """
     This function lists recursive feature selection
+    INPUTS:
+        rfe -- <sklearn.feature_selection._rfe.RFE> RFE model
+        X -- <pd.DataFrame> features
+        y -- <pd.Series> target variables
+    OUTPUTS:
+        rfs_df -- <pd.DataFrame> features and their scores
     """
     rfs=rfe.fit(X, y)
     #RFS Features
@@ -89,26 +108,16 @@ def recursive_selection(rfe, X, y):
     return rfs_df
 
 
-def fb_selection(name, model, direction_name, direction):
-    """
-    This function lists and plots forward or backward feature selection 
-    """
-    ff1 = sfs(model, k_features=30, forward=direction, verbose=2, scoring='accuracy')
-    ff1 = ff1.fit(X,y)
-    ff1_dict=ff1.get_metric_dict(confidence_interval=0.8)
-    ff1_df = pd.DataFrame.from_dict(ff1_dict).T
-    fig1=plot_sfs(ff1_dict, kind='ci')
-    plt.title(f'{direction_name} Feature Selection using {model} (With confidence interval)')
-    # plt.savefig(f'results/{model}_features_{name}.pdf', format="pdf", bbox_inches="tight")
-    plt.grid()
-    plot = plt.show()
-    ff1_features=list(ff1_df['feature_names'][30])
-    return ff1_features, fig1, plot
-
-
 ##### Boruta #####
 def boruta_select(X,y):
-    model = RandomForestRegressor(n_estimators=100, max_depth=5)
+    """
+    This function finds top features by the boruta package
+    INPUTS:
+        X -- <pd.DataFrame> features
+        y -- <pd.Series> target variables
+    OUTPUTS:
+        boruta_features -- <list> features and their scores
+    """
     # let's initialize Boruta
     feat_selector = BorutaPy(
         verbose=2,
@@ -136,17 +145,34 @@ def boruta_select(X,y):
     return boruta_features
 
 
-def results(name, X,y, df_features):
+def results(df_features):
     """
     This function returns the top features of each selection method and the overall top features
+    INPUTS:
+        df_features -- <pd.DataFrame> preprocessed dataset
+    OUTPUTS:
+        mi_df -- <pd.DataFrame> mutual info features and their scores
+        mi_plot -- <pd.DataFrame.plot.bar> plot of top 30 mututal info features and scores
+        chi_df -- <pd.DataFrame> chi square features and their scores
+        chi_plot -- <pd.DataFrame.plot.bar> plot of top 30 chi square features and scores
+        rf_df -- <pd.DataFrame> random forest features and their scores
+        rf_plot -- <pd.DataFrame.plot.bar> plot of top 30 random forest features and scores
+        rfr_df -- <pd.DataFrame> random forest recursive selection features and their scores
+        dtr_df -- <pd.DataFrame> decision tree recursive selection features and their scores
+        b_df -- <pd.DataFrame> boruta features and their scores
+        combined_features -- <pd.DataFrame> combined features and their scores
     """
+
+    X = df_features.drop(['P1_PT_TYPE'], axis=1, inplace = False)
+    y = df_features['P1_PT_TYPE']
+
     ###### Mutual Info ######
     mi= MIC(X,y)
     #Mutual Info Features
     mi_cols=list(X.columns)
     #Mutual Info Scores
     mi_score=mi.tolist()
-    mi_df, mi_plot = find_features(f'mutual_info_{name}', mi_cols, mi_score)
+    mi_df, mi_plot = find_features(f'mutual_info_', mi_cols, mi_score)
 
     ###### Chi-Square ######
 
@@ -159,11 +185,10 @@ def results(name, X,y, df_features):
     chi_score=chi[1].tolist()
     # #Chi Test Features
     chi_features=list(X1)
-    chi_df, chi_plot = find_features(f'chi-square_{name}', chi_features, chi_score)
+    chi_df, chi_plot = find_features(f'chi-square_', chi_features, chi_score)
 
     ###### Random Forest ######
-
-    rf_df, rf_plot = random_forest_select(name, X,y)
+    rf_df, rf_plot = random_forest_select(X,y)
 
     ###### Recursive Selections ######
     rfr = RFE(estimator=RandomForestClassifier(), n_features_to_select=30)
@@ -178,6 +203,11 @@ def results(name, X,y, df_features):
     ##### Combining all methods #####
     features=[]
     def combine_features():
+        """
+        This function combines top features from each model and selects the top 28 most frequent features
+        OUPUT:
+        combined_features -- <pd.DataFrame> top 28 most frequent top features from every model
+        """
         features=list(mi_df['Features'])+list(rf_df['Features'])+list(rfr_df['Features'])+list(dtr_df['Features'])+b_df
         features=pd.DataFrame(features).reset_index(drop=True)
         features.columns = ['Features']

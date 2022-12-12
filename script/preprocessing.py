@@ -8,7 +8,13 @@ import regex as re
 
 
 def preprocessing(data):
-
+  """
+  This function retains relevant features from dataset
+  INPUT: 
+    data -- <pandas.DataFrame> raw biological dataset
+  OUTPUT: 
+    df -- <pandas.DataFrame> cleaned dataset
+  """
   #subset the data to the patient visits where blood samples are taken
   df_with_RBM = data[data['RBM_Rule_Based_Medicine']==1]
   #retain only relevant blood + protein + disorders features with biological factors like age, sex,etc.

@@ -1,5 +1,5 @@
-import preprocessing as pp
-import feature_selection as fs
+from script import preprocessing as pp
+from script import feature_selection as fs
 import pandas as pd
 import math
 from sklearn.ensemble import ExtraTreesClassifier
@@ -23,19 +23,37 @@ from sklearn import metrics
 from bayes_opt import BayesianOptimization 
 
 def get_data(non_genetic_df):
+  """
+  This function retrieves and splits data
+  INPUTS:
+    non_genetic_df -- <pd.DataFrame> raw biological dataset
+  OUTPUTS:
+      df_features -- <pd.DataFrame> features
+      y -- <pd.Series> target variable
+  """
 
-  df_combined = pp.preprocessing(non_genetic_df)
+  df= pp.preprocessing(non_genetic_df)
 
   #remove patient ID while doing feature selection
-  df_features_comb = df_combined.drop(['PATID'], axis=1)
+  df_features = df.drop(['PATID'], axis=1)
   ##### Split features and target variable #####
-  X_comb = df_features_comb.drop(['P1_PT_TYPE'], axis=1, inplace = False)
-  y_comb = df_features_comb['P1_PT_TYPE']
+  y = df_features['P1_PT_TYPE']
 
-  return df_features_comb, X_comb, y_comb
+  return df_features, y
 
 def ml_prep(final_df):
-  
+  """
+  This function splits data into test, train, and validation sets
+  INPUTS:
+    final_df -- <pd.DataFrame> dataset of selected features
+  OUTPUTS:
+      X_train -- <pd.DataFrame> training set features
+      y_train -- <pd.Series> training set target variable
+      X_val -- <pd.DataFrame> validation set features
+      y_val -- <pd.Series> validation set target variable
+      X_test -- <pd.DataFrame> testing set features
+      y_test -- <pd.Series> testing set target variable
+  """  
   features = final_df.loc[:, final_df.columns != 'P1_PT_TYPE']
   y = final_df['P1_PT_TYPE']
 
@@ -434,15 +452,15 @@ def evaluation(y_test, y_pred):
 def model_main(non_genetic_df):
 
   # pre-process the raw data
-  df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
+  df_features, y = get_data(non_genetic_df)
     
   # retrieve pickled combined features list
   combined_features_list = pickle.load(open("data/pickled_combined_features_list.pkl", "rb" ))
 
   # getting only top features after feature selection
-  final_features_df = df_features_comb[combined_features_list]
+  final_features_df = df_features[combined_features_list]
   # merge the dataset for machine learning model
-  frames = [final_features_df, y_comb]
+  frames = [final_features_df, y]
   final_df = pd.concat(frames, axis=1)
 
   # perform train_test_split

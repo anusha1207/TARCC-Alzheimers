@@ -4,14 +4,19 @@ import pickle
 import modeling as m
 
 def shap_function(classifier_func, model_name, final_features_df):
+    # get shap values based on the model and input dataframe passed in
     shap_values = shap.TreeExplainer(classifier_func).shap_values(final_features_df)
-    #print(model_name[model])
-    #print(shap_values)
+    
+    # graph a SHAP summary plot showing top features in order of influence to output
     shap.summary_plot(shap_values, final_features_df, show=False)
     title = "SHAP Graph of " + model_name + " Model"
     plt.title(title)
+    
+    # save SHAP summary plot as a PDF file
     plt_title = model_name + "_SHAP.pdf"
     plt.savefig(plt_title, format="pdf", bbox_inches="tight")
+    
+    # show the SHAP summary plot graph
     plt.show()
 
 def interpretation_main(non_genetic_df):
@@ -23,7 +28,7 @@ def interpretation_main(non_genetic_df):
 
     # getting only top features after feature selection
     final_features_df = df_features_comb[combined_features_list]
-    # merge the dataset for machine learning model
+    # merge the dataset for machine learning model and interprettation
     frames = [final_features_df, y_comb]
     final_df = pd.concat(frames, axis=1)
 

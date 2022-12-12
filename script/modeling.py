@@ -74,6 +74,15 @@ def ml_prep(final_df):
 # Bayesian Tuning Methods
 # Light Gradient Boosting (LGBM)
 def lgbm_optimize(iterations, X_train, y_train, X_val, y_val):
+  """
+  This function optimizes lgbm model
+  INPUTS:
+    iterations -- <int> number of iterations
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+  """
   def black_box_lgbm_classifier(n_estimator, max_depth, colsample_bytree, num_leaves):
     assert type(n_estimator) == int
     assert type(max_depth) == int
@@ -120,6 +129,15 @@ def lgbm_optimize_classifier(params):
 
 # Random Forests
 def random_forest_optimize(iterations, X_train, y_train, X_val, y_val):
+  """
+  This function optimizes random forest model
+  INPUTS:
+    iterations -- <int> number of iterations
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+  """
   def black_box_random_forest(n_estimators, max_depth, min_samples_leaf, min_samples_split):
     assert type(n_estimators) == int
     assert type(max_depth) == int
@@ -246,6 +264,15 @@ def logistic_regression_optimize_classifier(params):
 
 # Extra Trees
 def extra_trees_optimize(iterations, X_train, y_train, X_val, y_val):
+  """
+  This function optimizes extra trees model
+  INPUTS:
+    iterations -- <int> number of iterations
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+  """
   def black_box_extra_trees_classifier(n_estimator, max_depth):
     assert type(n_estimator) == int
     assert type(max_depth) == int
@@ -282,6 +309,15 @@ def extra_trees_optimize_classifier(params):
 
 # eXtra Gradient Boosting (XGB)
 def xgb_optimize(iterations, X_train, y_train, X_val, y_val):
+  """
+  This function optimizes XGboost model
+  INPUTS:
+    iterations -- <int> number of iterations
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+  """
   def black_box_xgb_classifier(n_estimator, max_depth, colsample_bytree, gamma):
     assert type(n_estimator) == int
     assert type(max_depth) == int
@@ -326,6 +362,15 @@ def xgb_optimize_classifier(params):
 
 # Categorical Boosting (Catboost)
 def catboost_optimize(iterations, X_train, y_train, X_val, y_val):
+  """
+  This function optimizes catboost model
+  INPUTS:
+    iterations -- <int> number of iterations
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+  """
   def black_box_catboost_classifier(depth, border_count, learning_rate, l2_leaf_reg):
     assert type(depth) == int
     assert type(border_count) == int
@@ -372,7 +417,19 @@ def catboost_optimize_classifier(params):
                             random_state=42)
                             
 def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_name):
-
+  """
+  This function evaluates each model's ROC curve
+  INPUTS:
+    df -- <pd.DataFrame> dataset
+    X_train -- <pd.DataFrame> training set features
+    y_train -- <pd.Series> training set target variable
+    X_val -- <pd.DataFrame> validation set features
+    y_val -- <pd.Series> validation set target variable
+    classifier_func -- model 
+    model_name -- <str> name of model
+  OUTPUTS:
+    ROC curve plot
+  """
   # perform evaluation on various models
   for model in range(len(classifier_func[:])):
     classifier_func[model].fit(X_train, y_train)
@@ -390,7 +447,14 @@ def model_results(df, X_train, X_test, y_train, y_test, classifier_func, model_n
 
 # Evaluation metrics
 def evaluation(y_test, y_pred):
-
+    """
+    This function evaluates based on various scores
+    INPUTS:
+      y_test -- <pd.Series> target variable testing set
+      y_pred -- <pd.Series> target variable predictions
+    OUTPUTS:
+      ROC curve plot
+    """
     # Accuracy classification score
     score = round(accuracy_score(y_test, y_pred), 4)
     print(f'Accuracy Score: {score*100}%')
@@ -450,7 +514,12 @@ def evaluation(y_test, y_pred):
 
 
 def model_main(non_genetic_df):
-
+  """
+  This function evaluates each model with best parameters
+  INPUTS:
+    non_genetic_df -- <pd.DataFrame> raw biological dataset
+  OUTPUT: model results
+  """
   # pre-process the raw data
   df_features, y = get_data(non_genetic_df)
     

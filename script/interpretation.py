@@ -1,6 +1,7 @@
 import shap
 from sklearn.ensemble import RandomForestClassifier
 import pickle
+import modeling as m
 
 def shap_function(classifier_func, model_name, final_features_df):
     shap_values = shap.TreeExplainer(classifier_func).shap_values(final_features_df)
@@ -15,7 +16,7 @@ def shap_function(classifier_func, model_name, final_features_df):
 
 def interpretation_main(non_genetic_df):
     # pre-process the raw data
-    df_features_comb, X_comb, y_comb = get_data(non_genetic_df)
+    df_features_comb, X_comb, y_comb = m.get_data(non_genetic_df)
     
     # retrieve pickled combined features list
     combined_features_list = pickle.load(open("/content/drive/MyDrive/Capstone COMP 549/TARCC_F22-main/data/pickled_combined_features_list.pkl", "rb" ))

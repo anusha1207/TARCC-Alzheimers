@@ -21,6 +21,15 @@ def shap_function(classifier_func, model_name, final_features_df):
     plt.show()
 
 def interpretation_main(non_genetic_df):
+    """
+    This function interprets the best performing model in determining
+    in whether each of the  top features chosen during feature selection 
+    resist or progress the progression of Alzheimer's for each patient 
+    and even overall
+    INPUTS:
+        non_genetic_df -- <pd.DataFrame> raw biological dataset
+    OUTPUT: SHAP interpretation results and summary plot
+    """
     # pre-process the raw data
     df_features_comb, X_comb, y_comb = m.get_data(non_genetic_df)
     

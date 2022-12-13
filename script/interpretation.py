@@ -11,6 +11,7 @@ def shap_function(classifier_func, model_name, final_features_df):
     shap.summary_plot(shap_values, final_features_df, show=False)
     title = "SHAP Graph of " + model_name + " Model"
     plt.title(title)
+    plt.legend(['', 'Class \'1\'', 'Class \'2\''])
     
     # save SHAP summary plot as a PDF file
     plt_title = model_name + "_SHAP.pdf"

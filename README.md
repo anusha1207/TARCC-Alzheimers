@@ -56,7 +56,9 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 pip install -r config/requirements.txt
 ```
-3. Run main.py
+3. Copy the TARCC.csv file from the dataset folder and paste it in the main directory. This will ensure proper configuration from which main.py accesses the data.
+
+4. Run main.py
 ```
 python scripts/main.py
 ```

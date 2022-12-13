@@ -110,6 +110,7 @@ def evaluation(y_test, y_pred):
     OUTPUTS:
       ROC curve plot
     """
+   
     # Accuracy classification score
     score = round(accuracy_score(y_test, y_pred), 4)
     print(f'Accuracy Score: {score*100}%')
@@ -135,23 +136,6 @@ def evaluation(y_test, y_pred):
     roc_auc_bi = roc_auc_score(y_test, y_pred, average = 'macro')
     print("ROC_AUC Score: {:.4f}".format(roc_auc_bi))
 
-    # required to convert labels for auc_precision_recall
-    # converted from 1 = AD and 2 = Control to 1 = AD and 0 = Control
-    # convert y_test
-    prc_y_test = copy.deepcopy(y_test)
-    prc_y_test[prc_y_test==1] = 1
-    prc_y_test[prc_y_test==2] = 0
-
-    # convert y_pred
-    prc_y_pred = copy.deepcopy(y_pred)
-    prc_y_pred[prc_y_pred==1] = 1
-    prc_y_pred[prc_y_pred==2] = 0
-
-    # Compute Area Under the Precision Recall Curve; default average is 'macro'
-    precision, recall, thresholds = precision_recall_curve(prc_y_test, prc_y_pred)
-    auc_precision_recall = auc(recall, precision)
-    print("AUPRC is: {:.4f}".format(auc_precision_recall))
-
     # Get specificity from classification report; include 'binary' results
     class_report = classification_report(y_test, y_pred, labels=[1,2])
     print("Classification Report: ")
@@ -163,9 +147,6 @@ def evaluation(y_test, y_pred):
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
     plt.show()
-
-
-# Note: Use micro-average if classes are imbalance
 
 
 def model_main(non_genetic_df):
@@ -190,26 +171,26 @@ def model_main(non_genetic_df):
   # perform train_test_split
   X_train, y_train, X_val, y_val, X_test, y_test = ml_prep(final_df)
 
-
+  # load pickled models
+  lgbm_model = pickle.load(open('script/lgbm_model_f_beta_7377%.pkl','rb'))
+  catboost_model = pickle.load(open('script/catboost_model_7500fb%.pkl','rb'))
+  rf_model = pickle.load(open('script/rf_model_f_beta_7937%.pkl','rb'))
+  xgb_model = pickle.load(open('script/xgb_model_f_beta_7500%.pkl','rb'))
+  et_model = pickle.load(open('script/extratrees_model_7091fb%.pkl','rb'))
+  
   # We decided not to use logistic regression as a final model 
   # list of classifier functions
-  classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.46053366496668136,num_leaves= 122, random_state=42),
-                    RandomForestClassifier(n_estimators=900, max_depth=8, random_state=42), 
-                    XGBClassifier(colsample_bytree= 0.840545160958208, gamma= 0.3433699189306628, max_depth= 2),                    
-                    #LogisticRegression(class_weight='balanced', max_iter=200, random_state=42, solver='sag'),
-                    ExtraTreesClassifier(n_estimators=500, max_depth=3),
-                    CatBoostClassifier(random_state=42)]  
+  classifier_func = [lgbm.LGBMClassifier(colsample_bytree=0.5544879541065879, max_depth=38, num_leaves= 28, random_state=42),
+                     RandomForestClassifier(max_depth=20, n_estimators=100, min_samples_leaf=5, min_samples_split=5, random_state=42), 
+                     XGBClassifier(colsample_bytree= 0.5614800142167471, gamma= 0.37470611364219275, max_depth= 6, random_state=42)  
 
   # list of classifier names
   model_name= ['Light Gradient Boosting Method',
               'Random Forest', 
               'eXtreme Gradient Boosting',
-              #'Logistic Regression', 
-              'Extra Trees',
-              'Categorical Boosting']
+              ]
 
   # evaluate performance and feature importance for each algorithm
-  # model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
   model_results(final_df, X_train, X_test, y_train, y_test, classifier_func, model_name)
 
   

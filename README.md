@@ -72,7 +72,6 @@ The data we have is from Texas Alzheimer's Research Care and Consortium. It cons
 ![Pipeline](https://user-images.githubusercontent.com/97485268/198148374-fc9760c7-bf3f-4b82-8a7c-b83b73d82556.png)
 
 ### PREPROCESSING <br />
-There are two tangents to the project, as follows. <br />
 The data pertaining to blood and protein bio-markers along with mental and physical attributes is subsetted to perform a line of analysis which helps us gauge the most important features. Upon doing this, the resulting data-set consisted of 563 patients with a total of 217 features. After preprocessing, the patient database is divided broadly into two classes based on the diagnosis, whether they have AD or not.
 <br />
 

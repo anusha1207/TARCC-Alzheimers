@@ -56,11 +56,9 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 pip install -r config/requirements.txt
 ```
-3. Copy TARCC's .csv file under the data folder and rename it as `non_genomic_data.csv`
-
-4. Run main.py
+3. Run main.py
 ```
-python main.py
+python scripts/main.py
 ```
 
 

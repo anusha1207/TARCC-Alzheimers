@@ -11,7 +11,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.linear_model import LogisticRegression #linear_model.LogisticRegression (setting multi_class=”multinomial”)
 from sklearn.feature_selection import RFE
 from sklearn.feature_selection import chi2
 from sklearn.ensemble import RandomForestRegressor

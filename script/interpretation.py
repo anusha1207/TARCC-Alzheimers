@@ -4,6 +4,15 @@ import pickle
 import modeling as m
 
 def shap_function(classifier_func, model_name, final_features_df):
+    """
+    This function evaluates each model's ROC curve
+    INPUTS:
+        classifier_func -- model 
+        model_name -- <str> name of model
+        final_features_df -- <pd.DataFrame> dataset
+    OUTPUTS:
+        SHAP summary plot
+    """
     # get shap values based on the model and input dataframe passed in
     shap_values = shap.TreeExplainer(classifier_func).shap_values(final_features_df)
     
@@ -28,8 +37,7 @@ def interpretation_main(non_genetic_df):
     and even overall
     INPUTS:
         non_genetic_df -- <pd.DataFrame> raw biological dataset
-    OUTPUT: SHAP summary plot of the two output classes using the top features, 
-    the dataset, and best performing model
+    OUTPUT: SHAP interpretation results
     """
     # pre-process the raw data
     df_features_comb, X_comb, y_comb = m.get_data(non_genetic_df)

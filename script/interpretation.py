@@ -28,7 +28,7 @@ def interpretation_main(non_genetic_df):
     and even overall
     INPUTS:
         non_genetic_df -- <pd.DataFrame> raw biological dataset
-    OUTPUT: SHAP interpretation results and summary plot
+    OUTPUT: SHAP summary plot
     """
     # pre-process the raw data
     df_features_comb, X_comb, y_comb = m.get_data(non_genetic_df)

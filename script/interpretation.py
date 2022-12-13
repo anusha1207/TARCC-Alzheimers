@@ -28,7 +28,8 @@ def interpretation_main(non_genetic_df):
     and even overall
     INPUTS:
         non_genetic_df -- <pd.DataFrame> raw biological dataset
-    OUTPUT: SHAP summary plot
+    OUTPUT: SHAP summary plot of the two output classes using the top features, 
+    the dataset, and best performing model
     """
     # pre-process the raw data
     df_features_comb, X_comb, y_comb = m.get_data(non_genetic_df)

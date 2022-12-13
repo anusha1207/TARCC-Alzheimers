@@ -5,7 +5,9 @@ import modeling as m
 
 def shap_function(classifier_func, model_name, final_features_df):
     """
-    This function evaluates each model's ROC curve
+    This function evaluates interprets the individual model and 
+    the features involved in determining the output based on the 
+    individual model and the input dataframe
     INPUTS:
         classifier_func -- model 
         model_name -- <str> name of model

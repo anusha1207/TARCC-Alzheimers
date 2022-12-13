@@ -37,14 +37,21 @@ This project installs and uses the following packages.
 - [bayesian-optimization](https://pypi.org/project/bayesian-optimization/) 
 
 ## Folder Structure
-* main: `main.py` orchestrates the run and pipes data between other functions
-* data: contains the pickled files of the top features after performing feature selection and the pickled files of the tuned models. This is where the TARCC data has to be copied to run the project.  
-* config: `config.py` sets global variables for parameters and settings for methods, and the data path for the data.
-* config: `requirements.txt` contains the necessary dependencies.
-* preprocessing: `preprocessing.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker and diseases data
-* feature selection: `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
-* modeling: `modeling.py` contains functions to run the different models
-* results: contains plots of feature selections, ROC curves
+* config: The config folder contains two files
+  * config.py: sets global variables for parameters and settings for methods, and the data path for the data.
+  * requirements.txt: contains all the dependencies and necessary packages/libraries
+* data: The data folder contains pickled features from different models (LGBM, catboost, extra trees, random forest and XGBoost). It also contains the combined pickled features.
+* dataset: The dataset contains a csv file of our raw input. This is present in the repository for our sponsors to easily reproduce and replicate results.
+* results: This folder contains the results of all our tests, and the combined AUC-ROC plots.
+* script: This folder consists of preprocessing, modeling, feature selection modules.
+  * preprocessing: `preprocessing.py` contains the function block to preprocess the data and subset it to usable features from the blood biomarker and diseases data
+  * modeling: `modeling.py` contains functions to run the different models
+  * feature selection: `feature_selection.py`  contains functions to evaluate the importance of each feature in determining the most important biomarkers
+* [TARCC_Demo.ipynb](TARCC_Demo.ipynb) orchestrates the run and pipes data between other functions
+
+
+
+
 
 
 ## Installation and Usage Instructions

@@ -73,11 +73,8 @@ The data we have is from Texas Alzheimer's Research Care and Consortium. It cons
 
 ### PREPROCESSING <br />
 There are two tangents to the project, as follows. <br />
-
-- **Blood and Protein Biomarkers** <br />
-The data pertaining to blood test information and protein content is subsetted to perform a line of analysis which helps us gauge the most important features in this aspect. The overall dataset size is 595 rows/observations and 194 columns/features after the preprocessing. <br />
-- **Diseases: Mental and Physical Ailments** <br />
-The correlation of other mental ailments such as depression, anxiety, delusion etc., and physical ailments such as diabetes, angina etc., is studied against the propensity towards Alzheimer's. This analysis uses another preprocessed subset of data containing information pertinent only to the aforementioned types of physical and mental ailments. The overall dataset size is X rows/observations and Y columns/features after the preprocessing. <br />
+The data pertaining to blood and protein bio-markers along with mental and physical attributes is subsetted to perform a line of analysis which helps us gauge the most important features. Upon doing this, the resulting data-set consisted of 563 patients with a total of 217 features. After preprocessing, the patient database is divided broadly into two classes based on the diagnosis, whether they have AD or not.
+<br />
 
 ### FEATURE SELECTION <br />
 The feature selection methods we've used are as follows. <br />
@@ -113,11 +110,11 @@ The feature selection methods we've used are as follows. <br />
 2. Bayesian Optimization (BayesSearchCV) <br />
 
 - **Evaluation Metrics** <br />
-1. Recall/Sensitivity
+1. **F-Beta Score** - The primary evaluation metric for our analysis
 2. Specificity
 3. Receiver Operating Characteristic - Area Under the Curve (ROC-AUC) 
 4. Area Under the Precision Recall Curve (AUPRC)
-5. F-Beta Score 
+5. Recall/Sensitivity 
 6. F1 Score
 7. Confusion Matrix
 8. Classificaiton Report
@@ -125,8 +122,7 @@ The feature selection methods we've used are as follows. <br />
 10. Accuracy Score <br />
 
 ### INTERPRETATION AND RESULTS <br />
-1) Correspondence Analysis and Multiple Correspondence Analysis
-2) SHAP
+SHAP Interpretation
 <br />
 
 ## Contributors

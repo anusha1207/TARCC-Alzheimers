@@ -21,8 +21,8 @@ def get_cleaned_data():
 
     # TODO: Continue encoding unknown values. Should "Other" be converted to NA?
     # df["A1_HISPANIC"].replace(9, np.nan, inplace=True)
-    # df["A1_HISPANIC_TYPE"].replace([50, 99], np.nan, inplace=True)
-    # df["A1_RACE"].replace([50, 99], np.nan, inplace=True)
-    # df["A1_RACESEC"].replace([50, 88, 99], np.nan, inplace=True)
+    # df["A1_HISPANIC_TYPE"].replace([99], np.nan, inplace=True)
+    # df["A1_RACE"].replace([99], np.nan, inplace=True)
+    # df["A1_RACESEC"].replace([88, 99], np.nan, inplace=True)
 
     return df

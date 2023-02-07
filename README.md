@@ -1,5 +1,4 @@
-
-# Texas Alzheimers' Research Care and Consortium: Team TARCC 'F22
+# Texas Alzheimers' Research Care and Consortium: Team TARCC 'S23
 
 ## Table of Contents
 

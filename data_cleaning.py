@@ -93,3 +93,49 @@ def get_cleaned_data() -> pd.DataFrame:
     df = df.replace(-999999, 0)
 
     return df
+
+
+df = get_cleaned_data()
+# print(df.describe())
+# df.to_csv("Cleaned data.csv", index=False)
+
+
+def split_csv(original_df):
+    """
+    Takes in the original dataset and creates two new Data Frames, one with only clinical data
+    and the other with only blood data.
+
+    Args:
+        original_df: The original dataset
+    Returns:
+        Two new data frames that contain only one type of data (eit"her Blood or Clinical).
+    """
+
+    blood_columns = []
+
+    # Get the column names of those that include blood and bio-marker data
+    for col in df.columns:
+        if col.startswith("PROTEO"):
+            blood_columns.append(col)
+        elif col.startswith("RBM"):
+            blood_columns.append(col)
+        elif col.startswith("Q1"):
+            blood_columns.append(col)
+        elif col.startswith("X1") or col.startswith("X2"):
+            blood_columns.append(col)
+        elif col.startswith("P1"):
+            blood_columns.append(col)
+        elif col.startswith("PATID"):
+            blood_columns.append(col)
+
+    new_df1 = original_df[blood_columns]
+
+    blood_columns.remove("PATID")
+
+    new_df2 = original_df.drop(blood_columns, axis=1)
+
+    new_df1.to_csv("Blood Only Data.csv", index=False)
+    new_df2.to_csv("Clinical Only Data.csv", index=False)
+
+    return new_df1, new_df2
+

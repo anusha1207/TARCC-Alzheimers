@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from data_cleaning import get_cleaned_data
+from data_cleaning import split_csv
 
 
 def suppressed_nanmean(x: np.ndarray, log: bool = False):
@@ -62,9 +63,10 @@ def count_proportion_missing(x: np.ndarray) -> float:
 
 
 df = get_cleaned_data()
+blood_df, clinical_df = split_csv(df)
 
 # Take the standard deviation of each feature, grouping by patient ID.
-grouped_sigmas = df.groupby("PATID").agg(lambda x: suppressed_nanstd(x, log=True))
+grouped_sigmas = clinical_df.groupby("PATID").agg(lambda x: suppressed_nanstd(x, log=True))
 sigma_means = grouped_sigmas.agg(suppressed_nanmean)
 sigma_standard_deviations = grouped_sigmas.agg(suppressed_nanstd)
 high_variance_features = sigma_means[np.logical_not(np.logical_or(np.isnan(sigma_means), sigma_means < 0.5))].index
@@ -83,6 +85,8 @@ plt.errorbar(
     marker="^"
 )
 plt.xticks(rotation=90)
+# plt.savefig("BloodStandardDPlot.pdf", format="pdf", bbox_inches="tight")
+# plt.savefig("ClinicalStandardDPlot.pdf", format="pdf", bbox_inches="tight")
 plt.show()
 
 # Count the proportion of missing values for each feature, grouping by patient ID.

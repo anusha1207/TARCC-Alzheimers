@@ -1,5 +1,13 @@
 """
 Computes statistics for the cleaned data.
+
+TODO:
+plot on log scale - make y-axis log scale
+encoding
+normalize data by range: for each patient, divide the SD by the range of the total feature.
+find out how many are 0
+take a look at medians too
+violin plot or boxplot
 """
 
 from matplotlib import pyplot as plt
@@ -8,44 +16,34 @@ import numpy as np
 from data_cleaning import get_cleaned_data
 
 
-def suppressed_nanmean(x: np.ndarray, log: bool = False):
+def suppressed_nanmean(x: np.ndarray) -> float:
     """
     Performs the same operation as np.nanmean but suppresses warnings.
 
     Args:
         x: The array to take the mean over.
-        log: Whether to use a log scale.
 
     Returns:
         None.
     """
     if np.all(np.isnan(x)):
         return np.nan
-    nanmean = np.nanmean(x)
-    if log:
-        return np.nan if nanmean == 0.0 else np.log(nanmean)
-    else:
-        return nanmean
+    return float(np.nanmean(x))
 
 
-def suppressed_nanstd(x: np.ndarray, log: bool = False):
+def suppressed_nanstd(x: np.ndarray) -> float:
     """
     Performs the same operation as np.nanstd but suppresses warnings.
 
     Args:
         x: The array to take the standard deviation over.
-        log: Whether to use a log scale.
 
     Returns:
         None.
     """
     if np.all(np.isnan(x)):
         return np.nan
-    nanstd = np.nanstd(x)
-    if log:
-        return np.nan if nanstd == 0.0 else np.log(nanstd)
-    else:
-        return nanstd
+    return float(np.nanstd(x))
 
 
 def count_proportion_missing(x: np.ndarray) -> float:
@@ -64,7 +62,7 @@ def count_proportion_missing(x: np.ndarray) -> float:
 df = get_cleaned_data()
 
 # Take the standard deviation of each feature, grouping by patient ID.
-grouped_sigmas = df.groupby("PATID").agg(lambda x: suppressed_nanstd(x, log=True))
+grouped_sigmas = df.groupby("PATID").agg(suppressed_nanstd)
 sigma_means = grouped_sigmas.agg(suppressed_nanmean)
 sigma_standard_deviations = grouped_sigmas.agg(suppressed_nanstd)
 high_variance_features = sigma_means[np.logical_not(np.logical_or(np.isnan(sigma_means), sigma_means < 0.5))].index
@@ -80,18 +78,62 @@ plt.errorbar(
     sigma_means[high_variance_features],
     sigma_standard_deviations[high_variance_features],
     linestyle="None",
-    marker="^"
+    marker="o",
 )
+plt.yscale("log")
 plt.xticks(rotation=90)
+plt.title("Patient-wise feature means and standard deviations (log scale)")
+plt.xlabel("Feature Name")
+plt.ylabel("Patient-Wise Mean and SD")
 plt.show()
 
-# Count the proportion of missing values for each feature, grouping by patient ID.
-# grouped_proportions_missing = df.groupby("PATID").agg(count_proportion_missing)
-# proportions_missing_means = grouped_proportions_missing.agg(suppressed_nanmean)
-# proportions_missing_standard_deviations = grouped_proportions_missing.agg(suppressed_nanstd)
+# Plot the error bars of the 10 features with the most variance.
+plt.rcParams["figure.figsize"] = (12, 4)
+top_10_errors_indices = np.argsort(-sigma_means.values)[:10]
+top_10_highest_variance_features = sigma_means[top_10_errors_indices].index
+plt.errorbar(
+    [
+        "Anti-dementia Drug Hx A: Strength",
+        "Prescription A: Strength",
+        "Vitamin E Hx A: Strength",
+        "Anti-dementia Drug Hx B: Strength",
+        "Anti-dementia Drug Hx C: Strength",
+        "Anti-dementia Drug Hx D: Strength",
+        "Systemic Steroids Hx A: Strength"
+    ],
+    # top_10_highest_variance_features,
+    sigma_means[top_10_highest_variance_features][:7],
+    sigma_standard_deviations[top_10_highest_variance_features][:7],
+    linestyle="None",
+    marker="o"
+)
+plt.yscale("log")
+plt.xticks(rotation=20)
+plt.title("Top 7 patient-wise feature means and standard deviations (log scale)")
+plt.xlabel("Feature Name")
+plt.ylabel("Patient-Wise Mean and SD")
+plt.subplots_adjust(bottom=0.35)
+plt.show()
+
+# Count the proportion of missing values for each feature.
+plt.rcParams["figure.figsize"] = (12, 4)
+proportions_missing = df.agg(count_proportion_missing)
+sorted_indices = np.argsort(proportions_missing)[::-1]
+plt.bar(df.columns[sorted_indices], proportions_missing[sorted_indices])
+plt.title("Proportion of missing values by feature")
+plt.xlabel("Feature Name")
+plt.ylabel("Proportion of Missing Values")
+plt.show()
 
 
-# plot on log scale
-# find out how many are 0
-# take a look at medians too
-# violin plot or boxplot
+
+
+# Number of unique patients that drew blood: 594
+# Number of unique patients that did not draw blood: 3076
+plt.rcParams["figure.figsize"] = (6, 8)
+plt.bar(["Drew blood", "Did not draw blood"], [594, 3076], color=["red", "blue"])
+plt.title("Number of patients who drew blood / did not draw blood")
+plt.ylabel("Number of patients (duplicates not counted)")
+plt.show()
+
+

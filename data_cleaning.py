@@ -94,9 +94,8 @@ def get_cleaned_data() -> pd.DataFrame:
 
     return df
 
-
 df = get_cleaned_data()
-# print(df.describe())
+# print(df.columns)
 # df.to_csv("Cleaned data.csv", index=False)
 
 
@@ -139,3 +138,42 @@ def split_csv(original_df):
 
     return new_df1, new_df2
 
+
+def update_wanted_features(df):
+
+    unwanted_cols = []
+
+    for col in df.columns:
+
+        if col.startswith("F1"):
+            if col == "F1_PSMSTOTSCR":
+                continue
+            else:
+                unwanted_cols.append(col)
+
+        elif col.startswith("F2"):
+            if col == "F2_IADLTOTSCR":
+                continue
+            else:
+                unwanted_cols.append(col)
+
+        elif col.startswith("I1"):
+            unwanted_cols.append(col)
+
+        elif col.startswith("P1"):
+            if col == "P1_PT_TYPE":
+                continue
+            else:
+                unwanted_cols.append(col)
+
+        elif col.startswith("X1") or col.startswith("X2"):
+            print(col)
+            unwanted_cols.append(col)
+
+        # Need to ask John about PID and GWAS
+
+    updated_df = df.drop(unwanted_cols, axis=1)
+
+    return updated_df
+
+new_df = update_wanted_features(df)

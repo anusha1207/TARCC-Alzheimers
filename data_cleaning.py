@@ -211,6 +211,7 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         None
     """
 
+    # "['A5_TOBACLstYr', 'A5_Arthritic', 'A5_AutoImm', 'A5_Chron_Oth', 'A5_Chron_OthX'] not in index"
     missing_value_codes = {
         "A5_CVHATT": [9],
         "A5_CVAFIB": [9],
@@ -220,19 +221,19 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         "A5_CVCHF": [9],
         "A5_CVOTHR": [9],
         "A5_CBSTROKE": [9],
-        "A5_STROK1YR": [9999],
-        "A5_STROK2YR": [9999],
-        "A5_STROK3YR": [9999],
-        "A5_STROK4YR": [9999],
-        "A5_STROK5YR": [9999],
-        "A5_STROK6YR": [9999],
+        "A5_STROK1YR": [9999, ' '],
+        "A5_STROK2YR": [9999, ' '],
+        "A5_STROK3YR": [9999, ' '],
+        "A5_STROK4YR": [9999, ' '],
+        "A5_STROK5YR": [9999, ' '],
+        "A5_STROK6YR": [9999, ' '],
         "A5_CBTIA": [9],
-        "A5_TIA1YR": [9999],
-        "A5_TIA2YR": [9999],
-        "A5_TIA3YR": [9999],
-        "A5_TIA4YR": [9999],
-        "A5_TIA5YR": [9999],
-        "A5_TIA6YR": [9999],
+        "A5_TIA1YR": [9999, ' '],
+        "A5_TIA2YR": [9999, ' '],
+        "A5_TIA3YR": [9999, ' '],
+        "A5_TIA4YR": [9999, ' '],
+        "A5_TIA5YR": [9999, ' '],
+        "A5_TIA6YR": [9999, ' '],
         "A5_SEIZURES": [9],
         "A5_TRAUMBRF": [9],
         "A5_TRAUMEXT": [9],
@@ -248,21 +249,21 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         "A5_CANCER": [9],
         "A5_DEP2YRS": [9],
         "A5_ALCOHOL": [9],
-        "A5_TOBACLstYr": [9],
         "A5_TOBAC30": [9],
         "A5_TOBAC100": [9],
         "A5_PACKSPER": [9],
         "A5_PSYCDIS": [9],
         "A5_IBD": [9],
-        "A5_Arthritic": [9],
-        "A5_AutoImm": [9],
 
     }
     for feature_name in missing_value_codes:
         df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
 
-    # Creating 'NUM_STROKES' which is the proportion of parents with dementia
-    df['PROP_PARENTS_DEM'] = (df['A3_MOMDEM'] + df['A3_DADDEM'])
+    # Creating 'NUM_STROKES' which is the number of strokes a patient has had
+    df['NUM_STROKES'] = np.sum(~pd.isna(df[['A5_STROK1YR','A5_STROK2YR','A5_STROK3YR','A5_STROK4YR', 'A5_STROK5YR', 'A5_STROK6YR']]), axis=1)
+
+    # Creating 'NUM_TIA' which is the number of TIAs a patient has had
+    df['NUM_TIA'] = np.sum(~pd.isna(df[['A5_TIA1YR','A5_TIA2YR','A5_TIA3YR','A5_TIA4YR', 'A5_TIA5YR', 'A5_TIA6YR']]), axis=1)
 
     df.drop(
         [
@@ -277,8 +278,6 @@ def clean_medical_history(df: pd.DataFrame) -> None:
             "A5_ABUSOTHR",
             "A5_ABUSX",
             "A5_PSYCDISX",
-            "A5_Chron_Oth",
-            "A5_Chron_OthX",
             "A5_PDOTHR",
             "A5_DEPOTHR",
             "A5_STROK1YR",
@@ -292,7 +291,7 @@ def clean_medical_history(df: pd.DataFrame) -> None:
             "A5_TIA3YR",
             "A5_TIA4YR",
             "A5_TIA5YR",
-            "A5_TIA6YR"
+            "A5_TIA6YR",
         ],
         axis=1,
         inplace=True

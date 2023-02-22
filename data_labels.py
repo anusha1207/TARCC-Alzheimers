@@ -4,6 +4,10 @@ import pandas as pd
 
 codebook = pd.read_excel("20220602-TARCC-Codebook.xlsx")
 
+# ensure codebook variable names are strings in all caps
+codebook["Variable Name"] = codebook["Variable Name"].astype(str)
+codebook["Variable Name"] = codebook["Variable Name"].apply(str.upper)
+
 # TODO: create dictionary to direct proteo names in csv to proteo names in codebook
 
 names_to_codebook_proteo = {"PROTEO_ADIPONECTIN" : "Proteomics_Adiponectin", "PROTEO_BFGF" : "Proteomics_bFGF", "PROTEO_CLUSTERIN" : "Proteomics_Clusterin",
@@ -25,6 +29,9 @@ def get_desc_table(cols):
     descs = []
     for col in cols:
         entry = {}
+        if col in names_to_codebook_proteo:
+            print('ooga booga')
+            col = names_to_codebook_proteo[col]
         col = str(col).upper()
         row = codebook[codebook["Variable Name"] == col]
         entry["Variable Name"] = col

@@ -167,6 +167,136 @@ def clean_medicinal_history(df: pd.DataFrame) -> None:
         inplace=True
     )
 
+def clean_family_history(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the family history (A3) section. We merge the dad or mom having
+    dementia into one feature which is the proportion of parents with dementia.
+
+    Args:
+        df: The dataframe representing the TARCC dataset.
+
+    Returns:
+        None
+    """
+
+    missing_value_codes = {
+        "A3_MOMDEM": [9],
+        "A3_DADDEM": [9]
+    }
+    for feature_name in missing_value_codes:
+        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+
+    # Creating 'PROP_PARENTS_DEM' which is the proportion of parents with dementia
+    df['PROP_PARENTS_DEM'] = (df['A3_MOMDEM'] + df['A3_DADDEM']) / 2
+
+    df.drop(
+        [
+            "A3_MOMDEM",
+            "A3_DADDEM"
+        ],
+        axis=1,
+        inplace=True
+    )
+
+def clean_medical_history(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the medical history (A5) section. We drop all of the "Other"
+    features (i.e., cardiovascular other and cerebrovascular other), and merge years of strokes/TIAs into
+    "number of TIAs and number of strokes per patient".
+
+    Args:
+        df: The dataframe representing the TARCC dataset.
+
+    Returns:
+        None
+    """
+
+    missing_value_codes = {
+        "A5_CVHATT": [9],
+        "A5_CVAFIB": [9],
+        "A5_CVANGIO": [9],
+        "A5_CVBYPASS": [9],
+        "A5_CVPACE": [9],
+        "A5_CVCHF": [9],
+        "A5_CVOTHR": [9],
+        "A5_CBSTROKE": [9],
+        "A5_STROK1YR": [9999],
+        "A5_STROK2YR": [9999],
+        "A5_STROK3YR": [9999],
+        "A5_STROK4YR": [9999],
+        "A5_STROK5YR": [9999],
+        "A5_STROK6YR": [9999],
+        "A5_CBTIA": [9],
+        "A5_TIA1YR": [9999],
+        "A5_TIA2YR": [9999],
+        "A5_TIA3YR": [9999],
+        "A5_TIA4YR": [9999],
+        "A5_TIA5YR": [9999],
+        "A5_TIA6YR": [9999],
+        "A5_SEIZURES": [9],
+        "A5_TRAUMBRF": [9],
+        "A5_TRAUMEXT": [9],
+        "A5_TRAUMCHR": [9],
+        "A5_PD": [9],
+        "A5_HYPERTEN": [9],
+        "A5_HYPERCHO": [9],
+        "A5_DIABETES": [9],
+        "A5_B12DEF": [9],
+        "A5_THYROID": [9],
+        "A5_INCONTU": [9],
+        "A5_INCONTF": [9],
+        "A5_CANCER": [9],
+        "A5_DEP2YRS": [9],
+        "A5_ALCOHOL": [9],
+        "A5_TOBACLstYr": [9],
+        "A5_TOBAC30": [9],
+        "A5_TOBAC100": [9],
+        "A5_PACKSPER": [9],
+        "A5_PSYCDIS": [9],
+        "A5_IBD": [9],
+        "A5_Arthritic": [9],
+        "A5_AutoImm": [9],
+
+    }
+    for feature_name in missing_value_codes:
+        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+
+    # Creating 'NUM_STROKES' which is the proportion of parents with dementia
+    df['PROP_PARENTS_DEM'] = (df['A3_MOMDEM'] + df['A3_DADDEM'])
+
+    df.drop(
+        [
+            "A5_CVOTHR",
+            "A5_CVOTHRX",
+            "A5_CBOTHR",
+            "A5_CBOTHRX",
+            "A5_PDYR",
+            "A5_PDOTHRYR",
+            "A5_NCOTHR",
+            "A5_NCOTHRX",
+            "A5_ABUSOTHR",
+            "A5_ABUSX",
+            "A5_PSYCDISX",
+            "A5_Chron_Oth",
+            "A5_Chron_OthX",
+            "A5_PDOTHR",
+            "A5_DEPOTHR",
+            "A5_STROK1YR",
+            "A5_STROK2YR",
+            "A5_STROK3YR",
+            "A5_STROK4YR",
+            "A5_STROK5YR",
+            "A5_STROK6YR",
+            "A5_TIA1YR",
+            "A5_TIA2YR",
+            "A5_TIA3YR",
+            "A5_TIA4YR",
+            "A5_TIA5YR",
+            "A5_TIA6YR"
+        ],
+        axis=1,
+        inplace=True
+    )
 
 def get_cleaned_data() -> pd.DataFrame:
     """
@@ -190,6 +320,7 @@ def get_cleaned_data() -> pd.DataFrame:
     # Clean each section of the dataset.
     clean_demographics(df)
     clean_medicinal_history(df)
+    clean_family_history(df)
 
     # Replace missing values with NaN.
     for key, value in NON_PROTEO_MISSING_VALUES.items():

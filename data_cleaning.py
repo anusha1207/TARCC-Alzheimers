@@ -74,8 +74,10 @@ def clean_exit(df: pd.DataFrame) -> None:
     for col in df.columns:
         if col.startswith("E1"):
             unwanted_cols.append(col)
+        if col.startswith("D1"):
+            if col in ['D1_PROBAD','D1_PROBADIF','D1_POSSAD','D1_POSSADIF']:
+                unwanted_cols.append(col)
     df.drop(unwanted_cols, axis=1, inplace=True)
-
     
 
 def get_cleaned_data() -> pd.DataFrame:

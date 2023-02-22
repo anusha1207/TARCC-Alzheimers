@@ -61,6 +61,22 @@ NON_PROTEO_MISSING_VALUES = dict(
     Q1_UCHL1=[-999, -888, -555, -333, -444], Q1_CD14=[-999, -888, -555, -333, -444]
 )
 
+def clean_exit(df: pd.DataFrame) -> None:
+    """
+    Eliminates the columns specifying method of exit for patients
+    Inputs: 
+        pandas dataframe of clinical/biomarker data
+    Returns:
+        None, alters the inputted dataframe
+    """
+    unwanted_cols = []
+
+    for col in df.columns:
+        if col.startswith("E1"):
+            unwanted_cols.append(col)
+    df.drop(unwanted_cols, axis=1, inplace=True)
+
+    
 
 def get_cleaned_data() -> pd.DataFrame:
     """

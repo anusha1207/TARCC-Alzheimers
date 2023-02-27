@@ -126,7 +126,7 @@ def split_csv(original_df):
 df1, df2 = split_csv(df)
 print(df1.describe())
 
-def update_wanted_features(df):
+def clean_extra_patient_info(df):
     """
         This function will modify the section of the dataset that contains information about the patients visit,
         their physical activities, and their designated informant.
@@ -156,5 +156,5 @@ def update_wanted_features(df):
         )
 
 
-update_wanted_features(df)
+clean_extra_patient_info(df)
 print(df.describe())

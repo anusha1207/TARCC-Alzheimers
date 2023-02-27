@@ -95,9 +95,9 @@ def get_cleaned_data() -> pd.DataFrame:
     return df
 
 df = get_cleaned_data()
+print(df.describe())
 # print(df.columns)
 # df.to_csv("Cleaned data.csv", index=False)
-
 
 def split_csv(original_df):
     """
@@ -107,73 +107,54 @@ def split_csv(original_df):
     Args:
         original_df: The original dataset
     Returns:
-        Two new data frames that contain only one type of data (eit"her Blood or Clinical).
+        Two new data frames that contain only one type of data (either Blood or Clinical).
     """
 
-    blood_columns = []
+    blood_feats = ["PROTEO", "RBM", "Q1", "X1", "X2", "P1", "PATID"]
 
-    # Get the column names of those that include blood and bio-marker data
-    for col in df.columns:
-        if col.startswith("PROTEO"):
-            blood_columns.append(col)
-        elif col.startswith("RBM"):
-            blood_columns.append(col)
-        elif col.startswith("Q1"):
-            blood_columns.append(col)
-        elif col.startswith("X1") or col.startswith("X2"):
-            blood_columns.append(col)
-        elif col.startswith("P1"):
-            blood_columns.append(col)
-        elif col.startswith("PATID"):
-            blood_columns.append(col)
+    filtered_feats = list(filter(lambda name: any(name.startswith(prefix) for prefix in blood_feats), original_df.columns))
 
-    new_df1 = original_df[blood_columns]
-
-    blood_columns.remove("PATID")
-
-    new_df2 = original_df.drop(blood_columns, axis=1)
+    new_df1 = original_df[filtered_feats]
+    filtered_feats.remove("PATID")
+    new_df2 = original_df.drop(filtered_feats, axis=1)
 
     new_df1.to_csv("Blood Only Data.csv", index=False)
     new_df2.to_csv("Clinical Only Data.csv", index=False)
 
     return new_df1, new_df2
 
+df1, df2 = split_csv(df)
+print(df1.describe())
 
 def update_wanted_features(df):
+    """
+        This function will modify the section of the dataset that contains information about the patients visit,
+        their physical activities, and their designated informant.
 
-    unwanted_cols = []
+        For a majority of these features, we have decided to remove them since they contain textual information
+        or were deemed to not be relevant to the objective of this project. There are very few features that will be
+        kept for these sections. For example, the section that describes the patient's physical activity does so by
+        asking them to score different activities based on how often they do them. We decided to only keep the feature
+        that contains the total score for these sections.
 
-    for col in df.columns:
+        This function modifies the data frame in place instead of producing a new one.
 
-        if col.startswith("F1"):
-            if col == "F1_PSMSTOTSCR":
-                continue
-            else:
-                unwanted_cols.append(col)
+        Args:
+            df: The original dataset
+        Returns:
+            None.
+        """
 
-        elif col.startswith("F2"):
-            if col == "F2_IADLTOTSCR":
-                continue
-            else:
-                unwanted_cols.append(col)
+    unwanted_feats = ["F1", "F2", "I1", "P1", "X1", "X2"]
+    feats_to_keep = ["F1_PSMSTOTSCR", "F2_IADLTOTSCR", "P1_PT_TYPE"]
 
-        elif col.startswith("I1"):
-            unwanted_cols.append(col)
+    for prefix in unwanted_feats:
+        df.drop(
+            list(filter(lambda name: name.startswith(prefix) and name not in feats_to_keep, df.columns)),
+            axis=1,
+            inplace=True
+        )
 
-        elif col.startswith("P1"):
-            if col == "P1_PT_TYPE":
-                continue
-            else:
-                unwanted_cols.append(col)
 
-        elif col.startswith("X1") or col.startswith("X2"):
-            print(col)
-            unwanted_cols.append(col)
-
-        # Need to ask John about PID and GWAS
-
-    updated_df = df.drop(unwanted_cols, axis=1)
-
-    return updated_df
-
-new_df = update_wanted_features(df)
+update_wanted_features(df)
+print(df.describe())

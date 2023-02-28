@@ -64,10 +64,11 @@ NON_PROTEO_MISSING_VALUES = dict(
 
 def clean_demographics(df: pd.DataFrame) -> None:
     """
-    Modifies the input dataframe to clean up the demographics (A1) section. We keep the age, sex, marital status,
-    level of independence, and education features, as well as one of the race features.
+    Modifies the input dataframe to clean up the demographics (A1) section.
+
     Args:
         df: The dataframe representing the TARCC dataset.
+
     Returns:
         None
     """
@@ -99,63 +100,52 @@ def clean_demographics(df: pd.DataFrame) -> None:
 def clean_medicinal_history(df: pd.DataFrame) -> None:
     """
     Modifies the input dataframe to clean up the medicinal history (A41-A44) section.
-    We remove all features relating to prescriptions, non-prescriptions, systemic steroids, and drug trials.
-    For now, we keep the features relating to vitamin E and anti-dementia medication, though in the future, we may
-    consider removing anti-dementia features because of their likely strong correlation with AD.
-    In the dataset, each drug is summarized by various fields such as name, route, strength, frequency, etc.
-    Here, we only consider the "strength" and "strength units" field for each drug, which we summarize into one feature.
-    Therefore, this function takes all A41-A44 features and replaces them with just two features: one for the strength
-    of vitamin E (in milligrams) and one for the *total* strength of anti-dementia medication (in milligrams).
-    The TARCC codebook specifies four entries for vitamin E features (A-D), but only features for A exist in the data.
-    However, there do exist 6 different entries (A-F) for anti-dementia drugs in the dataset, so we sum up their
-    strengths (in milligrams) to obtain their total strength.
-    This function mutates the dataframe in place instead of returning a new one.
+
+    We remove all features relating to prescriptions, non-prescriptions, anti-dementia drugs, systemic steroids, and
+    drug trials, and we keep only the features relating to vitamin E.
+
+    In the dataset, each drug is summarized by various fields such as name, route, strength, frequency, etc. Here, we
+    consider only the "strength" and "strength units" field for each drug, which we summarize into one feature.
+    Therefore, this function takes all A41-A44 features and replaces them with a single feature: the strength of vitamin
+    E in milligrams.
+
     Notes:
-        For vitamin E, 779 entries use IU, 105 entries use mg, 14 entries use µg, and 3 entries use mL. Since the
-        majority of entries use IU, we will convert all units to IU using the estimates 0.56 mg/IU and 1000 mg/mL.
-        # TODO: These are not accurate. Check these conversions with John.
-        For anti-dementia medications, 1945 entries use mg, 12 entries use mL, 9 entries use IU, and 8 entries use µg.
-        # TODO: Get conversion rate estimates from John.
+        The TARCC codebook specifies four entries for vitamin E features (A-D), but only features for A are in the data.
+
+        For vitamin E, 779 entries use IU, 105 entries use mg, 14 entries use µg, and 3 entries use mL, but we choose to
+        keep our final feature in mg. To convert from IU to mg, we assume that all vitamin E used by patients is
+        synthetic, implying a conversion rate of 0.45 mg / IU. And since very few entries use mL, we choose to replace
+        these values by an average of all other non-zero vitamin E strengths.
+
     Args:
         df: The dataframe representing the TARCC dataset.
+
     Returns:
         None
     """
 
-    # Define the conversion rates between IU and each of µg (1), mg (2), mL (3), and IU (4).
+    # Define the conversion rates between mg and each of µg (1), mg (2), mL (3), and IU (4).
     vitamin_e_conversions = np.array([
-        0,      # Null conversion (no vitamin E)
-        0.001,  # 1 µg ≈ 0.00056 IU
-        0.56,   # 1 mg ≈ 0.56 IU
-        560,    # 1 mL ≈ 450 IU
-        1,      # 1 IU = 1 IU
+        0,      # Null conversion (no vitamin E).
+        0.001,  # 1 µg = 0.001 mg.
+        1,      # 1 mg = 1 mg.
+        -1,     # Make all mL entries negative to find them later.
+        0.45,   # 1 IU ≈ 0.45 mg.
     ])
 
-    # Convert the vitamin E strengths to IU.
+    # Convert all µg and IU strengths to mg, and negate the mL strengths.
     df["A42_VEAS"] *= vitamin_e_conversions[df["A42_VEASU"]]
 
-    # TODO: Follow up with John and clean anti-dementia strengths (or drop anti-dementia features).
-    # Define the conversion rates between mg and each of µg (1), mg (2), mL (3), and IU (4).
-    anti_dementia_drug_conversions = np.array([
-        0,    # Null conversion (no anti-dementia drug)
-        400,  # 1 µg ≈ 400 IU
-        1,    # 1 mg = 1 mg
-        400,  # 1 mL ≈ 400 IU
-        400,  # 1 IU ≈ 400 mg
-    ])
+    # Replace all the negative entries with the average of all the positive entries.
+    df.loc[df["A42_VEAS"] < 0, "A42_VEAS"] = df.loc[df["A42_VEAS"] > 0, "A42_VEAS"].mean()
 
-    # Convert the anti-dementia drug strengths to mg, and accumulate them in the "A43_ADAS" column.
-    for c in "ABCDEF":
-        df[f"A43_AD{c}S"] *= anti_dementia_drug_conversions[df[f"A43_AD{c}SU"]]
-    for c in "BCDEF":
-        df["A43_ADAS"] += df[f"A43_AD{c}S"]
-
-    # Drop all "A4" columns except for the vitamin E and anti-dementia drug strengths.
+    # Drop all "A4" columns except for the vitamin E strengths.
     df.drop(
-        list(filter(lambda name: name.startswith("A4") and name not in ["A42_VEAS", "A43_ADAS"], df.columns)),
+        list(filter(lambda name: name.startswith("A4") and name != "A42_VEAS", df.columns)),
         axis=1,
         inplace=True
     )
+
 
 def clean_family_history(df: pd.DataFrame) -> None:
     """

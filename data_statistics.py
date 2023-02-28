@@ -1,5 +1,6 @@
 """
 Computes statistics for the cleaned data.
+
 TODO:
 plot on log scale - make y-axis log scale
 encoding
@@ -18,8 +19,10 @@ from data_cleaning import get_cleaned_data
 def suppressed_nanmean(x: np.ndarray) -> float:
     """
     Performs the same operation as np.nanmean but suppresses warnings.
+
     Args:
         x: The array to take the mean over.
+
     Returns:
         None.
     """
@@ -31,8 +34,10 @@ def suppressed_nanmean(x: np.ndarray) -> float:
 def suppressed_nanstd(x: np.ndarray) -> float:
     """
     Performs the same operation as np.nanstd but suppresses warnings.
+
     Args:
         x: The array to take the standard deviation over.
+
     Returns:
         None.
     """
@@ -44,8 +49,10 @@ def suppressed_nanstd(x: np.ndarray) -> float:
 def count_proportion_missing(x: np.ndarray) -> float:
     """
     Counts the proportion of NaN values in an array.
+
     Args:
         x: The array over which to count NaN values.
+
     Returns:
         The proportion of NaN values in an array.
     """
@@ -128,3 +135,42 @@ plt.bar(["Drew blood", "Did not draw blood"], [594, 3076], color=["red", "blue"]
 plt.title("Number of patients who drew blood / did not draw blood")
 plt.ylabel("Number of patients (duplicates not counted)")
 plt.show()
+
+
+blood = df[""]
+
+
+classes = df["P1_PT_TYPE"].value_counts()
+classes.index = ["Control", "AD", "MCI", "Other"]
+# classes.plot(kind="pie")
+sizes = classes.values
+pie = plt.pie(sizes, autopct='%1.1f%%', startangle=90)
+plt.legend(labels=classes.index)
+plt.savefig("PTTYPE.png", dpi=10000)
+plt.show()
+
+
+# For report revision: Just taking a few features to demonstrate patient-wise feature variances.
+
+import matplotlib.pyplot as plt
+
+temp = get_cleaned_data()
+features = ["A1_RACE", "C1_WAIS3_DIGTOT", "B1_BMI", "RBM_Insulin"]
+temp = temp[["PATID"] + features]
+
+# Normalize each of these features
+for f in features:
+    temp[f] = (temp[f] - np.nanmean(temp[f])) / np.nanstd(temp[f])
+
+# Compute patient-wise variances
+grouped_sigmas = temp.groupby("PATID").agg(suppressed_nanstd)
+sigma_means = grouped_sigmas.agg(suppressed_nanmean)
+sigma_standard_deviations = grouped_sigmas.agg(suppressed_nanstd)
+
+to_plot = {f: grouped_sigmas[f][~np.isnan(grouped_sigmas[f])] for f in features}
+
+plt.boxplot(to_plot.values(), showfliers=False)
+plt.xticks([1, 2, 3, 4], ["Race", "WAIS3 Digits Score", "BMI", "Insulin"])
+plt.title("Boxplots of patient-wise standard deviations for 4 features")
+plt.ylabel("Patient-wise SD")
+plt.show(dpi=2000)

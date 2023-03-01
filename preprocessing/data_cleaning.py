@@ -273,14 +273,14 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         inplace=True
     )
 
+
 def get_cleaned_data() -> pd.DataFrame:
     """
     Reads the CSV file and returns the cleaned dataframe.
     Returns:
         The cleaned dataframe representing the TARCC data.
     """
-
-    df = pd.read_csv("TARCC_data.csv")
+    df = pd.read_csv("data/TARCC_data.csv")
 
     # Replace all empty strings with NaN, and convert all relevant columns to numeric (float).
     df = df.replace(r"^\s*$", np.nan, regex=True)

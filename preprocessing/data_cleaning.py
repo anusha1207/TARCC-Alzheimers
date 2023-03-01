@@ -273,6 +273,24 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         inplace=True
     )
 
+def clean_cognitive_tests(df: pd.DataFrame) -> None:
+
+    keep = ["C1_WAIS3_DIGTOT", "C1_WAISR_DIGTOT",
+            "C1_MMSE", "C1_CDRSUM", "C1_CDRGLOB",
+            "C1_SS_TRAILA", "C1_SS_TRAILB",
+            "C1_CLOCK",
+            "C1_WMS3_LMEM1", "C1_WMS3_LMEM2", "C1_WMS3_VRI", "C1_WMS3_VR2",
+            "C1_WMSR_LMEM1", "C1_WMSR_LMEM2", "C1_WMSR_VRI", "C1_WMSR_VRII", "C1_WMSR_DIGTOT",
+            "C1_GDS30",
+            "C1_AMNART"]
+
+    # Drop all "C1" columns except for the vitamin E and anti-dementia drug strengths.
+    df.drop(
+        list(filter(lambda name: name.startswith("C1") and name not in keep, df.columns)),
+        axis=1,
+        inplace=True
+    )
+
 
 def get_cleaned_data() -> pd.DataFrame:
     """
@@ -295,6 +313,7 @@ def get_cleaned_data() -> pd.DataFrame:
     clean_demographics(df)
     clean_medicinal_history(df)
     clean_family_history(df)
+    clean_cognitive_tests(df)
 
     # Replace missing values with NaN.
     for key, value in NON_PROTEO_MISSING_VALUES.items():

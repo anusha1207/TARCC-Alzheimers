@@ -64,8 +64,7 @@ NON_PROTEO_MISSING_VALUES = dict(
 
 def clean_demographics(df: pd.DataFrame) -> None:
     """
-    Modifies the input dataframe to clean up the demographics (A1) section. We keep the age, sex, marital status,
-    level of independence, and education features, as well as one of the race features.
+    Modifies the input dataframe to clean up the demographics (A1) section.
 
     Args:
         df: The dataframe representing the TARCC dataset.
@@ -102,28 +101,21 @@ def clean_medicinal_history(df: pd.DataFrame) -> None:
     """
     Modifies the input dataframe to clean up the medicinal history (A41-A44) section.
 
-    We remove all features relating to prescriptions, non-prescriptions, systemic steroids, and drug trials.
-    For now, we keep the features relating to vitamin E and anti-dementia medication, though in the future, we may
-    consider removing anti-dementia features because of their likely strong correlation with AD.
+    We remove all features relating to prescriptions, non-prescriptions, anti-dementia drugs, systemic steroids, and
+    drug trials, and we keep only the features relating to vitamin E.
 
-    In the dataset, each drug is summarized by various fields such as name, route, strength, frequency, etc.
-    Here, we only consider the "strength" and "strength units" field for each drug, which we summarize into one feature.
-    Therefore, this function takes all A41-A44 features and replaces them with just two features: one for the strength
-    of vitamin E (in milligrams) and one for the *total* strength of anti-dementia medication (in milligrams).
-
-    The TARCC codebook specifies four entries for vitamin E features (A-D), but only features for A exist in the data.
-    However, there do exist 6 different entries (A-F) for anti-dementia drugs in the dataset, so we sum up their
-    strengths (in milligrams) to obtain their total strength.
-
-    This function mutates the dataframe in place instead of returning a new one.
+    In the dataset, each drug is summarized by various fields such as name, route, strength, frequency, etc. Here, we
+    consider only the "strength" and "strength units" field for each drug, which we summarize into one feature.
+    Therefore, this function takes all A41-A44 features and replaces them with a single feature: the strength of vitamin
+    E in milligrams.
 
     Notes:
-        For vitamin E, 779 entries use IU, 105 entries use mg, 14 entries use µg, and 3 entries use mL. Since the
-        majority of entries use IU, we will convert all units to IU using the estimates 0.56 mg/IU and 1000 mg/mL.
-        # TODO: These are not accurate. Check these conversions with John.
+        The TARCC codebook specifies four entries for vitamin E features (A-D), but only features for A are in the data.
 
-        For anti-dementia medications, 1945 entries use mg, 12 entries use mL, 9 entries use IU, and 8 entries use µg.
-        # TODO: Get conversion rate estimates from John.
+        For vitamin E, 779 entries use IU, 105 entries use mg, 14 entries use µg, and 3 entries use mL, but we choose to
+        keep our final feature in mg. To convert from IU to mg, we assume that all vitamin E used by patients is
+        synthetic, implying a conversion rate of 0.45 mg / IU. And since very few entries use mL, we choose to replace
+        these values by an average of all other non-zero vitamin E strengths.
 
     Args:
         df: The dataframe representing the TARCC dataset.
@@ -132,37 +124,151 @@ def clean_medicinal_history(df: pd.DataFrame) -> None:
         None
     """
 
-    # Define the conversion rates between IU and each of µg (1), mg (2), mL (3), and IU (4).
+    # Define the conversion rates between mg and each of µg (1), mg (2), mL (3), and IU (4).
     vitamin_e_conversions = np.array([
-        0,      # Null conversion (no vitamin E)
-        0.001,  # 1 µg ≈ 0.00056 IU
-        0.56,   # 1 mg ≈ 0.56 IU
-        560,    # 1 mL ≈ 450 IU
-        1,      # 1 IU = 1 IU
+        0,      # Null conversion (no vitamin E).
+        0.001,  # 1 µg = 0.001 mg.
+        1,      # 1 mg = 1 mg.
+        -1,     # Make all mL entries negative to find them later.
+        0.45,   # 1 IU ≈ 0.45 mg.
     ])
 
-    # Convert the vitamin E strengths to IU.
+    # Convert all µg and IU strengths to mg, and negate the mL strengths.
     df["A42_VEAS"] *= vitamin_e_conversions[df["A42_VEASU"]]
 
-    # TODO: Follow up with John and clean anti-dementia strengths (or drop anti-dementia features).
-    # Define the conversion rates between mg and each of µg (1), mg (2), mL (3), and IU (4).
-    anti_dementia_drug_conversions = np.array([
-        0,    # Null conversion (no anti-dementia drug)
-        400,  # 1 µg ≈ 400 IU
-        1,    # 1 mg = 1 mg
-        400,  # 1 mL ≈ 400 IU
-        400,  # 1 IU ≈ 400 mg
-    ])
+    # Replace all the negative entries with the average of all the positive entries.
+    df.loc[df["A42_VEAS"] < 0, "A42_VEAS"] = df.loc[df["A42_VEAS"] > 0, "A42_VEAS"].mean()
 
-    # Convert the anti-dementia drug strengths to mg, and accumulate them in the "A43_ADAS" column.
-    for c in "ABCDEF":
-        df[f"A43_AD{c}S"] *= anti_dementia_drug_conversions[df[f"A43_AD{c}SU"]]
-    for c in "BCDEF":
-        df["A43_ADAS"] += df[f"A43_AD{c}S"]
-
-    # Drop all "A4" columns except for the vitamin E and anti-dementia drug strengths.
+    # Drop all "A4" columns except for the vitamin E strengths.
     df.drop(
-        list(filter(lambda name: name.startswith("A4") and name not in ["A42_VEAS", "A43_ADAS"], df.columns)),
+        list(filter(lambda name: name.startswith("A4") and name != "A42_VEAS", df.columns)),
+        axis=1,
+        inplace=True
+    )
+
+
+def clean_family_history(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the family history (A3) section. We merge the dad or mom having
+    dementia into one feature which is the proportion of parents with dementia.
+    Args:
+        df: The dataframe representing the TARCC dataset.
+    Returns:
+        None
+    """
+
+    missing_value_codes = {
+        "A3_MOMDEM": [9],
+        "A3_DADDEM": [9]
+    }
+    for feature_name in missing_value_codes:
+        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+
+    # Creating 'PROP_PARENTS_DEM' which is the proportion of parents with dementia
+    df['PROP_PARENTS_DEM'] = (df['A3_MOMDEM'] + df['A3_DADDEM']) / 2
+
+    df.drop(
+        [
+            "A3_MOMDEM",
+            "A3_DADDEM"
+        ],
+        axis=1,
+        inplace=True
+    )
+
+def clean_medical_history(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the medical history (A5) section. We drop all of the "Other"
+    features (i.e., cardiovascular other and cerebrovascular other), and merge years of strokes/TIAs into
+    "number of TIAs and number of strokes per patient".
+    Args:
+        df: The dataframe representing the TARCC dataset.
+    Returns:
+        None
+    """
+
+    # "['A5_TOBACLstYr', 'A5_Arthritic', 'A5_AutoImm', 'A5_Chron_Oth', 'A5_Chron_OthX'] not in index"
+    missing_value_codes = {
+        "A5_CVHATT": [9],
+        "A5_CVAFIB": [9],
+        "A5_CVANGIO": [9],
+        "A5_CVBYPASS": [9],
+        "A5_CVPACE": [9],
+        "A5_CVCHF": [9],
+        "A5_CVOTHR": [9],
+        "A5_CBSTROKE": [9],
+        "A5_STROK1YR": [9999, ' '],
+        "A5_STROK2YR": [9999, ' '],
+        "A5_STROK3YR": [9999, ' '],
+        "A5_STROK4YR": [9999, ' '],
+        "A5_STROK5YR": [9999, ' '],
+        "A5_STROK6YR": [9999, ' '],
+        "A5_CBTIA": [9],
+        "A5_TIA1YR": [9999, ' '],
+        "A5_TIA2YR": [9999, ' '],
+        "A5_TIA3YR": [9999, ' '],
+        "A5_TIA4YR": [9999, ' '],
+        "A5_TIA5YR": [9999, ' '],
+        "A5_TIA6YR": [9999, ' '],
+        "A5_SEIZURES": [9],
+        "A5_TRAUMBRF": [9],
+        "A5_TRAUMEXT": [9],
+        "A5_TRAUMCHR": [9],
+        "A5_PD": [9],
+        "A5_HYPERTEN": [9],
+        "A5_HYPERCHO": [9],
+        "A5_DIABETES": [9],
+        "A5_B12DEF": [9],
+        "A5_THYROID": [9],
+        "A5_INCONTU": [9],
+        "A5_INCONTF": [9],
+        "A5_CANCER": [9],
+        "A5_DEP2YRS": [9],
+        "A5_ALCOHOL": [9],
+        "A5_TOBAC30": [9],
+        "A5_TOBAC100": [9],
+        "A5_PACKSPER": [9],
+        "A5_PSYCDIS": [9],
+        "A5_IBD": [9],
+
+    }
+    for feature_name in missing_value_codes:
+        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+
+    # Creating 'NUM_STROKES' which is the number of strokes a patient has had
+    df['NUM_STROKES'] = np.sum(~pd.isna(df[['A5_STROK1YR','A5_STROK2YR','A5_STROK3YR','A5_STROK4YR', 'A5_STROK5YR', 'A5_STROK6YR']]), axis=1)
+
+    # Creating 'NUM_TIA' which is the number of TIAs a patient has had
+    df['NUM_TIA'] = np.sum(~pd.isna(df[['A5_TIA1YR','A5_TIA2YR','A5_TIA3YR','A5_TIA4YR', 'A5_TIA5YR', 'A5_TIA6YR']]), axis=1)
+
+    df.drop(
+        [
+            "A5_CVOTHR",
+            "A5_CVOTHRX",
+            "A5_CBOTHR",
+            "A5_CBOTHRX",
+            "A5_PDYR",
+            "A5_PDOTHRYR",
+            "A5_NCOTHR",
+            "A5_NCOTHRX",
+            "A5_ABUSOTHR",
+            "A5_ABUSX",
+            "A5_PSYCDISX",
+            "A5_PDOTHR",
+            "A5_DEPOTHR",
+            "A5_STROK1YR",
+            "A5_STROK2YR",
+            "A5_STROK3YR",
+            "A5_STROK4YR",
+            "A5_STROK5YR",
+            "A5_STROK6YR",
+            "A5_TIA1YR",
+            "A5_TIA2YR",
+            "A5_TIA3YR",
+            "A5_TIA4YR",
+            "A5_TIA5YR",
+            "A5_TIA6YR",
+        ],
         axis=1,
         inplace=True
     )
@@ -171,12 +277,10 @@ def clean_medicinal_history(df: pd.DataFrame) -> None:
 def get_cleaned_data() -> pd.DataFrame:
     """
     Reads the CSV file and returns the cleaned dataframe.
-
     Returns:
         The cleaned dataframe representing the TARCC data.
     """
-
-    df = pd.read_csv("TARCC_data.csv")
+    df = pd.read_csv("data/TARCC_data.csv")
 
     # Replace all empty strings with NaN, and convert all relevant columns to numeric (float).
     df = df.replace(r"^\s*$", np.nan, regex=True)
@@ -190,6 +294,7 @@ def get_cleaned_data() -> pd.DataFrame:
     # Clean each section of the dataset.
     clean_demographics(df)
     clean_medicinal_history(df)
+    clean_family_history(df)
 
     # Replace missing values with NaN.
     for key, value in NON_PROTEO_MISSING_VALUES.items():

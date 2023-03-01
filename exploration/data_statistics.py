@@ -13,7 +13,7 @@ violin plot or boxplot
 from matplotlib import pyplot as plt
 import numpy as np
 
-from data_cleaning import get_cleaned_data
+from preprocessing.data_cleaning import get_cleaned_data
 
 
 def suppressed_nanmean(x: np.ndarray) -> float:

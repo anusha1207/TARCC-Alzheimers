@@ -1,18 +1,15 @@
 """
 Reads the CSV file and cleans the dataframe.
 """
-
-from logging import log, WARN
-
 import numpy as np
 import pandas as pd
 
-# A mapping from feature keys to lists of missing values.
+# A mapping from feature keys to lists of missing value codes.
 # Note: There are several discrepancies between the codebook and the actual dataset; these names are from the codebook.
 #       Many of the features in the codebook do not appear in the dataset, so users should always check for a KeyError.
 #       The codebook also capitalizes feature names differently. Users should always convert all feature names (except
 #       "Q1_Total_tau") to all-caps.
-# TODO: This should be split up into each of the "clean_*()" functions.
+# TODO: This should be split up into each of the "clean_*()" functions, or move to a config file.
 NON_PROTEO_MISSING_VALUES = dict(
     CCR_CL_IMPRESS_CODE=[10], A1_Hispanic=[9], A1_Hispanic_Type=[50, 99], A1_RACE=[50, 99], A1_RACESEC=[50, 88, 99],
     A1_RACETER=[50, 88, 99], A1_PRIMLANG=[8, 9], A1_EDUC=[99], A1_LIVSIT=[9], A1_INDEPEND=[9], A1_RESIDENC=[9],
@@ -97,6 +94,38 @@ def clean_demographics(df: pd.DataFrame) -> None:
         df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
 
 
+def clean_family_history(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the family history (A3) section. We merge the dad or mom having
+    dementia into one feature which is the proportion of parents with dementia.
+
+    Args:
+        df: The dataframe representing the TARCC dataset.
+
+    Returns:
+        None
+    """
+
+    missing_value_codes = {
+        "A3_MOMDEM": [9],
+        "A3_DADDEM": [9]
+    }
+    for feature_name in missing_value_codes:
+        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+
+    # Creating 'PROP_PARENTS_DEM' which is the proportion of parents with dementia
+    df["PROP_PARENTS_DEM"] = (df["A3_MOMDEM"] + df["A3_DADDEM"]) / 2
+
+    df.drop(
+        [
+            "A3_MOMDEM",
+            "A3_DADDEM"
+        ],
+        axis=1,
+        inplace=True
+    )
+
+
 def clean_medicinal_history(df: pd.DataFrame) -> None:
     """
     Modifies the input dataframe to clean up the medicinal history (A41-A44) section.
@@ -147,42 +176,15 @@ def clean_medicinal_history(df: pd.DataFrame) -> None:
     )
 
 
-def clean_family_history(df: pd.DataFrame) -> None:
-    """
-    Modifies the input dataframe to clean up the family history (A3) section. We merge the dad or mom having
-    dementia into one feature which is the proportion of parents with dementia.
-    Args:
-        df: The dataframe representing the TARCC dataset.
-    Returns:
-        None
-    """
-
-    missing_value_codes = {
-        "A3_MOMDEM": [9],
-        "A3_DADDEM": [9]
-    }
-    for feature_name in missing_value_codes:
-        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
-
-    # Creating 'PROP_PARENTS_DEM' which is the proportion of parents with dementia
-    df['PROP_PARENTS_DEM'] = (df['A3_MOMDEM'] + df['A3_DADDEM']) / 2
-
-    df.drop(
-        [
-            "A3_MOMDEM",
-            "A3_DADDEM"
-        ],
-        axis=1,
-        inplace=True
-    )
-
 def clean_medical_history(df: pd.DataFrame) -> None:
     """
     Modifies the input dataframe to clean up the medical history (A5) section. We drop all of the "Other"
     features (i.e., cardiovascular other and cerebrovascular other), and merge years of strokes/TIAs into
     "number of TIAs and number of strokes per patient".
+
     Args:
         df: The dataframe representing the TARCC dataset.
+
     Returns:
         None
     """
@@ -230,16 +232,21 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         "A5_PACKSPER": [9],
         "A5_PSYCDIS": [9],
         "A5_IBD": [9],
-
     }
     for feature_name in missing_value_codes:
         df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
 
     # Creating 'NUM_STROKES' which is the number of strokes a patient has had
-    df['NUM_STROKES'] = np.sum(~pd.isna(df[['A5_STROK1YR','A5_STROK2YR','A5_STROK3YR','A5_STROK4YR', 'A5_STROK5YR', 'A5_STROK6YR']]), axis=1)
+    df["NUM_STROKES"] = np.sum(
+        ~pd.isna(df[["A5_STROK1YR", "A5_STROK2YR", "A5_STROK3YR", "A5_STROK4YR", "A5_STROK5YR", "A5_STROK6YR"]]),
+        axis=1
+    )
 
     # Creating 'NUM_TIA' which is the number of TIAs a patient has had
-    df['NUM_TIA'] = np.sum(~pd.isna(df[['A5_TIA1YR','A5_TIA2YR','A5_TIA3YR','A5_TIA4YR', 'A5_TIA5YR', 'A5_TIA6YR']]), axis=1)
+    df["NUM_TIA"] = np.sum(
+        ~pd.isna(df[["A5_TIA1YR", "A5_TIA2YR", "A5_TIA3YR", "A5_TIA4YR", "A5_TIA5YR", "A5_TIA6YR"]]),
+        axis=1
+    )
 
     df.drop(
         [
@@ -273,30 +280,46 @@ def clean_medical_history(df: pd.DataFrame) -> None:
         inplace=True
     )
 
+
 def clean_cognitive_tests(df: pd.DataFrame) -> None:
+    """
+    Modifies the input dataframe to clean up the cognitive tests (C1) section. Since there are multiple tests and
+    multiple scores for each test, we keep only the total scores of any sections or tests that test working memory.
 
-    keep = ["C1_WAIS3_DIGTOT", "C1_WAISR_DIGTOT",
-            "C1_MMSE", "C1_CDRSUM", "C1_CDRGLOB",
-            "C1_SS_TRAILA", "C1_SS_TRAILB",
-            "C1_CLOCK",
-            "C1_WMS3_LMEM1", "C1_WMS3_LMEM2", "C1_WMS3_VRI", "C1_WMS3_VR2",
-            "C1_WMSR_LMEM1", "C1_WMSR_LMEM2", "C1_WMSR_VRI", "C1_WMSR_VRII", "C1_WMSR_DIGTOT",
-            "C1_GDS30",
-            "C1_AMNART"]
+    Args:
+        df: The dataframe representing the TARCC dataset.
 
-    # Drop all "C1" columns except for the vitamin E and anti-dementia drug strengths.
+    Returns:
+        None
+    """
+
+    keep = [
+        "C1_WAIS3_DIGTOT", "C1_WAISR_DIGTOT",
+        "C1_MMSE", "C1_CDRSUM", "C1_CDRGLOB",
+        "C1_SS_TRAILA", "C1_SS_TRAILB",
+        "C1_CLOCK",
+        "C1_WMS3_LMEM1", "C1_WMS3_LMEM2", "C1_WMS3_VRI", "C1_WMS3_VR2",
+        "C1_WMSR_LMEM1", "C1_WMSR_LMEM2", "C1_WMSR_VRI", "C1_WMSR_VRII", "C1_WMSR_DIGTOT",
+        "C1_GDS30",
+        "C1_AMNART"
+    ]
+
+    # Drop all irrelevant "C1" columns.
     df.drop(
         list(filter(lambda name: name.startswith("C1") and name not in keep, df.columns)),
         axis=1,
         inplace=True
     )
 
+
 def clean_exit(df: pd.DataFrame) -> None:
     """
     Eliminates the columns specifying method of exit for patients.
-    Also removes probable/possible AD features which are highly correlated with response
-    Inputs: 
+    Also removes probable/possible AD features which are highly correlated with response.
+
+    Args:
         pandas dataframe of clinical/biomarker data
+
     Returns:
         None, alters the inputted dataframe
     """
@@ -306,15 +329,18 @@ def clean_exit(df: pd.DataFrame) -> None:
         if col.startswith("E1"):
             unwanted_cols.append(col)
         if col.startswith("D1"):
-            if col in ['D1_PROBAD','D1_PROBADIF','D1_POSSAD','D1_POSSADIF', 'D1_WHODIDDX']:
+            if col in ["D1_PROBAD", "D1_PROBADIF", "D1_POSSAD", "D1_POSSADIF", "D1_WHODIDDX"]:
                 unwanted_cols.append(col)
     df.drop(unwanted_cols, axis=1, inplace=True)
-    
+
+
 def clean_D1(df: pd.DataFrame) -> None:
     """
-    Eliminates the columns specifying diagnostic indicators for patients
-    Inputs: 
+    Eliminates the columns specifying diagnostic indicators for patients.
+
+    Args:
         pandas dataframe of clinical/biomarker data
+
     Returns:
         None, alters the inputted dataframe
     """
@@ -327,6 +353,7 @@ def clean_D1(df: pd.DataFrame) -> None:
     # dropping above columns
     df.drop(final_delete, axis=1, inplace=True)
 
+
 def map_value_D1(value):
     """
     Helper function to map indicators to a summable weight
@@ -336,6 +363,7 @@ def map_value_D1(value):
         return value_mappings[value]
     else: 
         return value
+
 
 def sum_D1(df: pd.DataFrame):
     """
@@ -352,7 +380,39 @@ def sum_D1(df: pd.DataFrame):
     # mapping classifiers to reflect weights
     window = window.applymap(map_value_D1)
     # summing each patient row to create total risk factor
-    df['D1_total'] = window.sum(axis = 1)
+    df['D1_total'] = window.sum(axis=1)
+
+
+def clean_extra_patient_info(df) -> None:
+    """
+    This function will modify the section of the dataset that contains information about the patients visit,
+    their physical activities, and their designated informant.
+
+    For a majority of these features, we have decided to remove them since they contain textual information
+    or were deemed to not be relevant to the objective of this project. There are very few features that will be
+    kept for these sections. For example, the section that describes the patient's physical activity does so by
+    asking them to score different activities based on how often they do them. We decided to only keep the feature
+    that contains the total score for these sections.
+
+    This function modifies the data frame in place instead of producing a new one.
+
+    Args:
+        df: The original dataset
+
+    Returns:
+        None.
+    """
+
+    unwanted_feats = ["F1", "F2", "I1", "P1", "X1", "X2"]
+    feats_to_keep = ["F1_PSMSTOTSCR", "F2_IADLTOTSCR", "P1_PT_TYPE"]
+
+    for prefix in unwanted_feats:
+        df.drop(
+            list(filter(lambda name: name.startswith(prefix) and name not in feats_to_keep, df.columns)),
+            axis=1,
+            inplace=True
+        )
+
 
 def get_cleaned_data() -> pd.DataFrame:
     """
@@ -366,7 +426,7 @@ def get_cleaned_data() -> pd.DataFrame:
     df = df.replace(r"^\s*$", np.nan, regex=True)
 
     # TODO: The following lines convert all features to numeric and remove all textual columns.
-    # TODO: This behavior should be deferred to each of the "clean_*()" functions.
+    #       This behavior should be deferred to each of the "clean_*()" functions.
     df = df.apply(pd.to_numeric, errors="ignore")  # TODO: This may be removed after cleaning each section.
     # # Drop all text columns.
     # df = df.drop(columns=df.select_dtypes("object"))
@@ -374,19 +434,23 @@ def get_cleaned_data() -> pd.DataFrame:
     # Clean each section of the dataset.
     clean_demographics(df)
     clean_medicinal_history(df)
+    clean_medical_history(df)
     clean_family_history(df)
     clean_cognitive_tests(df)
     clean_exit(df)
     clean_D1(df)
     sum_D1(df)
+    clean_extra_patient_info(df)
 
     # Replace missing values with NaN.
+    # TODO: This is here for redundancy. Remove this after dataset has been cleaned.
     for key, value in NON_PROTEO_MISSING_VALUES.items():
         actual_key = key if key == "Q1_Total_tau" else key.upper()
         try:
             df[actual_key].replace(value, np.nan, inplace=True)
         except KeyError:
-            log(WARN, f"Key {actual_key} is missing from the dataframe.")
+            pass
+            # log(WARN, f"Key {actual_key} is missing from the dataframe.")
 
     # For proteo features, replace missing values with NaN and replace LLDL and GHDL with 0 and 999999999, respectively.
     for key in df.columns[[column_name.startswith("PROTEO") for column_name in df.columns]]:
@@ -396,6 +460,7 @@ def get_cleaned_data() -> pd.DataFrame:
 
     return df
 
+
 def split_csv(original_df):
     """
     Takes in the original dataset and creates two new Data Frames, one with only clinical data
@@ -403,6 +468,7 @@ def split_csv(original_df):
 
     Args:
         original_df: The original dataset
+
     Returns:
         Two new data frames that contain only one type of data (either Blood or Clinical).
     """
@@ -419,33 +485,3 @@ def split_csv(original_df):
     new_df2.to_csv("Clinical Only Data.csv", index=False)
 
     return new_df1, new_df2
-
-
-def clean_extra_patient_info(df) -> None:
-    """
-        This function will modify the section of the dataset that contains information about the patients visit,
-        their physical activities, and their designated informant.
-
-        For a majority of these features, we have decided to remove them since they contain textual information
-        or were deemed to not be relevant to the objective of this project. There are very few features that will be
-        kept for these sections. For example, the section that describes the patient's physical activity does so by
-        asking them to score different activities based on how often they do them. We decided to only keep the feature
-        that contains the total score for these sections.
-
-        This function modifies the data frame in place instead of producing a new one.
-
-        Args:
-            df: The original dataset
-        Returns:
-            None.
-        """
-
-    unwanted_feats = ["F1", "F2", "I1", "P1", "X1", "X2"]
-    feats_to_keep = ["F1_PSMSTOTSCR", "F2_IADLTOTSCR", "P1_PT_TYPE"]
-
-    for prefix in unwanted_feats:
-        df.drop(
-            list(filter(lambda name: name.startswith(prefix) and name not in feats_to_keep, df.columns)),
-            axis=1,
-            inplace=True
-        )

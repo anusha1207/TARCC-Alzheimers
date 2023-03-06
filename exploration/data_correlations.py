@@ -6,8 +6,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from preprocessing.data_cleaning import get_cleaned_data
-
 
 
 def filter_corr(df: pd.DataFrame):
@@ -91,12 +89,11 @@ def filter_top_features(df):
         if col not in features:
             df = df.iloc[df.index != col, df.columns != col]
 
-def plot_correlations():
+def plot_correlations(df: pd.DataFrame):
     """
     Plots Correlation Matrix based on above filtrations and specifications
     """
     # calling above functions
-    df = get_cleaned_data()
     corr_values = df.corr()
     filter_corr(corr_values)
     corr_values = corr_values.applymap(mask_)
@@ -110,5 +107,3 @@ def plot_correlations():
     plt.figure(figsize=(19,15))
     sns.heatmap(corr_values, cmap="coolwarm")
     plt.show()
-
-plot_correlations()

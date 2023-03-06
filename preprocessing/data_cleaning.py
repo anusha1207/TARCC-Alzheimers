@@ -396,7 +396,7 @@ def get_cleaned_data() -> pd.DataFrame:
 
     return df
 
-def split_csv(original_df: pd.Dataframe):
+def split_csv(original_df):
     """
     Takes in the original dataset and creates two new Data Frames, one with only clinical data
     and the other with only blood data.
@@ -421,7 +421,7 @@ def split_csv(original_df: pd.Dataframe):
     return new_df1, new_df2
 
 
-def clean_extra_patient_info(df: pd.DataFrame) -> None:
+def clean_extra_patient_info(df) -> None:
     """
         This function will modify the section of the dataset that contains information about the patients visit,
         their physical activities, and their designated informant.

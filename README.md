@@ -48,13 +48,15 @@ Our data is provided by the Texas Alzheimer's Research Care and Consortium (TARC
 The patients can have repetitive visits and are diagnosed each time as either having AD, MCI, or healthy. 
 
 ## **Data Science Pipeline**
+Data Wrangling --> Data Exploration --> Modeling --> Validation 
+1. Data Wrangling: Here, we merged data entries by patient to retain both clinical and biomarkers data. We also cleaned missing values and removed features which our sponsor deemed irrelevant. 
+2. Data Exploration: We created a correlation matrix to analyze features which were highly correlated with each other. 
+3. Modeling: We plan to use a two-model system; for patients who did not draw blood, we will use clinical data in the modeling phase, and for patients who do have biomarker data recorded, we will take into account both their blood-draw data and their clinical data. For now, we plan to use MRMR and Lasso/Ridge Regression. 
+4. Evaluation: For now, we plan to use a simple train-validation-test split, k-folds cross-validation, and the use of an external dataset for testing. 
 
-
-![Pipeline](https://user-images.githubusercontent.com/97485268/198148374-fc9760c7-bf3f-4b82-8a7c-b83b73d82556.png)
 
 ### PREPROCESSING <br />
-
-The data pertaining to blood and protein bio-markers along with mental and physical attributes is subsetted to perform a line of analysis which helps us gauge the most important features. Upon doing this, the resulting data-set consisted of 563 patients with a total of 217 features. After preprocessing, the patient database is divided broadly into two classes based on the diagnosis, whether they have AD or not.
+Our preprocessing stage merged data by patient visits to minimze the number of missing values per row (for example, blood tests are only taken on the first visit for many patients). 
 <br />
 
 

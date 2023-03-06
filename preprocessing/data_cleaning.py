@@ -395,3 +395,57 @@ def get_cleaned_data() -> pd.DataFrame:
     df = df.replace(-999999, 0)
 
     return df
+
+def split_csv(original_df: pd.Dataframe):
+    """
+    Takes in the original dataset and creates two new Data Frames, one with only clinical data
+    and the other with only blood data.
+
+    Args:
+        original_df: The original dataset
+    Returns:
+        Two new data frames that contain only one type of data (either Blood or Clinical).
+    """
+
+    blood_feats = ["PROTEO", "RBM", "Q1", "X1", "X2", "P1", "PATID"]
+
+    filtered_feats = list(filter(lambda name: any(name.startswith(prefix) for prefix in blood_feats), original_df.columns))
+
+    new_df1 = original_df[filtered_feats]
+    filtered_feats.remove("PATID")
+    new_df2 = original_df.drop(filtered_feats, axis=1)
+
+    new_df1.to_csv("Blood Only Data.csv", index=False)
+    new_df2.to_csv("Clinical Only Data.csv", index=False)
+
+    return new_df1, new_df2
+
+
+def clean_extra_patient_info(df: pd.DataFrame) -> None:
+    """
+        This function will modify the section of the dataset that contains information about the patients visit,
+        their physical activities, and their designated informant.
+
+        For a majority of these features, we have decided to remove them since they contain textual information
+        or were deemed to not be relevant to the objective of this project. There are very few features that will be
+        kept for these sections. For example, the section that describes the patient's physical activity does so by
+        asking them to score different activities based on how often they do them. We decided to only keep the feature
+        that contains the total score for these sections.
+
+        This function modifies the data frame in place instead of producing a new one.
+
+        Args:
+            df: The original dataset
+        Returns:
+            None.
+        """
+
+    unwanted_feats = ["F1", "F2", "I1", "P1", "X1", "X2"]
+    feats_to_keep = ["F1_PSMSTOTSCR", "F2_IADLTOTSCR", "P1_PT_TYPE"]
+
+    for prefix in unwanted_feats:
+        df.drop(
+            list(filter(lambda name: name.startswith(prefix) and name not in feats_to_keep, df.columns)),
+            axis=1,
+            inplace=True
+        )

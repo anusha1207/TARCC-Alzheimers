@@ -24,11 +24,12 @@ This project installs and uses the following packages.
 - [Pandas](https://pypi.org/project/pandas/)
 - [Scikit Learn](https://pypi.org/project/scikit-learn/)
 - [Scipy Stats](https://pypi.org/project/scipy/)
+- [Seaborn](https://seaborn.pydata.org/)
 
 
 ## Folder Structure
 * config: This folder contains a file named requirements.txt which contains all the packages you need to install.
-* data: The data folder contains the csv file of our raw input (TARC_data.csv) 
+* data: The data folder contains the csv file of our raw input (TARCC_data.csv) 
 * exploration: This contains initial data exploration files.
 * preprocessing: This folder contains a preprocessing file which cleans our data's missing values and features.
 

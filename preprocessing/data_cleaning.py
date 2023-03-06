@@ -291,6 +291,65 @@ def clean_cognitive_tests(df: pd.DataFrame) -> None:
         inplace=True
     )
 
+def clean_exit(df: pd.DataFrame) -> None:
+    """
+    Eliminates the columns specifying method of exit for patients.
+    Also removes probable/possible AD features which are highly correlated with response
+    Inputs: 
+        pandas dataframe of clinical/biomarker data
+    Returns:
+        None, alters the inputted dataframe
+    """
+    unwanted_cols = []
+
+    for col in df.columns:
+        if col.startswith("E1"):
+            unwanted_cols.append(col)
+        if col.startswith("D1"):
+            if col in ['D1_PROBAD','D1_PROBADIF','D1_POSSAD','D1_POSSADIF', 'D1_WHODIDDX']:
+                unwanted_cols.append(col)
+    df.drop(unwanted_cols, axis=1, inplace=True)
+    
+def clean_D1(df: pd.DataFrame) -> None:
+    """
+    Eliminates the columns specifying diagnostic indicators for patients
+    Inputs: 
+        pandas dataframe of clinical/biomarker data
+    Returns:
+        None, alters the inputted dataframe
+    """
+    # list all columns starting with D1_ and end with IF (want to keep)
+    filter_col = [col for col in df if col.startswith('D1_') and col.endswith('IF')]
+    # list all columns starting with D1_ (don't want to keep all)
+    filter_col_delete = [col for col in df if col.startswith('D1_')]
+    # find difference between lists to show columns starting with D1_ and not ending in IF
+    final_delete = [col for col in filter_col_delete if col not in filter_col]
+    # dropping above columns
+    df.drop(final_delete, axis=1, inplace=True)
+
+def map_value_D1(value):
+    value_mappings = {0: 0, 1: 3, 2: 2, 3: 1}
+    if type(value) == int:
+        return value_mappings[value]
+    else: 
+        return value
+
+def sum_D1(df: pd.DataFrame):
+    """
+    Sums the diagnostic classifications for patients
+    NOTE: to be called after clean_D1
+    Inputs: 
+        pandas dataframe of clinical/biomarker data
+    Returns:
+        None, alters the inputted dataframe
+    """
+    cols = [col for col in df if col.startswith('D1_')]
+    # only operating on set of selected columns 
+    window = df[cols]
+    # mapping classifiers to reflect weights
+    window = window.applymap(map_value_D1)
+    # summing each patient row to create total risk factor
+    df['D1_total'] = window.sum(axis = 1)
 
 def get_cleaned_data() -> pd.DataFrame:
     """

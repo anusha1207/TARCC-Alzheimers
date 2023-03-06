@@ -27,6 +27,7 @@ This project installs and uses the following packages.
 
 
 ## Folder Structure
+* config: This folder contains a file named requirements.txt which contains all the packages you need to install.
 * data: The data folder contains the csv file of our raw input (TARC_data.csv) 
 * exploration: This contains initial data exploration files.
 * preprocessing: This folder contains a preprocessing file which cleans our data's missing values and features.

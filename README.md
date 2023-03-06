@@ -32,6 +32,7 @@ This project installs and uses the following packages.
 * data: The data folder contains the csv file of our raw input (TARCC_data.csv) 
 * exploration: This contains initial data exploration files.
 * preprocessing: This folder contains a preprocessing file which cleans our data's missing values and features.
+* main.ipynb: The main notebook for running functions located in other modules. This notebook serves as a demo of what our code can do.
 
 
 ## Installation and Usage Instructions
@@ -43,7 +44,6 @@ git clone https://github.com/RiceD2KLab/TARCC_F22.git
 ```
 pip install -r config/requirements.txt
 ```
-
 
 ## Data
 Our data is provided by the Texas Alzheimer's Research Care and Consortium (TARCC) and contains 14,655 observations of clinical visit data spread acorss 3,670 unique patients. There are 787 features (columns) which are either clinical (mental/physical disorders, measurements, prescriptions, cognitive assesments, living habits) or biomarkers (blood tests and protein levels) and can be formatted as numerical, categorical, binary, date, or unstructured. 

@@ -38,6 +38,8 @@ def filter_corr(df: pd.DataFrame):
 def mask_(elem):
     """
     masking correlations < |.5| to be nan
+    Input: elem, an arbitrary element of the dataframe
+    Output: either passes elem, or masks as np.nan if doesn't meet criteria
     """
     if elem < 0.5 and elem > -0.5 and type(elem) != str:
         return np.nan
@@ -60,7 +62,7 @@ def get_redundant_pairs(df):
             pairs_to_drop.add((cols[i], cols[j]))
     return pairs_to_drop
 
-def get_top_abs_correlations(df, n=5):
+def get_top_abs_correlations(df):
     """
     Returns the top correlations of a given correlation matrix
     Inputs: df, a correlation matrix

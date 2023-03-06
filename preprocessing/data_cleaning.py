@@ -328,6 +328,9 @@ def clean_D1(df: pd.DataFrame) -> None:
     df.drop(final_delete, axis=1, inplace=True)
 
 def map_value_D1(value):
+    """
+    Helper function to map indicators to a summable weight
+    """
     value_mappings = {0: 0, 1: 3, 2: 2, 3: 1}
     if type(value) == int:
         return value_mappings[value]
@@ -373,6 +376,9 @@ def get_cleaned_data() -> pd.DataFrame:
     clean_medicinal_history(df)
     clean_family_history(df)
     clean_cognitive_tests(df)
+    clean_exit(df)
+    clean_D1(df)
+    sum_D1(df)
 
     # Replace missing values with NaN.
     for key, value in NON_PROTEO_MISSING_VALUES.items():

@@ -17,7 +17,7 @@ def filter_corr(df: pd.DataFrame):
     """
     np.fill_diagonal(df.values, 0)
 
-    # Scan each row to see if it has any correlations over 0.75 or under -0.75. If not, add to list to delete
+    # Scan each row to see if it has any correlations over 1 or under -1. If not, add to list to delete
     for column in df:
         df[column].mask(df[column] >= 1.0, np.nan, inplace=True)
         df[column].mask(df[column] <= -1.0, np.nan, inplace=True)

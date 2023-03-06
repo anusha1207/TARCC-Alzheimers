@@ -94,6 +94,8 @@ def filter_top_features(df):
 def plot_correlations(df: pd.DataFrame):
     """
     Plots Correlation Matrix based on above filtrations and specifications
+    Input: df, correlation matrix reflecting pandas Dataframe
+    Output: None, produces plot
     """
     # calling above functions
     corr_values = df.corr()

@@ -361,7 +361,7 @@ def map_value_D1(value):
     value_mappings = {0: 0, 1: 3, 2: 2, 3: 1}
     if type(value) == int:
         return value_mappings[value]
-    else: 
+    else:
         return value
 
 
@@ -369,13 +369,13 @@ def sum_D1(df: pd.DataFrame):
     """
     Sums the diagnostic classifications for patients
     NOTE: to be called after clean_D1
-    Inputs: 
+    Inputs:
         pandas dataframe of clinical/biomarker data
     Returns:
         None, alters the inputted dataframe
     """
     cols = [col for col in df if col.startswith('D1_')]
-    # only operating on set of selected columns 
+    # only operating on set of selected columns
     window = df[cols]
     # mapping classifiers to reflect weights
     window = window.applymap(map_value_D1)

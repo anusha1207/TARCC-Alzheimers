@@ -41,7 +41,7 @@ def encode_medical_history(df: pd.DataFrame) -> pd.DataFrame:
     """
 
     return pd.get_dummies(df, dummy_na=True, columns=["A5_CVHATT","A5_CVAFIB","A5_CVANGIO","A5_CVBYPASS","A5_CVPACE",
-                                                      "A5_CVCHF","A5_CBSTROK","A5_CBTIA","A5_SEIZURES","A5_TRAUMBRF",
+                                                      "A5_CVCHF", "A5_CBTIA","A5_SEIZURES","A5_TRAUMBRF",
                                                       "A5_TRAUMEXT","A5_TRAUMCHR","A5_PD","A5_HYPERTEN","A5_HYPERCHO",
                                                       "A5_DIABETES","A5_B12DEF","A5_THYROID","A5_INCONTU","A5_INCONTF",
                                                       "A5_CANCER","A5_DEP2YRS","A5_ALCOHOL","A5_TOBAC30","A5_TOBAC100",
@@ -62,6 +62,7 @@ def encode_data(df: pd.DataFrame) -> pd.DataFrame:
 
     df = encode_demographics(df)
     df = encode_medical_history(df)
+    df = encode_patient_type(df)
 
     # Call all encode_* functions here.
 

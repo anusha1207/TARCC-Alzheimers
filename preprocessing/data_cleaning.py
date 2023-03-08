@@ -430,8 +430,6 @@ def get_cleaned_data() -> pd.DataFrame:
     # TODO: The following lines convert all features to numeric and remove all textual columns.
     #       This behavior should be deferred to each of the "clean_*()" functions.
     df = df.apply(pd.to_numeric, errors="ignore")  # TODO: This may be removed after cleaning each section.
-    # # Drop all text columns.
-    # df = df.drop(columns=df.select_dtypes("object"))
 
     # Clean each section of the dataset.
     clean_demographics(df)
@@ -443,6 +441,10 @@ def get_cleaned_data() -> pd.DataFrame:
     clean_D1(df)
     sum_D1(df)
     clean_extra_patient_info(df)
+
+    # TODO: Move this.
+    # # Drop all text columns.
+    df = df.drop(columns=df.select_dtypes("object"))
 
     # Replace missing values with NaN.
     # TODO: This is here for redundancy. Remove this after dataset has been cleaned.

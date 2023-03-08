@@ -485,3 +485,20 @@ def split_csv(original_df):
     new_df2.to_csv("Clinical Only Data.csv", index=False)
 
     return new_df1, new_df2
+
+def get_features_label(cleaned_df):
+    """
+    Takes in the cleaned df and outputs the features df and label df
+
+    Args:
+        cleaned_df: cleaned TARCC dataframe
+
+    Returns:
+            Two data frames:
+                label - labels of CN, MCI and AD for all the data
+                features - feature set
+    """
+
+    label_df = cleaned_df['P1_PT_TYPE']
+    features_df = cleaned_df.drop('P1_PT_TYPE', axis=1)
+    return label_df, features_df

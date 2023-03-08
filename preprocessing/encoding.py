@@ -35,6 +35,22 @@ def encode_medical_history(df: pd.DataFrame) -> pd.DataFrame:
                                                       "A5_CANCER","A5_DEP2YRS","A5_ALCOHOL","A5_TOBAC30","A5_TOBAC100",
                                                       "A5_PACKSPER","A5_PSYCDIS","A5_IBD"])
 
+def encode_D1(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Encodes the categorical variables of the input dataframe using dummy encoding. The dataframe must be cleaned before
+    calling this function.
+
+    Args:
+        df: The cleaned dataframe representing the TARCC dataset.
+
+    Returns:
+        A cleaned and encoded TARCC dataframe.
+    """
+    cols = []
+    for col in df.columns:
+        if col.startswith('D1_') and col.endswith('IF'):
+            cols.append(col)
+    return pd.get_dummies(df, dummy_na=True, columns=cols)
 
 def encode_data(df: pd.DataFrame) -> pd.DataFrame:
     """

@@ -253,6 +253,7 @@ def clean_medical_history(df: pd.DataFrame) -> None:
             "A5_CVOTHR",
             "A5_CVOTHRX",
             "A5_CBOTHR",
+            "A5_CHRON_OTHX",
             "A5_CBOTHRX",
             "A5_PDYR",
             "A5_PDOTHRYR",
@@ -275,6 +276,7 @@ def clean_medical_history(df: pd.DataFrame) -> None:
             "A5_TIA4YR",
             "A5_TIA5YR",
             "A5_TIA6YR",
+            "CCR_YES_NOTES"
         ],
         axis=1,
         inplace=True
@@ -498,7 +500,6 @@ def get_features_label(cleaned_df):
                 label - labels of CN, MCI and AD for all the data
                 features - feature set
     """
-
-    label_df = cleaned_df['P1_PT_TYPE']
-    features_df = cleaned_df.drop('P1_PT_TYPE', axis=1)
+    label_df = cleaned_df["P1_PT_TYPE"]
+    features_df = cleaned_df.drop("P1_PT_TYPE", axis=1)
     return label_df, features_df

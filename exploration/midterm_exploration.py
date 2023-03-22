@@ -1,6 +1,7 @@
 """
 Provides functions for creating plots for the midterm presentation/report.
 """
+from typing import Tuple
 
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -105,27 +106,32 @@ def plot_grouped_barplot(
     plt.show()
 
 
-def plot_proteomics_histograms(data: pd.DataFrame, feature: str) -> None:
+def plot_proteomics_histograms(
+        data: pd.DataFrame,
+        feature: str,
+        xlim: Tuple[int, int] = None,
+        title: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        png: str = None
+) -> None:
 
-    x = data[[feature, "P1_PT_TYPE"]]
-    x = x[~np.isnan(x[feature])]
-    x = x[x != 999999999]
+    subset = data[[feature, "P1_PT_TYPE"]]
+    subset = subset[~np.isnan(subset[feature])]
+    subset = subset[subset != 999999999]
 
-    print(np.isnan(x[feature]))
-    xlim = (np.percentile(x[feature], 10), np.percentile(x[feature], 90))
-    print(xlim)
-
-    alzheimers_x = x[x["P1_PT_TYPE"] == 1]
-    histplot = sns.histplot(x=alzheimers_x[feature])
-    histplot.set(xlim=xlim)
-    plt.show()
-
-    mci_x = x[x["P1_PT_TYPE"] == 4]
-    histplot = sns.histplot(x=mci_x[feature])
-    histplot.set(xlim=xlim)
-    plt.show()
-
-    control_x = x[x["P1_PT_TYPE"] == 2]
-    histplot = sns.histplot(x=control_x[feature])
-    histplot.set(xlim=xlim)
+    histplot = sns.histplot(
+        x=subset[feature],
+        multiple="fill",
+        hue=subset["P1_PT_TYPE"],
+        hue_order=[2, 4, 1],
+        palette="Set2"
+    )
+    plt.legend(["AD", "MCI", "Control"], reverse=True, fontsize=18)
+    histplot.set_xlim(xlim)
+    histplot.set_title(title, fontsize=18)
+    histplot.set_xlabel(xlabel, fontsize=14)
+    histplot.set_ylabel(ylabel, fontsize=14)
+    if png:
+        plt.savefig(f"{png}.png", dpi=1000)
     plt.show()

@@ -30,14 +30,11 @@ def clean_compliance_committee_review(df: pd.DataFrame) -> None:
         None
     """
 
-    df.drop(["CCR_YES_NOTES"], axis=1, inplace=True)
-
-    # Replace missing values with NaN.
-    missing_value_codes = {
-        "CCR_CL_IMPRESS_CODE": [10],
-    }
-    for feature_name in missing_value_codes:
-        df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
+    df.drop(
+        list(filter(lambda name: name.startswith("CCR"), df.columns)),
+        axis=1,
+        inplace=True
+    )
 
 
 def clean_demographics(df: pd.DataFrame) -> None:
@@ -370,7 +367,7 @@ def clean_cognitive_tests(df: pd.DataFrame) -> None:
         df[feature_name].replace(missing_value_codes[feature_name], np.nan, inplace=True)
 
 
-def clean_D1(df: pd.DataFrame) -> None:
+def clean_diagnoses(df: pd.DataFrame) -> None:
     """
     Eliminates the columns specifying diagnostic indicators for patients.
 
@@ -529,6 +526,9 @@ def get_cleaned_data() -> pd.DataFrame:
 
     df = pd.read_csv("data/TARCC_data.csv")
 
+    # Remove all patients labeled as "Other".
+    df = df[df["P1_PT_TYPE"] != 3]
+
     # Replace all empty strings with NaN, and convert all relevant columns to numeric (float).
     df = df.replace(r"^\s*$", np.nan, regex=True)
 
@@ -547,7 +547,7 @@ def get_cleaned_data() -> pd.DataFrame:
     clean_npi_questionnaire(df)
     clean_cognitive_tests(df)
     clean_exit(df)
-    clean_D1(df)
+    clean_diagnoses(df)
     sum_D1(df)
     clean_extra_patient_info(df)
     clean_other(df)

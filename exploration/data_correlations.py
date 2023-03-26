@@ -62,10 +62,11 @@ def get_redundant_pairs(df):
             pairs_to_drop.add((cols[i], cols[j]))
     return pairs_to_drop
 
-def get_top_abs_correlations(df):
+def get_top_abs_correlations(df, n):
     """
     Returns the top correlations of a given correlation matrix
     Inputs: df, a correlation matrix
+            n, top n features to be selected
     Outputs: top n features ranked by correlation values
     """
     au_corr = df.abs().unstack()

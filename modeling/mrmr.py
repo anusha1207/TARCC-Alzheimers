@@ -1,5 +1,5 @@
 import mrmr
-from matplotlib import pyplot as plt
+import mrmr
 import numpy as np
 import pandas as pd
 import seaborn as sns

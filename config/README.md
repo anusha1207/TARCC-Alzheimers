@@ -1,6 +1,6 @@
 # Texas Alzheimers' Research Care and Consortium: Team TARCC 'S23
 
-## Config
+## Table of Contents
 
 1. [Data Codes](#data-codes)
 2. [Requirements](#requirements)

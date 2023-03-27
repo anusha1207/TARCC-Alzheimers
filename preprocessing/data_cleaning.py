@@ -572,13 +572,14 @@ def split_csv(original_df):
 
     filtered_feats = list(filter(lambda name: any(name.startswith(prefix) for prefix in blood_feats), original_df.columns))
 
-    new_df1 = original_df[filtered_feats]
     filtered_feats.remove("PATID")
     filtered_feats.remove("P1_PT_TYPE")
-    new_df2 = original_df.drop(filtered_feats, axis=1)
 
-    new_df1.to_csv("Blood Only Data.csv", index=False)
-    new_df2.to_csv("Clinical Only Data.csv", index=False)
+    new_df2 = original_df.drop(filtered_feats, axis=1)
+    new_df1 = original_df.dropna(subset = ["RBM_TARC_PID"])
+
+    new_df1.to_csv("Blood Data.csv", index=False)
+    new_df2.to_csv("Clinical Data.csv", index=False)
 
     return new_df1, new_df2
 

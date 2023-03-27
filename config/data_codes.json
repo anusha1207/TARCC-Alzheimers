@@ -1,0 +1,333 @@
+{
+  "filtering": {
+    "MISC": {
+      "features": [],
+      "keep": true
+    },
+    "CCR": {
+      "features": [],
+      "keep": true
+    },
+    "A1": {
+      "features": [
+        "A1_BIRTHYR",
+        "A1_EVENTDATEX",
+        "A1_HANDEDNESS",
+        "A1_HISPANIC_TYPE",
+        "A1_HISPORX",
+        "A1_RACESEC",
+        "A1_RESIDENC"
+      ],
+      "keep": false
+    },
+    "A3": {
+      "features": [
+        "A3_PROP_PARENTS_DEM"
+      ],
+      "keep": true
+    },
+    "A4": {
+      "features": [
+        "A42_VEAS"
+      ],
+      "keep": true
+    },
+    "A5": {
+      "features": [
+        "A5_CVOTHR",
+        "A5_CVOTHRX",
+        "A5_CBOTHR",
+        "A5_CHRON_OTHX",
+        "A5_CBOTHRX",
+        "A5_PDYR",
+        "A5_PDOTHRYR",
+        "A5_NCOTHR",
+        "A5_NCOTHRX",
+        "A5_ABUSOTHR",
+        "A5_ABUSX",
+        "A5_PSYCDISX",
+        "A5_PDOTHR",
+        "A5_DEPOTHR",
+        "A5_STROK1YR",
+        "A5_STROK2YR",
+        "A5_STROK3YR",
+        "A5_STROK4YR",
+        "A5_STROK5YR",
+        "A5_STROK6YR",
+        "A5_TIA1YR",
+        "A5_TIA2YR",
+        "A5_TIA3YR",
+        "A5_TIA4YR",
+        "A5_TIA5YR",
+        "A5_TIA6YR"
+      ],
+      "keep": false
+    },
+    "APOE": {
+      "features": [
+        "APOE_GENOTYPE"
+      ],
+      "keep": true
+    },
+    "B5": {
+      "features": [
+        "B5_NPIQINFX",
+        "B5_DEL",
+        "B5_HALL",
+        "B5_AGIT",
+        "B5_DEPD",
+        "B5_ANX",
+        "B5_ELAT",
+        "B5_APA",
+        "B5_DISN",
+        "B5_IRR",
+        "B5_MOT",
+        "B5_NITE",
+        "B5_APP",
+        "B5_NPIQINFX"
+      ],
+      "keep": false
+    },
+    "C1": {
+      "features": [
+        "C1_WAIS3_DIGTOT",
+        "C1_WAISR_DIGTOT",
+        "C1_MMSE",
+        "C1_CDRSUM",
+        "C1_CDRGLOB",
+        "C1_SS_TRAILA",
+        "C1_SS_TRAILB",
+        "C1_CLOCK",
+        "C1_WMS3_LMEM1",
+        "C1_WMS3_LMEM2",
+        "C1_WMS3_VRI",
+        "C1_WMS3_VR2",
+        "C1_WMSR_LMEM1",
+        "C1_WMSR_LMEM2",
+        "C1_WMSR_VRI",
+        "C1_WMSR_VRII",
+        "C1_WMSR_DIGTOT",
+        "C1_GDS30"
+      ],
+      "keep": true
+    },
+    "D1": {
+      "features": [
+        "D1_ALCDEMIF",
+        "D1_BRNINJIF",
+        "D1_COGOTHIF",
+        "D1_CORTIF",
+        "D1_DEMUNIF",
+        "D1_DEPIF",
+        "D1_DLBIF",
+        "D1_DOWNSIF",
+        "D1_DYSILLIF",
+        "D1_FTDIF",
+        "D1_HUNTIF",
+        "D1_HYCEPHIF",
+        "D1_MEDSIF",
+        "D1_NEOPIF",
+        "D1_OTHPSYIF",
+        "D1_PARKIF",
+        "D1_POS_VASCIF",
+        "D1_PPAPHIF",
+        "D1_PRIONIF",
+        "D1_PSPIF",
+        "D1_STROKEIF",
+        "D1_VASCIF"
+      ],
+      "keep": true
+    },
+    "E1": {
+      "features": [],
+      "keep": true
+    },
+    "F1": {
+      "features": [
+        "F1_PSMSTOTSCR"
+      ],
+      "keep": true
+    },
+    "F2": {
+      "features": [
+        "F2_IADLTOTSCR"
+      ],
+      "keep": true
+    },
+    "I1": {
+      "features": [],
+      "keep": true
+    },
+    "P1": {
+      "features": [
+        "P1_PT_TYPE"
+      ],
+      "keep": true
+    },
+    "PROTEO": {
+      "features": [],
+      "keep": false
+    },
+    "X1": {
+      "features": [],
+      "keep": true
+    },
+    "X2": {
+      "features": [],
+      "keep": true
+    },
+    "RBM": {
+      "features": [],
+      "keep": false
+    },
+    "Q1": {
+      "features": [],
+      "keep": false
+    }
+  },
+  "missing_value_codes": {
+    "A1_HISPANIC": [9],
+    "A1_MARISTAT": [8, 9],
+    "A1_RACE": [50, 99],
+    "A5_CVHATT": [9],
+    "A5_CVAFIB": [9],
+    "A5_CVANGIO": [9],
+    "A5_CVBYPASS": [9],
+    "A5_CVPACE": [9],
+    "A5_CVCHF": [9],
+    "A5_CBSTROKE": [9],
+    "A5_CBTIA": [9],
+    "A5_SEIZURES": [9],
+    "A5_TRAUMBRF": [9],
+    "A5_TRAUMEXT": [9],
+    "A5_TRAUMCHR": [9],
+    "A5_PD": [9],
+    "A5_HYPERTEN": [9],
+    "A5_HYPERCHO": [9],
+    "A5_DIABETES": [9],
+    "A5_B12DEF": [9],
+    "A5_THYROID": [9],
+    "A5_INCONTU": [9],
+    "A5_INCONTF": [9],
+    "A5_CANCER": [9],
+    "A5_DEP2YRS": [9],
+    "A5_ALCOHOL": [9],
+    "A5_TOBAC30": [9],
+    "A5_TOBAC100": [9],
+    "A5_PACKSPER": [9],
+    "A5_PSYCDIS": [9],
+    "A5_IBD": [9],
+    "A5_ARTHRITIC": [9],
+    "A5_AUTOIMM": [9],
+    "A5_CHRON_OTH": [9],
+    "A5_QUITSMOK": [99],
+    "A5_TOBACLSTYR": [9],
+    "B1_VISION": [9],
+    "B1_VISCORR": [9],
+    "B1_VISWCORR": [9],
+    "B1_HEARING": [9],
+    "B1_HEARAID": [9],
+    "B1_HEARWAID": [9],
+    "C1_WAIS3_DIGTOT": [99],
+    "C1_WAISR_DIGTOT": [99],
+    "C1_MMSE": [99],
+    "C1_CLOCK": [999],
+    "C1_WMS3_LMEM1": [99],
+    "C1_WMS3_LMEM2": [99],
+    "C1_WMSR_LMEM1": [99],
+    "C1_WMSR_LMEM2": [99],
+    "C1_WMSR_VRI": [99],
+    "C1_WMSR_VRII": [99],
+    "C1_WMSR_DIGTOT": [99],
+    "C1_GDS30": [99],
+    "Q1_YKL_40": [-999, -888, -555, -333, -444],
+    "Q1_GFAP": [-999, -888, -555, -333, -444],
+    "Q1_NFL": [-999, -888, -555, -333, -444],
+    "Q1_Total_tau": [-999, -888, -555, -333, -444],
+    "Q1_UCHL1": [-999, -888, -555, -333, -444],
+    "Q1_CD14": [-999, -888, -555, -333, -444]
+  },
+  "encodings": [
+    "A1_HISPANIC",
+    "A1_MARISTAT",
+    "A1_RACE",
+    "A1_SEX",
+    "A3_PROP_PARENTS_DEM",
+    "A5_CVHATT",
+    "A5_CVAFIB",
+    "A5_CVANGIO",
+    "A5_CVBYPASS",
+    "A5_CVPACE",
+    "A5_CVCHF",
+    "A5_CBTIA",
+    "A5_SEIZURES",
+    "A5_TRAUMBRF",
+    "A5_TRAUMEXT",
+    "A5_TRAUMCHR",
+    "A5_PD",
+    "A5_HYPERTEN",
+    "A5_HYPERCHO",
+    "A5_DIABETES",
+    "A5_B12DEF",
+    "A5_THYROID",
+    "A5_INCONTU",
+    "A5_INCONTF",
+    "A5_CANCER",
+    "A5_DEP2YRS",
+    "A5_ALCOHOL",
+    "A5_TOBAC30",
+    "A5_TOBAC100",
+    "A5_PACKSPER",
+    "A5_PSYCDIS",
+    "A5_IBD",
+    "A5_ARTHRITIC",
+    "A5_AUTOIMM",
+    "A5_CBSTROKE",
+    "A5_CHRON_OTH",
+    "A5_TOBACLSTYR",
+    "APOE_GENOTYPE",
+    "B1_VISION",
+    "B1_VISCORR",
+    "B1_VISWCORR",
+    "B1_HEARING",
+    "B1_HEARAID",
+    "B1_HEARWAID",
+    "B5_DELSEV",
+    "B5_HALLSEV",
+    "B5_AGITSEV",
+    "B5_DEPDSEV",
+    "B5_ANXSEV",
+    "B5_ELATSEV",
+    "B5_APASEV",
+    "B5_DISNSEV",
+    "B5_IRRSEV",
+    "B5_MOTSEV",
+    "B5_NITESEV",
+    "B5_APPSEV",
+    "D1_ALCDEMIF",
+    "D1_BRNINJIF",
+    "D1_COGOTHIF",
+    "D1_CORTIF",
+    "D1_DEMUNIF",
+    "D1_DEPIF",
+    "D1_DLBIF",
+    "D1_DOWNSIF",
+    "D1_DYSILLIF",
+    "D1_FTDIF",
+    "D1_HUNTIF",
+    "D1_HYCEPHIF",
+    "D1_MEDSIF",
+    "D1_NEOPIF",
+    "D1_OTHPSYIF",
+    "D1_PARKIF",
+    "D1_POS_VASCIF",
+    "D1_PPAPHIF",
+    "D1_PRIONIF",
+    "D1_PSPIF",
+    "D1_STROKEIF",
+    "D1_VASCIF",
+    "RBM_Rule_Based_Medicine",
+    "RBM_Batch",
+    "Q1_Quanterix"
+  ]
+}

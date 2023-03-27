@@ -3,8 +3,8 @@
 ## Table of Contents
 
 1. [Data Correlations](#data_correlations.py)
-2. [Data Statistics](#Data Statistics)
-3. [Midterm Exploration](#Midterm Exploration)
+2. [Data Statistics](#data_statistics.py)
+3. [Midterm Exploration](#midterm_exploration.py)
 
 ## data_correlations.py
 This module has several functions for computing correlations between our features. The plot_correlations function is used to plot

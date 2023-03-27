@@ -1,23 +1,28 @@
 import mrmr
-import mrmr
-import numpy as np
 import pandas as pd
-import seaborn as sns
-from sklearn.datasets import make_classification
-import pandas as pd
-import numpy as np
-from sklearn.impute import KNNImputer
-from sklearn.inspection import permutation_importance
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.metrics import f1_score
+
 
 def perform_mrmr(X: pd.DataFrame, y: pd.Series, k: int, scr):
-    selected_features = mrmr.mrmr_classif(X=X, y=y, K=k, return_scores= scr)
+    """
+    Performs MRMR on the input data, keeping k features.
+
+    Args:
+        X: The data matrix
+        y: The label vector
+        k: The number of features to keep
+        scr: Whether to return scores
+
+    Returns:
+        The k selected features
+    """
+    selected_features = mrmr.mrmr_classif(X=X, y=y, K=k, return_scores=scr)
+    print(selected_features)
     return selected_features
 
-def test_elastic_net(df: pd.DataFrame):
+def test_mrmr_model(df: pd.DataFrame):
     """
     Runs an elastic-net model on the input dataframe, using "P1_PT_TYPE" as the label.
 
@@ -25,7 +30,7 @@ def test_elastic_net(df: pd.DataFrame):
         df: The cleaned and encoded TARCC dataset.
 
     Returns:
-
+        None
     """
     LABEL = 'P1_PT_TYPE'
     X = df.drop(LABEL, axis=1).values

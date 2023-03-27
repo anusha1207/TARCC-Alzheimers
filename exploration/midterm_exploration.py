@@ -115,6 +115,20 @@ def plot_proteomics_histograms(
         ylabel: str = None,
         png: str = None
 ) -> None:
+    """
+    Plots a histogram of proteomics data by diagnosis group.
+    Args:
+        data:
+        feature:
+        xlim:
+        title:
+        xlabel:
+        ylabel:
+        png:
+
+    Returns:
+
+    """
 
     subset = data[[feature, "P1_PT_TYPE"]]
     subset = subset[~np.isnan(subset[feature])]

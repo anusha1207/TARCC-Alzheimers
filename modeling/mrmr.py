@@ -17,7 +17,7 @@ def perform_mrmr(X: pd.DataFrame, y: pd.Series, k: int, scr):
     selected_features = mrmr.mrmr_classif(X=X, y=y, K=k, return_scores= scr)
     return selected_features
 
-def test_elastic_net(df: pd.DataFrame):
+def test_mrmr_model(df: pd.DataFrame):
     """
     Runs an elastic-net model on the input dataframe, using "P1_PT_TYPE" as the label.
 

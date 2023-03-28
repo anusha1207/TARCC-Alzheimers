@@ -57,7 +57,7 @@ Data Wrangling --> Data Exploration --> Modeling --> Validation
 4. Evaluation: For now, we plan to use a simple train-validation-test split, k-folds cross-validation, and the use of an external dataset for testing. 
 
 
-## PREPROCESSING <br />
+## Preprocessing <br />
 Our preprocessing stage merged data by patient visits to minimze the number of missing values per row (for example, blood tests are only taken on the first visit for many patients). 
 <br />
 

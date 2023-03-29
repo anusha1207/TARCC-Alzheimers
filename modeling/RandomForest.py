@@ -6,22 +6,25 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, f1_score
+# import sys
+# sys.path.insert(0, "\xabbo\Desktop\TARCC\TARCC_F22\preprocessing")
+from preprocessing.data_cleaning import get_cleaned_data
 
 
-LABEL = "P1_PT_TYPE"
 
 
 def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
     """
-    Runs an elastic-net model on the input dataframe, using "P1_PT_TYPE" as the label.
+    Runs a random forest model on the input dataframe, using "P1_PT_TYPE" as the label.
 
     Args:
         df: The cleaned and encoded TARCC dataset.
-        num_iters: The number of elastic-net iterations to perform.
+        num_iters: The number of random forest iterations to perform.
 
     Returns:
 
     """
+    LABEL = "P1_PT_TYPE"
     # dropping patient ID columns. Removing rows that reflect "other" in response variable
     data = df[df[LABEL] != 3]
     if "PATID" in df.columns:
@@ -70,3 +73,9 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
         confusion_matrices.append(confusion_matrix(y_test, predictions))
 
     return micro_f1_scores, feature_importances, confusion_matrices
+
+# df = encode_data(get_cleaned_data())
+# df = df[df["P1_PT_TYPE"] != 3]
+# blood, clinical = split_csv(df)
+
+# micro_f1_scores, feature_importances, confusion_matrices = run_random_forest(clinical)

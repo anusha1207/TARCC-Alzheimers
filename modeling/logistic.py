@@ -20,7 +20,12 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
         num_iters: The number of elastic-net iterations to perform.
 
     Returns:
-
+        A tuple containing the following:
+            best_cs: the best C values in predicting AD in each iteration.
+            best_l1_ratios: the best l1 ratios in predicting AD in each iteration.
+            micro_f1_scores: the micro-f1 score of each iteration
+            feature_importances: the sklearn feature_importances (means) of each iteration
+            confusion_matrices: the confusion matrix of each iteration
     """
 
     data = df[df[LABEL] != 3]

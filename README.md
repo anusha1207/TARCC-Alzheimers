@@ -8,11 +8,11 @@
 4. [Installation and Usage Instructions](#installation-and-usage-instructions)
 5. [Data](#data)
 6. [Data Science pipeline](#data-science-pipeline)
-- [Preprocessing](#data-science-pipeline)
-- [Feature Selection](#data-science-pipeline)
-- [Modeling](#data-science-pipeline)
+7. [Preprocessing](#data-science-pipeline)
+8. [Feature Selection](#data-science-pipeline)
+9. [Modeling](#data-science-pipeline)
 - [Results and Interpretation](#data-science-pipeline)
-7. [Contributors](#contributors)
+10. [Contributors](#contributors)
 
 
 ## About the Project
@@ -57,10 +57,15 @@ Data Wrangling --> Data Exploration --> Modeling --> Validation
 4. Evaluation: For now, we plan to use a simple train-validation-test split, k-folds cross-validation, and the use of an external dataset for testing. 
 
 
-### PREPROCESSING <br />
+## Preprocessing <br />
 Our preprocessing stage merged data by patient visits to minimze the number of missing values per row (for example, blood tests are only taken on the first visit for many patients). 
 <br />
 
+## Feature Selection
+Our team conducted feature selection using a model agnostic approach: maximum relevancy, minimal redundancy (MRMR). MRMR is an iterative approach that selects the best features based on their highest correlation to the response variable (relevance), and lowest correlation between features (redundancy).
+
+## Modeling
+Our modeling stage is currently utilizing a multiclass logistic regression for prediction of disease class. We will next be exploring a XGBoost Random Forest model to improve accuracy and interpretation.
 
 ## Contributors
 **Lee, Michelle** <br />

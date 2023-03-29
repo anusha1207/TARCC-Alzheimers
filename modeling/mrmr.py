@@ -28,12 +28,11 @@ def plot_accuracy_with_features(X: pd.DataFrame, y: pd.Series):
     """
     features, score, _ = perform_mrmr(X, y, X.shape[1], True)
     score = score.sort_values(ascending=False)
-    score = score.reset_index()
 
     cdf = 0
     scores = []
-    for i in range(len(features)):
-        cdf += score[features[i]]
+    for feature in features:
+        cdf += score[feature]
         scores.append(cdf)
 
     plt.plot(range(len(features)), scores)

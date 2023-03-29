@@ -93,8 +93,6 @@
         "C1_WAIS3_DIGTOT",
         "C1_WAISR_DIGTOT",
         "C1_MMSE",
-        "C1_CDRSUM",
-        "C1_CDRGLOB",
         "C1_SS_TRAILA",
         "C1_SS_TRAILB",
         "C1_CLOCK",

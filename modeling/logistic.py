@@ -1,3 +1,9 @@
+"""
+Defines functions for running and evaluating logistic net models with the elastic net penalty.
+"""
+
+import pickle as pk
+
 import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
@@ -11,7 +17,7 @@ from sklearn.metrics import confusion_matrix, f1_score
 LABEL = "P1_PT_TYPE"
 
 
-def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
+def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None):
     """
     Runs an elastic-net model on the input dataframe, using "P1_PT_TYPE" as the label.
 
@@ -28,14 +34,17 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
             confusion_matrices: the confusion matrix of each iteration
     """
 
-    data = df[df[LABEL] != 3]
+    data = df
     if "PATID" in df.columns:
         data = data.drop("PATID", axis=1)
     if "RBM_TARC_PID" in df.columns:
         data = data.drop("RBM_TARC_PID", axis=1)
+    if "STUDYID" in df.columns:
+        data = data.drop("STUDYID", axis=1)
+    if "VISIT" in df.columns:
+        data = data.drop("VISIT", axis=1)
 
     features = data.drop(LABEL, axis=1).columns
-
     X = data.drop(LABEL, axis=1).values
     y = data[LABEL]
 
@@ -45,14 +54,15 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    best_cs = np.zeros(num_iters)
-    best_l1_ratios = np.zeros(num_iters)
-    micro_f1_scores = np.zeros(num_iters)
-    feature_importances = []
-    confusion_matrices = []
+    training_data = []
+    testing_data = []
+    models = []
 
     for i in range(num_iters):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+        training_data.append((X_train, y_train))
+        testing_data.append((X_test, y_test))
 
         logistic_regression_model = LogisticRegressionCV(
             penalty="elasticnet",
@@ -61,15 +71,73 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
             solver="saga",
             n_jobs=-1
         )
+
         logistic_regression_model.fit(X_train, y_train)
+
+        # predictions = logistic_regression_model.predict(X_test)
+        #
+        # best_cs[i] = logistic_regression_model.C_[0]
+        # best_l1_ratios[i] = logistic_regression_model.l1_ratio_[0]
+        # micro_f1_scores[i] = f1_score(y_test, predictions, average="micro")
+        #
+        # # Feature importance
+        # r = permutation_importance(
+        #     logistic_regression_model, X_test, y_test,
+        #     scoring="f1_micro",
+        #     n_repeats=10,
+        #     random_state=0
+        # )
+        # importance_indices = np.argsort(r["importances_mean"])[::-1]
+        # feature_importances.append(features[importance_indices])
+        #
+        # confusion_matrices.append(confusion_matrix(y_test, predictions))
+
+        models.append(logistic_regression_model)
+
+    if pickle:
+        with open(f"{pickle}.pickle", "wb") as handle:
+            pk.dump(
+                {
+                    "features": features,
+                    "models": models,
+                    "training_data": training_data,
+                    "testing_data": testing_data
+                },
+                handle,
+                protocol=pk.HIGHEST_PROTOCOL
+            )
+
+    return {
+        "features": features,
+        "models": models,
+        "training_data": training_data,
+        "testing_data": testing_data
+    }
+
+
+def evaluate_results(pickle: str):
+
+    with open(f"{pickle}.pickle", "rb") as handle:
+        data = pk.load(handle)
+        features = data["features"]
+        models = data["models"]
+        testing_data = data["testing_data"]
+
+    micro_f1_scores = []
+    confusions = []
+
+    for i in range(len(models)):
+
+        logistic_regression_model = models[i]
+        X_test, y_test = testing_data[i]
 
         predictions = logistic_regression_model.predict(X_test)
 
-        best_cs[i] = logistic_regression_model.C_[0]
-        best_l1_ratios[i] = logistic_regression_model.l1_ratio_[0]
-        micro_f1_scores[i] = f1_score(y_test, predictions, average="micro")
+        best_C = logistic_regression_model.C_[0]
+        best_l1_ratio = logistic_regression_model.l1_ratio_[0]
+        micro_f1_score = f1_score(y_test, predictions, average="micro")
+        micro_f1_scores.append(micro_f1_score)
 
-        # Feature importance
         r = permutation_importance(
             logistic_regression_model, X_test, y_test,
             scoring="f1_micro",
@@ -77,8 +145,18 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1):
             random_state=0
         )
         importance_indices = np.argsort(r["importances_mean"])[::-1]
-        feature_importances.append(features[importance_indices])
+        sorted_important_features = features[importance_indices]
 
-        confusion_matrices.append(confusion_matrix(y_test, predictions))
+        confusion = confusion_matrix(y_test, predictions)
+        confusions.append(confusion)
 
-    return best_cs, best_l1_ratios, micro_f1_scores, feature_importances, confusion_matrices
+        print(f"Iteration {i}")
+        print(f"Best C: {best_C}")
+        print(f"Best l1 ratio: {best_l1_ratio}")
+        print(f"Micro-F1 score: {micro_f1_score}")
+        print(f"Feature importances: {sorted_important_features}")
+        print(f"Confusion matrix:\n{confusion}")
+        print()
+
+    print(f"Average micro-F1 score: {sum(micro_f1_scores) / len(micro_f1_scores)}")
+    print(f"Average confusion matrix:\n{sum(confusions) / len(confusions)}")

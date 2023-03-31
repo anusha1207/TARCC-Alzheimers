@@ -2,6 +2,9 @@ import mrmr
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from utils.utils import remove_bookkeeping_features
+
+
 def perform_mrmr(X: pd.DataFrame, y: pd.Series, k: int, scr):
     """
     Performs MRMR on the input data, keeping k features.
@@ -15,8 +18,13 @@ def perform_mrmr(X: pd.DataFrame, y: pd.Series, k: int, scr):
     Returns:
         The k selected features
     """
+
+    # Remove bookkeeping information before feature selection.
+    X = remove_bookkeeping_features(X)
+
     selected_features = mrmr.mrmr_classif(X=X, y=y, K=k, return_scores=scr)
     return selected_features
+
 
 def plot_accuracy_with_features(X: pd.DataFrame, y: pd.Series):
     """

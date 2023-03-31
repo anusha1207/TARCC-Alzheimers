@@ -1,8 +1,8 @@
 """
 Defines functions for running and evaluating logistic net models with the elastic net penalty.
 """
-
 import pickle as pk
+from typing import Any
 
 import pandas as pd
 import numpy as np
@@ -13,56 +13,53 @@ from sklearn.linear_model import LogisticRegressionCV
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, f1_score
 
+from utils.utils import remove_bookkeeping_features
 
 LABEL = "P1_PT_TYPE"
 
 
-def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None):
+def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> dict[str, Any]:
     """
-    Runs an elastic-net model on the input dataframe, using "P1_PT_TYPE" as the label.
+    Runs an elastic net model for num_iters train-test splits on the input dataframe, using "P1_PT_TYPE" as the label.
+    Output the results to a pickle file if the pickle option is provided.
 
     Args:
         df: The cleaned and encoded TARCC dataset.
         num_iters: The number of elastic-net iterations to perform.
+        pickle: The name of the pickle file to cache the results in.
 
-    Returns:
-        A tuple containing the following:
-            best_cs: the best C values in predicting AD in each iteration.
-            best_l1_ratios: the best l1 ratios in predicting AD in each iteration.
-            micro_f1_scores: the micro-f1 score of each iteration
-            feature_importances: the sklearn feature_importances (means) of each iteration
-            confusion_matrices: the confusion matrix of each iteration
+    Returns: A dictionary of model results with the following keys and values:
+        - features: A list of feature used in the elastic net model.
+        - models: A list containing the LogisticRegressionCV object after each iteration.
+        - training_data: A list of tuples, where each tuple is an (X, y) pair of training data.
+        - testing_data: A list of tuples, where each tuple is an (X, y) pair of testing data.
     """
 
-    data = df
-    if "PATID" in df.columns:
-        data = data.drop("PATID", axis=1)
-    if "RBM_TARC_PID" in df.columns:
-        data = data.drop("RBM_TARC_PID", axis=1)
-    if "STUDYID" in df.columns:
-        data = data.drop("STUDYID", axis=1)
-    if "VISIT" in df.columns:
-        data = data.drop("VISIT", axis=1)
+    # Remove bookkeeping information before modeling.
+    df = remove_bookkeeping_features(df)
 
-    features = data.drop(LABEL, axis=1).columns
-    X = data.drop(LABEL, axis=1).values
-    y = data[LABEL]
+    # Obtain the features, the data matrix, and the label vector.
+    features = df.drop(LABEL, axis=1).columns
+    X = df.drop(LABEL, axis=1).values
+    y = df[LABEL]
 
+    # Impute the data using KNN imputing.
     imputer = KNNImputer(keep_empty_features=True)
     X = imputer.fit_transform(X)
 
+    # Scale the data.
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
+    # Keep track of the models, the training data, and the testing data of each iteration.
+    models = []
     training_data = []
     testing_data = []
-    models = []
 
+    # Run the elastic net model multiple times.
     for i in range(num_iters):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        training_data.append((X_train, y_train))
-        testing_data.append((X_test, y_test))
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
         logistic_regression_model = LogisticRegressionCV(
             penalty="elasticnet",
@@ -71,51 +68,41 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None):
             solver="saga",
             n_jobs=-1
         )
-
         logistic_regression_model.fit(X_train, y_train)
 
-        # predictions = logistic_regression_model.predict(X_test)
-        #
-        # best_cs[i] = logistic_regression_model.C_[0]
-        # best_l1_ratios[i] = logistic_regression_model.l1_ratio_[0]
-        # micro_f1_scores[i] = f1_score(y_test, predictions, average="micro")
-        #
-        # # Feature importance
-        # r = permutation_importance(
-        #     logistic_regression_model, X_test, y_test,
-        #     scoring="f1_micro",
-        #     n_repeats=10,
-        #     random_state=0
-        # )
-        # importance_indices = np.argsort(r["importances_mean"])[::-1]
-        # feature_importances.append(features[importance_indices])
-        #
-        # confusion_matrices.append(confusion_matrix(y_test, predictions))
-
         models.append(logistic_regression_model)
+        training_data.append((X_train, y_train))
+        testing_data.append((X_test, y_test))
 
-    if pickle:
-        with open(f"{pickle}.pickle", "wb") as handle:
-            pk.dump(
-                {
-                    "features": features,
-                    "models": models,
-                    "training_data": training_data,
-                    "testing_data": testing_data
-                },
-                handle,
-                protocol=pk.HIGHEST_PROTOCOL
-            )
-
-    return {
+    output = {
         "features": features,
         "models": models,
         "training_data": training_data,
         "testing_data": testing_data
     }
 
+    # Cache the return value if the pickle option has been provided.
+    if pickle:
+        with open(f"{pickle}.pickle", "wb") as handle:
+            pk.dump(output, handle, protocol=pk.HIGHEST_PROTOCOL)
 
-def evaluate_results(pickle: str):
+    return output
+
+
+def evaluate_results(pickle: str) -> None:
+    """
+    Evaluates the results of the logistic regression models stored in the input pickle file. For each train-test split,
+    this model prints the optimal hyperparameters, the micro-F1 score, the feature importances, and the confusion
+    matrix. After all iterations, this function prints the mean micro-F1 score and the mean confusion matrix.
+
+    Args:
+        pickle: The name of the pickle file (without the ".pickle" extension) which stores the output of the logistic
+        regression model to evaluate. The object stored in this file should be a dictionary returned by the
+        run_elastic_net function.
+
+    Returns:
+        None
+    """
 
     with open(f"{pickle}.pickle", "rb") as handle:
         data = pk.load(handle)

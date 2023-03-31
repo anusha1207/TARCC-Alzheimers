@@ -55,6 +55,7 @@ def sum_D1(df: pd.DataFrame):
 def get_cleaned_data() -> pd.DataFrame:
     """
     Reads the CSV file and returns the cleaned dataframe.
+
     Returns:
         The cleaned dataframe representing the TARCC data.
     """
@@ -139,16 +140,19 @@ def get_cleaned_data() -> pd.DataFrame:
     return df
 
 
-def split_csv(original_df):
+def split_csv(original_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    Takes in the original dataset and creates two new Data Frames, one with only clinical data
-    and the other with only blood data.
+    Takes in the original dataset and creates three new data frames: one for combined blood and clinical data, one for
+    blood data only, and one for clinical data only.
 
     Args:
-        original_df: The original dataset
+        original_df: The cleaned and encoded TARCC dataset.
 
     Returns:
-        Two new data frames that contain only one type of data (either Blood or Clinical).
+        Three new data frames formatted as follows:
+        combined - contains blood and clinical features, but only patients who have drawn blood.
+        blood_only - contains only blood features and only patients who have drawn blood.
+        clinical_only - contains only clinical features and all patients.
     """
 
     blood_feats = ["APOE", "PROTEO", "RBM", "Q1", "P1", "PATID"]
@@ -158,13 +162,18 @@ def split_csv(original_df):
     filtered_feats.remove("PATID")
     filtered_feats.remove("P1_PT_TYPE")
 
-    new_df2 = original_df.drop(filtered_feats, axis=1)
-    new_df1 = original_df.dropna(subset = ["RBM_TARC_PID"])
+    combined = original_df.dropna(subset=["RBM_TARC_PID"])
+    combined = combined[combined["P1_PT_TYPE"] != 4]
 
-    new_df1.to_csv("Blood Data.csv", index=False)
-    new_df2.to_csv("Clinical Data.csv", index=False)
+    blood_only = original_df.dropna(subset=["RBM_TARC_PID"])[["PATID", "P1_PT_TYPE"] + filtered_feats]
+    blood_only = blood_only[blood_only["P1_PT_TYPE"] != 4]
 
-    return new_df1, new_df2
+    clinical_only = original_df.drop(filtered_feats, axis=1)
+
+    blood_only.to_csv("Blood Data.csv", index=False)
+    clinical_only.to_csv("Clinical Data.csv", index=False)
+
+    return combined, blood_only, clinical_only
 
 
 def get_features_label(cleaned_df):

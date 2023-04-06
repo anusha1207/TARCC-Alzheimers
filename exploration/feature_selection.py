@@ -12,6 +12,7 @@ from exploration.midterm_exploration import plot_feature_against_diagnosis
 
 from modeling.mrmr import plot_accuracy_with_features, perform_mrmr
 from modeling.logistic import run_elastic_net, evaluate_results
+import numpy as np
 
 
 def plot_mrmr_features(scores):
@@ -24,7 +25,7 @@ def plot_mrmr_features(scores):
     plt.show()
 
 
-def plot_rf_features(result):
+def plot_rf_features(result, features):
     top_10_idx = np.argsort(result.importances_mean)[::-1][:10]
     top_10_features = features[top_10_idx]
     top_10_scores = result.importances_mean[top_10_idx]

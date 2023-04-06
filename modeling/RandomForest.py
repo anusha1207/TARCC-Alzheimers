@@ -75,9 +75,8 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
 
         confusion_matrices.append(confusion_matrix(y_test, predictions))
 
-    return micro_f1_scores, feature_importances, confusion_matrices, r
+    return micro_f1_scores, feature_importances, confusion_matrices, r, features
 
 df = encode_data(get_cleaned_data())
 combined, blood, clinical = split_csv(df)
 
-micro_f1_scores, feature_importances, confusion_matrices, r = run_random_forest(combined)

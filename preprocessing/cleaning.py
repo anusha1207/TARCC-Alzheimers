@@ -61,7 +61,7 @@ def get_cleaned_data() -> pd.DataFrame:
         The cleaned dataframe representing the TARCC data.
     """
 
-    df = pd.read_csv("../data/TARCC_data.csv")
+    df = pd.read_csv("data/TARCC_data.csv")
 
     # Remove all patients labeled as "Other".
     df = df[df["P1_PT_TYPE"] != 3]
@@ -110,7 +110,7 @@ def get_cleaned_data() -> pd.DataFrame:
     # Drop any unnecessary features without a prefix.
     df.drop(["PID", "GWAS"], axis=1, inplace=True)
 
-    with open("../config/data_codes.json") as data_codes:
+    with open("config/data_codes.json") as data_codes:
 
         json_object = json.load(data_codes)
 

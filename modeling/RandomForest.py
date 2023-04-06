@@ -6,12 +6,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, f1_score
+import matplotlib.pyplot as plt
+
 # import sys
 # sys.path.insert(0, "\xabbo\Desktop\TARCC\TARCC_F22\preprocessing")
-from preprocessing.data_cleaning import get_cleaned_data
-
-
-
+from preprocessing.cleaning import get_cleaned_data
+from preprocessing.encoding import encode_data
+from utils.utils import get_features_label, split_csv
 
 def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
     """
@@ -38,7 +39,7 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
     y = data[LABEL]
 
     # KNN Imputation to 
-    imputer = KNNImputer(keep_empty_features=True)
+    imputer = KNNImputer()
     X = imputer.fit_transform(X)
 
     scaler = StandardScaler()
@@ -68,14 +69,30 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
             random_state=0
         )
         importance_indices = np.argsort(r["importances_mean"])[::-1]
+
+        top_10_idx = np.argsort(r.importances_mean)[::-1][:10]
+        top_10_features = features[top_10_idx]
+        top_10_scores = r.importances_mean[top_10_idx]
+
+        # Print the top 10 features and their scores
+        print("Top 10 features by permutation importance:")
+        for feature, score in zip(top_10_features, top_10_scores):
+            print(f"{feature}: {score}")
+
+        plt.bar(top_10_features, top_10_scores)
+        plt.xticks(rotation=90)
+        plt.xlabel("Feature")
+        plt.ylabel("Permutation importance score")
+        plt.title("Top 10 features by permutation importance")
+        plt.show()
+
         feature_importances.append(features[importance_indices])
 
         confusion_matrices.append(confusion_matrix(y_test, predictions))
 
     return micro_f1_scores, feature_importances, confusion_matrices
 
-# df = encode_data(get_cleaned_data())
-# df = df[df["P1_PT_TYPE"] != 3]
-# blood, clinical = split_csv(df)
+df = encode_data(get_cleaned_data())
+combined, blood, clinical = split_csv(df)
 
-# micro_f1_scores, feature_importances, confusion_matrices = run_random_forest(clinical)
+micro_f1_scores, feature_importances, confusion_matrices = run_random_forest(combined)

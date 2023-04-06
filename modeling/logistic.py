@@ -2,7 +2,7 @@
 Defines functions for running and evaluating logistic net models with the elastic net penalty.
 """
 import pickle as pk
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 import numpy as np
@@ -18,7 +18,7 @@ from utils.utils import remove_bookkeeping_features
 LABEL = "P1_PT_TYPE"
 
 
-def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> dict[str, Any]:
+def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> Dict[str, Any]:
     """
     Runs an elastic net model for num_iters train-test splits on the input dataframe, using "P1_PT_TYPE" as the label.
     Output the results to a pickle file if the pickle option is provided.

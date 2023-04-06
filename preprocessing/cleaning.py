@@ -2,12 +2,13 @@
 Reads the CSV file and cleans the dataframe.
 """
 import json
+from typing import List
 
 import numpy as np
 import pandas as pd
 
 
-def drop_features(df: pd.DataFrame, features_to_drop: list[str]) -> None:
+def drop_features(df: pd.DataFrame, features_to_drop: List[str]):
     """
     Drops the given features from the input dataframe. This function modifies the data frame in place instead of
     producing a new one.
@@ -60,7 +61,7 @@ def get_cleaned_data() -> pd.DataFrame:
         The cleaned dataframe representing the TARCC data.
     """
 
-    df = pd.read_csv("data/TARCC_data.csv")
+    df = pd.read_csv("../data/TARCC_data.csv")
 
     # Remove all patients labeled as "Other".
     df = df[df["P1_PT_TYPE"] != 3]
@@ -109,7 +110,7 @@ def get_cleaned_data() -> pd.DataFrame:
     # Drop any unnecessary features without a prefix.
     df.drop(["PID", "GWAS"], axis=1, inplace=True)
 
-    with open("config/data_codes.json") as data_codes:
+    with open("../config/data_codes.json") as data_codes:
 
         json_object = json.load(data_codes)
 

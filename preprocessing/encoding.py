@@ -19,6 +19,6 @@ def encode_data(df: pd.DataFrame) -> pd.DataFrame:
         A cleaned and encoded TARCC dataframe.
     """
 
-    with open("config/data_codes.json") as data_codes:
+    with open("../config/data_codes.json") as data_codes:
         encodings = json.load(data_codes)["encodings"]
         return pd.get_dummies(df, dummy_na=True, columns=encodings, drop_first=True)

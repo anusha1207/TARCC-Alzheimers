@@ -70,29 +70,14 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1):
         )
         importance_indices = np.argsort(r["importances_mean"])[::-1]
 
-        top_10_idx = np.argsort(r.importances_mean)[::-1][:10]
-        top_10_features = features[top_10_idx]
-        top_10_scores = r.importances_mean[top_10_idx]
-
-        # Print the top 10 features and their scores
-        print("Top 10 features by permutation importance:")
-        for feature, score in zip(top_10_features, top_10_scores):
-            print(f"{feature}: {score}")
-
-        plt.bar(top_10_features, top_10_scores)
-        plt.xticks(rotation=90)
-        plt.xlabel("Feature")
-        plt.ylabel("Permutation importance score")
-        plt.title("Top 10 features by permutation importance")
-        plt.show()
 
         feature_importances.append(features[importance_indices])
 
         confusion_matrices.append(confusion_matrix(y_test, predictions))
 
-    return micro_f1_scores, feature_importances, confusion_matrices
+    return micro_f1_scores, feature_importances, confusion_matrices, r
 
 df = encode_data(get_cleaned_data())
 combined, blood, clinical = split_csv(df)
 
-micro_f1_scores, feature_importances, confusion_matrices = run_random_forest(combined)
+micro_f1_scores, feature_importances, confusion_matrices, r = run_random_forest(combined)

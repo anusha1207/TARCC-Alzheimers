@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, f1_score
 # import sys
 # sys.path.insert(0, "\xabbo\Desktop\TARCC\TARCC_F22\preprocessing")
-from preprocessing.data_cleaning import get_cleaned_data
+from preprocessing.cleaning import get_cleaned_data
 
 
 

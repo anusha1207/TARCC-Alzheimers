@@ -42,6 +42,10 @@ def plot_rf_features(result, features):
     top_10_scores = result.importances_mean[top_10_idx]
     top_10_std = result.importances_std[top_10_idx]
 
+    # Print the top 10 features and their scores
+    print("Standard deviation of the top 10 features by permutation importance:")
+    for feature, score in zip(top_10_features, top_10_std):
+        print(f"{feature}: {score}")
 
 
     # Print the top 10 features and their scores
@@ -55,10 +59,6 @@ def plot_rf_features(result, features):
     plt.xlabel("Feature")
     plt.ylabel("Permutation importance score")
     plt.title("Top 10 features by permutation importance")
-    plt.show()
-
-    plt.boxplot(top_10_features, top_10_std)
-    plt.xticks(rotation = 90)
     plt.show()
 
 def plot_rf_features_scaled(result, features):
@@ -66,9 +66,8 @@ def plot_rf_features_scaled(result, features):
     top_10_features = features[top_10_idx]
     top_10_scores = result.importances_mean[top_10_idx]
     max_score = max(top_10_scores)
-    top_10_scores = top_10_scores.div(max_score)
-    top_10_std = result.importances_std[top_10_idx]
-
+    top_10_scores = np.divide(top_10_scores, max_score)
+    # top_10_std = result.importances_std[top_10_idx]
 
 
     # Print the top 10 features and their scores
@@ -84,6 +83,3 @@ def plot_rf_features_scaled(result, features):
     plt.title("Top 10 features by permutation importance")
     plt.show()
 
-    plt.boxplot(top_10_features, top_10_std)
-    plt.xticks(rotation = 90)
-    plt.show()

@@ -1,5 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.patches as mpatches
+import seaborn as sns
 
 from utils.utils import get_features_label, split_csv
 
@@ -81,5 +84,53 @@ def plot_rf_features_scaled(result, features):
     plt.xlabel("Feature")
     plt.ylabel("Permutation importance score")
     plt.title("Top 10 features by permutation importance")
+    plt.show()
+
+def plot_mrmr_and_rf(scores, result, features):
+    scores = scores.sort_values(ascending=False)
+    scores = scores.head(10)
+    max_score = max(scores)
+    scores = scores.div(max_score)
+
+    top_10_idx = np.argsort(result.importances_mean)[::-1][:10]
+    top_10_features = features[top_10_idx]
+    top_10_scores = result.importances_mean[top_10_idx]
+    max_score = max(top_10_scores)
+    top_10_scores = np.divide(top_10_scores, max_score)
+
+    # Find the non-overlapping features
+    non_overlap_mrmr = scores.index.difference(top_10_features)
+    non_overlap_rf = np.setdiff1d(top_10_features, scores.index)
+    non_overlap_mrmr = scores[non_overlap_mrmr].sort_values(ascending=False).index
+
+    # Create the first plot for non-overlapping features
+    sns.set(style="whitegrid")
+    fig, ax = plt.subplots()
+    width = 0.4
+    colors = {'MRMR': 'blue', 'Random Forest': 'orange'}
+    ax.bar(non_overlap_mrmr, scores[non_overlap_mrmr], width, color=colors['MRMR'])
+    ax.bar(non_overlap_rf, top_10_scores[np.in1d(top_10_features, non_overlap_rf)], width, color=colors['Random Forest'])
+    ax.set_xlabel('Features')
+    ax.set_ylabel('Accuracy Scores')
+    ax.set_title('Non-overlapping Features')
+    ax.legend(['MRMR', 'Random Forest'])
+    ax.tick_params(axis='x', rotation=90)
+
+    # Find the overlapping features
+    overlap = scores.index.intersection(top_10_features)
+
+    # Create the stacked bar chart for overlapping features using seaborn
+    sns.set(style="whitegrid")
+    fig, ax = plt.subplots()
+    sns.barplot(x=overlap, y=[scores[feature] for feature in overlap], color='blue', label='MRMR', ax=ax)
+    sns.barplot(x=overlap, y=[top_10_scores[top_10_features.get_loc(feature)] for feature in overlap], color='orange',
+                label='Random Forest', ax=ax, bottom=[scores[feature] for feature in overlap])
+
+    ax.set_xlabel('Features')
+    ax.set_ylabel('Accuracy Scores')
+    ax.set_title('Overlapping Features')
+    ax.legend()
+
+    ax.tick_params(axis='x', rotation=90)
     plt.show()
 

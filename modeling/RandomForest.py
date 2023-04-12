@@ -68,5 +68,5 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1, blood: bool = False)
 
         confusion_matrices.append(confusion_matrix(y_test, predictions))
 
-    return micro_f1_scores, feature_importances, confusion_matrices
+    return micro_f1_scores, feature_importances, confusion_matrices, r, features
 

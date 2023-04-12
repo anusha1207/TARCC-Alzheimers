@@ -21,4 +21,5 @@ def encode_data(df: pd.DataFrame) -> pd.DataFrame:
 
     with open("config/data_codes.json") as data_codes:
         encodings = json.load(data_codes)["encodings"]
-        return pd.get_dummies(df, dummy_na=True, columns=encodings, drop_first=True)
+        encoded_data = pd.get_dummies(df, dummy_na=True, columns=encodings, drop_first=True)
+        return encoded_data[list(filter(lambda feature: not feature.endswith("_nan"), encoded_data.columns))]

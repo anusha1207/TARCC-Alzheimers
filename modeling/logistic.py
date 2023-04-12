@@ -89,7 +89,7 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) ->
     return output
 
 
-def evaluate_results(pickle: str) -> None:
+def evaluate_results(pickle: str) -> dict[str, list]:
     """
     Evaluates the results of the logistic regression models stored in the input pickle file. For each train-test split,
     this model prints the optimal hyperparameters, the micro-F1 score, the feature importances, and the confusion
@@ -100,8 +100,10 @@ def evaluate_results(pickle: str) -> None:
         regression model to evaluate. The object stored in this file should be a dictionary returned by the
         run_elastic_net function.
 
-    Returns:
-        None
+    Returns: A dictionary of model results with the following keys and values:
+        - f1: A list of micro-F1 scores for each model.
+        - confusion: A list of confusion matrices for each model.
+
     """
 
     with open(f"{pickle}.pickle", "rb") as handle:
@@ -147,3 +149,8 @@ def evaluate_results(pickle: str) -> None:
 
     print(f"Average micro-F1 score: {sum(micro_f1_scores) / len(micro_f1_scores)}")
     print(f"Average confusion matrix:\n{sum(confusions) / len(confusions)}")
+
+    return {
+        "f1": micro_f1_scores,
+        "confusion": confusions
+    }

@@ -59,7 +59,7 @@ def plot_cutoffs(
     """
     Runs MRMR feature selection on the blood-only, clinical-only, and combined dataframes. This function plots the
     cumulative relevance scores of each feature set, as well as the points at which the percent change of the scores
-    dips below 1%.
+    dips below 0.5%.
 
     Args:
         blood_only: The cleaned and encoded blood-only dataset.

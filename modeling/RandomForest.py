@@ -1,5 +1,5 @@
 import pickle as pk
-from typing import Any
+from typing import Any, Dict, List
 
 import pandas as pd
 import numpy as np
@@ -80,7 +80,7 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pickle: str = None, 
     return output
 
 
-def evaluate_random_forest(pickle: str) -> None:
+def evaluate_random_forest(pickle: str) -> dict[str, list]:
     """
     Evaluates the results of the random forest models stored in the input pickle file. For each train-test split,
     this model prints the optimal hyperparameters, the micro-F1 score, the feature importances, and the confusion
@@ -134,3 +134,8 @@ def evaluate_random_forest(pickle: str) -> None:
 
     print(f"Average micro-F1 score: {sum(micro_f1_scores) / len(micro_f1_scores)}")
     print(f"Average confusion matrix:\n{sum(confusions) / len(confusions)}")
+
+    return {
+        "f1": micro_f1_scores,
+        "confusion": confusions
+    }

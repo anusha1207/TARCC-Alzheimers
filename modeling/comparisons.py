@@ -6,11 +6,11 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 
-def plot_f1_scores(f1_scores: list[np.array], xlabel: str, ylabel: str, xticklabels: list[str]) -> None:
-    violin_plot = sns.violinplot(f1_scores)
+def plot_f1_scores(f1_scores: list[np.array], xlabel: str, ylabel: str, models: list[str]) -> None:
+    violin_plot = sns.violinplot(f1_scores, orient="h", height=20)
     violin_plot.set_xlabel(xlabel)
     violin_plot.set_ylabel(ylabel)
-    violin_plot.set_xticklabels(xticklabels, rotation=45)
+    violin_plot.set_yticklabels(models)
     plt.rcParams["figure.dpi"] = 400
     plt.show()
 

@@ -89,7 +89,7 @@ def run_elastic_net(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) ->
     return output
 
 
-def evaluate_results(pickle: str) -> dict[str, list]:
+def evaluate_results(pickle: str) -> Dict[str, list]:
     """
     Evaluates the results of the logistic regression models stored in the input pickle file. For each train-test split,
     this model prints the optimal hyperparameters, the micro-F1 score, the feature importances, and the confusion

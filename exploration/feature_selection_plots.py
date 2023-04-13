@@ -13,7 +13,7 @@ from exploration.data_correlations import plot_correlations
 from exploration.data_statistics import plot_labels_pie_chart, plot_blood_draw_statistics
 from exploration.midterm_exploration import plot_feature_against_diagnosis
 
-from modeling.mrmr import plot_accuracy_with_features, perform_mrmr
+from modeling.mrmr_feature_selection import plot_accuracy_with_features, perform_mrmr
 from modeling.logistic import run_elastic_net, evaluate_results
 import numpy as np
 
@@ -22,6 +22,7 @@ def plot_mrmr_features(scores):
     scores = scores.sort_values(ascending=False)
     scores = scores.head(10)
 
+    sns.set(style="whitegrid")
     ax = scores.plot(kind = 'bar')
     plt.xticks(rotation = 90)
     plt.ylabel("Accuracy Score")
@@ -40,6 +41,7 @@ def plot_mrmr_features_scaled(scores):
 
 
 def plot_rf_features(result, features):
+    sns.set(style="whitegrid")
     top_10_idx = np.argsort(result.importances_mean)[::-1][:10]
     top_10_features = features[top_10_idx]
     top_10_scores = result.importances_mean[top_10_idx]
@@ -98,23 +100,34 @@ def plot_mrmr_and_rf(scores, result, features):
     max_score = max(top_10_scores)
     top_10_scores = np.divide(top_10_scores, max_score)
 
-    # Find the non-overlapping features
-    non_overlap_mrmr = scores.index.difference(top_10_features)
-    non_overlap_rf = np.setdiff1d(top_10_features, scores.index)
-    non_overlap_mrmr = scores[non_overlap_mrmr].sort_values(ascending=False).index
 
-    # Create the first plot for non-overlapping features
-    sns.set(style="whitegrid")
-    fig, ax = plt.subplots()
-    width = 0.4
+    # Set the style to 'whitegrid'
+    sns.set_style('whitegrid')
     colors = {'MRMR': 'blue', 'Random Forest': 'orange'}
-    ax.bar(non_overlap_mrmr, scores[non_overlap_mrmr], width, color=colors['MRMR'])
-    ax.bar(non_overlap_rf, top_10_scores[np.in1d(top_10_features, non_overlap_rf)], width, color=colors['Random Forest'])
+
+    # Create a new pandas series to combine the two sets of data
+    all_scores = pd.concat([scores, pd.Series(data=top_10_scores, index=top_10_features)])
+
+    # Set up a new dataframe to differentiate between the two sets of data
+    all_scores_df = pd.DataFrame({'feature': all_scores.index, 'score': all_scores.values})
+    all_scores_df.loc[:9, 'type'] = 'MRMR'
+    all_scores_df.loc[10:19, 'type'] = 'Random Forest'
+
+    # Create the bar plot using Seaborn
+    ax = sns.barplot(x=all_scores_df.index, y='score', hue='type', data=all_scores_df, palette=colors, width=0.8)
+    plt.xticks(rotation=90)
+
+    # Add a legend
+    ax.legend(loc='best')
+
+    # Add a title
     ax.set_xlabel('Features')
-    ax.set_ylabel('Accuracy Scores')
-    ax.set_title('Non-overlapping Features')
-    ax.legend(['MRMR', 'Random Forest'])
-    ax.tick_params(axis='x', rotation=90)
+    ax.set_xticklabels(all_scores_df['feature'])
+    ax.set_ylabel('Scaled Importance Scores')
+    ax.set_title('Top 10 Features of Both MRMR and Random Forest')
+
+    # Rotate the x-axis labels
+    plt.show()
 
     # Find the overlapping features
     overlap = scores.index.intersection(top_10_features)
@@ -127,8 +140,8 @@ def plot_mrmr_and_rf(scores, result, features):
                 label='Random Forest', ax=ax, bottom=[scores[feature] for feature in overlap])
 
     ax.set_xlabel('Features')
-    ax.set_ylabel('Accuracy Scores')
-    ax.set_title('Overlapping Features')
+    ax.set_ylabel('Importance Scores')
+    ax.set_title('Overlapping Important Features of MRMR and Random Forest')
     ax.legend()
 
     ax.tick_params(axis='x', rotation=90)

@@ -1,64 +1,102 @@
 """
 Provides functions for visualizing and analyzing model results.
 """
+from typing import Any
+
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 
 
-def plot_f1_scores(f1_scores: list[np.array], xlabel: str, ylabel: str, models: list[str]) -> None:
-    violin_plot = sns.violinplot(f1_scores, orient="h", height=20)
-    violin_plot.set_xlabel(xlabel)
-    violin_plot.set_ylabel(ylabel)
-    violin_plot.set_yticklabels(models)
-    plt.rcParams["figure.dpi"] = 400
+def plot_f1_scores(
+        f1_scores: list[np.array],
+        title: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        models: list[str] = None,
+        pad: int = None,
+        png: str = None
+) -> None:
+    """
+    Plots the micro-F1 scores of the input models as violin plots, with models on the x-axis and scores on the y-axis.
+
+    Args:
+        f1_scores: A list of numpy arrays containing the micro-F1 scores of the models.
+        title: The title of the plot
+        xlabel: The label of the x-axis.
+        ylabel: The label of the y-axis.
+        models: A list of model names to plot. This list must divide the length of the micro-F1 scores list.
+        pad: The number of groups in the final plot, where each group is a collection of related models.
+        png: The name of the png file to save.
+
+    Returns:
+        None
+    """
+
+    def insert_value(original_list: list[Any], val: Any, padding: int) -> list[Any]:
+        """
+        Inserts a value in between elements of a list, including before the first item and after the last item.
+
+        Args:
+            original_list: The list where the value is being inserted.
+            val: The value to insert.
+            padding: The amount of items to skip after each insertion.
+
+        Returns:
+            A copy of the original list, modified with the insertions.
+        """
+        copy = original_list[:]
+        for i in range(len(copy) - 1, 0, -1):
+            if i % padding == 0:
+                copy.insert(i, val)
+        copy.insert(0, val)
+        copy.append(val)
+        return copy
+
+    # Check that len(models) divides len(f1_scores).
+    if len(f1_scores) % len(models) != 0:
+        print("len(f1_scores) should be an integral multiple of len(models)")
+        return
+
+    # Pad the f1 scores if necessary.
+    padded_f1_scores = f1_scores if not pad else insert_value(f1_scores, [np.nan], pad)
+
+    # Pad the model names if necessary.
+    complete_models = models
+    quotient = len(f1_scores) // len(models)
+    if quotient != 1:
+        complete_models = []
+        for i in range(quotient):
+            complete_models += ["" for _ in range(quotient // 2)] + [models[i]] + ["" for _ in range(quotient // 2)]
+    padded_models = complete_models if not pad else insert_value(complete_models, "", pad)
+
+    # Pad the colors if necessary.
+    colors = ["orange", "green", "blue"]
+    padded_colors = colors if not pad else insert_value(colors, "grey", pad)[:-1]
+
+    # Plot the violin plot.
+    violin_plot = sns.violinplot(
+        padded_f1_scores,
+        orient="v",
+        scale="width",
+        palette=padded_colors
+    )
+    violin_plot.set_title(title, fontsize=18)
+    violin_plot.set_xlabel(xlabel, fontsize=14)
+    violin_plot.set_ylabel(ylabel, fontsize=14)
+    violin_plot.set_xticklabels(padded_models)
+    violin_plot.tick_params(bottom=False)
+
+    # Add vertical lines to separate the models.
+    if pad:
+        line_indices = [(pad + 1) * i for i in range(1, pad)]
+        for line_index in line_indices:
+            violin_plot.axvline(x=line_index, linestyle="--", c="grey")
+
+    # Add a legend for the colors.
+    legend_handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in ["orange", "green", "blue"]]
+    plt.legend(legend_handles, ["Blood", "Clinical", "Combined"], title="Dataset", loc="lower right", prop={"size": 8})
+
+    if png:
+        plt.savefig(f"{png}.png", dpi=100)
     plt.show()
-
-
-# plot_f1_scores(
-#     [
-#         [  # Blood only LR
-#             0.8403361344537815, 0.8487394957983193, 0.7899159663865545, 0.907563025210084, 0.8823529411764706,
-#             0.7731092436974791, 0.7815126050420168, 0.7983193277310925, 0.7647058823529412, 0.7899159663865545,
-#             0.8235294117647058, 0.865546218487395, 0.8235294117647058, 0.8319327731092437, 0.7815126050420168,
-#             0.8823529411764706, 0.8319327731092437, 0.8739495798319328, 0.8319327731092437, 0.8319327731092437
-#         ],
-#         [  # Clinical only LR
-#             0.8285024154589372, 0.8291925465838509, 0.8405797101449275, 0.8319530710835059, 0.8423050379572119,
-#             0.8429951690821256, 0.834023464458247, 0.8378191856452726, 0.8391994478951, 0.8374741200828157,
-#             0.8526570048309179, 0.8378191856452726, 0.831608005521049, 0.8391994478951, 0.8381642512077294,
-#             0.8409247757073844, 0.8478260869565218, 0.8398895790200138, 0.8405797101449275, 0.841959972394755
-#         ],
-#         [  # Combined LR
-#             0.9411764705882353, 0.9411764705882353, 0.957983193277311, 0.9747899159663865, 0.9411764705882353,
-#             0.9495798319327731, 0.957983193277311, 0.9663865546218487, 0.957983193277311, 0.9747899159663865,
-#             0.957983193277311, 0.8991596638655462, 0.9831932773109243, 0.957983193277311, 0.9495798319327731,
-#             0.9411764705882353, 0.9663865546218487, 0.9243697478991597, 0.9495798319327731, 0.9663865546218487
-#         ],
-#         [  # Blood only RF
-#             0.84033613, 0.85714286, 0.82352941, 0.81512605, 0.85714286, 0.87394958, 0.87394958, 0.85714286, 0.78991597,
-#             0.8487395, 0.79831933, 0.89915966, 0.8487395, 0.8907563, 0.84033613, 0.79831933, 0.84033613, 0.85714286,
-#             0.87394958, 0.8487395
-#         ],
-#         [  # Clinical only RF
-#             0.88819876, 0.88371291, 0.8847481, 0.88060732, 0.89061422, 0.88750863, 0.86714976, 0.8857833, 0.88336784,
-#             0.88923395, 0.88405797, 0.88819876, 0.88095238, 0.88647343, 0.87853692, 0.87853692, 0.88647343, 0.89406487,
-#             0.88095238, 0.88612836
-#         ],
-#         [  # Combined RF
-#             0.96638655, 0.96638655, 0.97478992, 0.95798319, 0.98319328, 0.96638655, 0.96638655, 0.95798319, 0.97478992,
-#             0.94117647, 0.95798319, 0.94117647, 0.98319328, 0.96638655, 0.94117647, 0.96638655, 0.93277311, 0.93277311,
-#             0.97478992, 0.95798319
-#         ]
-#     ],
-#     xlabel="Model",
-#     ylabel="Micro-F1 Score",
-#     xticklabels=[
-#         "LR (Blood)",
-#         "LR (Clinical)",
-#         "LR (Combined)",
-#         "RF (Blood)",
-#         "RF (Clinical)",
-#         "RF (Combined)",
-#     ]
-# )

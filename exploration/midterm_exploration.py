@@ -20,7 +20,7 @@ def plot_feature_against_diagnosis(
         data: The dataframe containing at least the input feature and the P1_PT_TYPE label.
         feature: The name of the feature to plot.
         title: The title of the plot.
-        ylabel: The label of tye y-axis.
+        ylabel: The label of the y-axis.
         png: The name of the png file to save.
 
     Returns:

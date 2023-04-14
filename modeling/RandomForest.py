@@ -137,5 +137,7 @@ def evaluate_random_forest(pickle: str) -> dict[str, list]:
 
     return {
         "f1": micro_f1_scores,
-        "confusion": confusions
+        "confusion": confusions,
+        "importance": r,
+        "features": features
     }

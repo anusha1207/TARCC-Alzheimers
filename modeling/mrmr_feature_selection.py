@@ -82,17 +82,17 @@ def plot_cutoffs(
         plt.plot(range(len(features)), cumulative_relevances, label=label, c=color)
         plt.vlines(cutoff, 0, cumulative_relevances[cutoff], colors=color)
 
-        return features[:cutoff]
+        return features[:cutoff], relevances
 
     plt.figure(figsize=(8, 6))
 
-    selected_blood_features = plot_line(blood_only, "Blood Only", "orange")
-    selected_clinical_features = plot_line(clinical_only, "Clinical Only", "green")
-    selected_combined_features = plot_line(combined, "Combined", "blue")
+    selected_blood_features, blood_scores = plot_line(blood_only, "Blood Only", "orange")
+    selected_clinical_features, clinical_scores = plot_line(clinical_only, "Clinical Only", "green")
+    selected_combined_features, combined_scores = plot_line(combined, "Combined", "blue")
 
     plt.xlabel("Number of Features")
     plt.ylabel("Scaled Cumulative Accuracy Score")
     plt.legend()
     plt.show()
 
-    return selected_blood_features, selected_clinical_features, selected_combined_features
+    return selected_blood_features, selected_clinical_features, selected_combined_features, blood_scores, clinical_scores, combined_scores

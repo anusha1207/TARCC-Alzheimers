@@ -3,6 +3,7 @@ import numpy as np
 import mrmr
 import pandas as pd
 import matplotlib.pyplot as plt
+from typing import Tuple
 
 from utils.utils import remove_bookkeeping_features, get_features_label
 
@@ -55,7 +56,7 @@ def plot_cutoffs(
         blood_only: pd.DataFrame,
         clinical_only: pd.DataFrame,
         combined: pd.DataFrame
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Runs MRMR feature selection on the blood-only, clinical-only, and combined dataframes. This function plots the
     cumulative relevance scores of each feature set, as well as the points at which the percent change of the scores

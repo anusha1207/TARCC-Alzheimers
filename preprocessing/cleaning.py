@@ -2,13 +2,12 @@
 Reads the CSV file and cleans the dataframe.
 """
 import json
-from typing import List
 
 import numpy as np
 import pandas as pd
 
 
-def drop_features(df: pd.DataFrame, features_to_drop: List[str]):
+def drop_features(df: pd.DataFrame, features_to_drop: list[str]) -> None:
     """
     Drops the given features from the input dataframe. This function modifies the data frame in place instead of
     producing a new one.

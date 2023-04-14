@@ -20,7 +20,7 @@ def log_features(df: pd.DataFrame, log="features") -> None:
             f.write(f"{df.columns[i]}\t{df.dtypes[i]}\n")
 
 
-def split_csv(original_df: pd.DataFrame):
+def split_csv(original_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Takes in the original dataset and creates three new data frames: one for combined blood and clinical data, one for
     blood data only, and one for clinical data only.

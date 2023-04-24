@@ -54,7 +54,11 @@ def plot_accuracy_with_features(X: pd.DataFrame, y: pd.Series):
 def plot_cutoffs(
         blood_only: pd.DataFrame,
         clinical_only: pd.DataFrame,
-        combined: pd.DataFrame
+        combined: pd.DataFrame,
+        title: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        png: str = None
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Runs MRMR feature selection on the blood-only, clinical-only, and combined dataframes. This function plots the
@@ -79,8 +83,8 @@ def plot_cutoffs(
         cumulative_relevances = np.cumsum(relevances.sort_values(ascending=False))
         cutoff = np.where(np.abs(np.diff(cumulative_relevances)) / cumulative_relevances[:-1] < 0.005)[0][0]
 
-        plt.plot(range(len(features)), cumulative_relevances, label=label, c=color)
-        plt.vlines(cutoff, 0, cumulative_relevances[cutoff], colors=color)
+        plt.plot(range(len(features)), cumulative_relevances, label=label, c=color, linewidth=2)
+        plt.vlines(cutoff, -1, cumulative_relevances[cutoff], colors=color, linewidth=2)
 
         return features[:cutoff]
 
@@ -90,9 +94,14 @@ def plot_cutoffs(
     selected_clinical_features = plot_line(clinical_only, "Clinical Only", "green")
     selected_combined_features = plot_line(combined, "Combined", "blue")
 
-    plt.xlabel("Number of Features")
-    plt.ylabel("Scaled Cumulative Accuracy Score")
-    plt.legend()
+    plt.title(title, fontsize=18)
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel(ylabel, fontsize=14)
+    plt.legend(loc="lower right")
+    plt.xlim((-10, 200))
+    plt.ylim((-0.02, 1.05))
+    if png:
+        plt.savefig(f"{png}.png", dpi=1000)
     plt.show()
 
     return selected_blood_features, selected_clinical_features, selected_combined_features

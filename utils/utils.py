@@ -4,7 +4,7 @@ A collection of utility functions.
 import pandas as pd
 
 
-def log_features(df: pd.DataFrame, log="features") -> None:
+def log_features(df: pd.DataFrame, log="output/logs/features.log") -> None:
     """
     Outputs a list of existing features and their datatypes to a log file.
 
@@ -15,18 +15,19 @@ def log_features(df: pd.DataFrame, log="features") -> None:
     Returns:
         None
     """
-    with open(f"{log}.log", "w") as f:
+    with open(log, "w") as f:
         for i in range(len(df.columns)):
             f.write(f"{df.columns[i]}\t{df.dtypes[i]}\n")
 
 
-def split_csv(original_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def split_csv(original_df: pd.DataFrame, csv: bool = False) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Takes in the original dataset and creates three new data frames: one for combined blood and clinical data, one for
     blood data only, and one for clinical data only.
 
     Args:
         original_df: The cleaned and encoded TARCC dataset.
+        csv: If True, outputs a CSV in output/dataframes for each partition.
 
     Returns: Three new data frames formatted as follows:
         combined - contains blood and clinical features, but only patients who have drawn blood.
@@ -49,8 +50,10 @@ def split_csv(original_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd
 
     clinical_only = original_df.drop(filtered_feats, axis=1)
 
-    blood_only.to_csv("Blood Data.csv", index=False)
-    clinical_only.to_csv("Clinical Data.csv", index=False)
+    if csv:
+        combined.to_csv("output/dataframes/Combined.csv", index=False)
+        blood_only.to_csv("output/dataframes/Blood Data.csv", index=False)
+        clinical_only.to_csv("output/dataframes/Clinical Data.csv", index=False)
 
     return combined, blood_only, clinical_only
 

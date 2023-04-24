@@ -39,5 +39,5 @@ def plot_feature_against_diagnosis(
     boxplot.set_ylabel(ylabel, fontsize=14)
     boxplot.set_xticklabels(["Control", "MCI", "AD"], fontsize=12)
     if png:
-        plt.savefig(f"{png}.png", dpi=1000)
+        plt.savefig(png, dpi=1000)
     plt.show()

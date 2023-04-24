@@ -1,5 +1,3 @@
-from typing import Any
-
 import numpy as np
 
 import mrmr
@@ -61,7 +59,7 @@ def plot_cutoffs(
         xlabel: str = None,
         ylabel: str = None,
         png: str = None
-) -> dict[str, dict[str, pd.DataFrame]]:
+) -> dict[str, dict[str, list | pd.Series]]:
     """
     Runs MRMR feature selection on the blood-only, clinical-only, and combined dataframes. This function plots the
     cumulative relevance scores of each feature set, as well as the points at which the percent change of the scores
@@ -81,7 +79,7 @@ def plot_cutoffs(
         keys "features" (for the selected features) and "relevances" (for the relevance scores).
     """
 
-    def plot_line(data: pd.DataFrame, label: str, color: str) -> tuple[pd.DataFrame, pd.DataFrame]:  # TODO: pd.Series?
+    def plot_line(data: pd.DataFrame, label: str, color: str) -> tuple[list, pd.Series]:
         """
         Plots the MRMR line for one dataset.
 
@@ -120,7 +118,7 @@ def plot_cutoffs(
     plt.xlim((-10, 200))
     plt.ylim((-0.02, 1.05))
     if png:
-        plt.savefig(f"{png}.png", dpi=1000)
+        plt.savefig(png, dpi=1000)
     plt.show()
 
     return {

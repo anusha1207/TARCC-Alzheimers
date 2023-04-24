@@ -74,7 +74,7 @@ def plot_blood_draw_statistics(df: pd.DataFrame, png: str = None) -> None:
     plt.title("Number of patients who drew blood / did not draw blood")
     plt.ylabel("Number of patients (duplicates not counted)")
     if png:
-        plt.savefig(f"{png}.png", dpi=100)
+        plt.savefig(png, dpi=100)
     plt.show()
 
 
@@ -93,7 +93,7 @@ def plot_labels_pie_chart(df: pd.DataFrame, png: str = None) -> None:
     classes.plot(kind="pie")
     plt.legend(labels=classes.index)
     if png:
-        plt.savefig(f"{png}.png", dpi=100)
+        plt.savefig(png, dpi=100)
     plt.show()
 
 
@@ -131,5 +131,5 @@ def plot_patientwise_errors(
     plt.title(f"Box plots of patient-wise standard deviations for {len(features)} features")
     plt.ylabel("Patient-wise SD")
     if png:
-        plt.savefig(f"{png}.png", dpi=100)
+        plt.savefig(png, dpi=100)
     plt.show()

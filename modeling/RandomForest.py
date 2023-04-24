@@ -13,6 +13,7 @@ from utils.utils import remove_bookkeeping_features
 
 LABEL = "P1_PT_TYPE"
 
+
 def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pickle: str = None, blood = False) -> dict[str, Any]:
     """
     Runs an elastic net model for num_iters train-test splits on the input dataframe, using "P1_PT_TYPE" as the label.
@@ -137,5 +138,7 @@ def evaluate_random_forest(pickle: str) -> dict[str, list]:
 
     return {
         "f1": micro_f1_scores,
-        "confusion": confusions
+        "confusion": confusions,
+        "importance": r,
+        "features": features
     }

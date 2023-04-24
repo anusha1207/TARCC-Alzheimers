@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 import mrmr
@@ -59,7 +61,7 @@ def plot_cutoffs(
         xlabel: str = None,
         ylabel: str = None,
         png: str = None
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> dict[str, dict[str, pd.DataFrame]]:
     """
     Runs MRMR feature selection on the blood-only, clinical-only, and combined dataframes. This function plots the
     cumulative relevance scores of each feature set, as well as the points at which the percent change of the scores
@@ -69,12 +71,29 @@ def plot_cutoffs(
         blood_only: The cleaned and encoded blood-only dataset.
         clinical_only: The cleaned and encoded clinical-only dataset.
         combined: The combined dataset.
+        title: The title of the plot.
+        xlabel: The label of the x-axis.
+        ylabel: The label of the y-axis.
+        png: The name of the png file to save.
 
     Returns:
-        A tuple of three lists, each representing the selected features of the input dataframes.
+        A tuple of three dictionaries, each representing the MRMR output on each dataset. Each dictionary contains the
+        keys "features" (for the selected features) and "relevances" (for the relevance scores).
     """
 
-    def plot_line(data: pd.DataFrame, label: str, color: str) -> pd.DataFrame:
+    def plot_line(data: pd.DataFrame, label: str, color: str) -> tuple[pd.DataFrame, pd.DataFrame]:  # TODO: pd.Series?
+        """
+        Plots the MRMR line for one dataset.
+
+        Args:
+            data: The dataset to perform MRMR on and plot.
+            label: The legend label for the line.
+            color: The color of the line.
+
+        Returns:
+            A tuple where the first element is a dataframe of selected features and the second element is a dataframe of
+            relevance scores.
+        """
 
         y, X = get_features_label(data)
         y = pd.Series(y)
@@ -86,13 +105,13 @@ def plot_cutoffs(
         plt.plot(range(len(features)), cumulative_relevances, label=label, c=color, linewidth=2)
         plt.vlines(cutoff, -1, cumulative_relevances[cutoff], colors=color, linewidth=2)
 
-        return features[:cutoff]
+        return features[:cutoff], relevances
 
     plt.figure(figsize=(8, 6))
 
-    selected_blood_features = plot_line(blood_only, "Blood Only", "orange")
-    selected_clinical_features = plot_line(clinical_only, "Clinical Only", "green")
-    selected_combined_features = plot_line(combined, "Combined", "blue")
+    selected_blood_features, blood_scores = plot_line(blood_only, "Blood Only", "orange")
+    selected_clinical_features, clinical_scores = plot_line(clinical_only, "Clinical Only", "green")
+    selected_combined_features, combined_scores = plot_line(combined, "Combined", "blue")
 
     plt.title(title, fontsize=18)
     plt.xlabel(xlabel, fontsize=14)
@@ -104,4 +123,17 @@ def plot_cutoffs(
         plt.savefig(f"{png}.png", dpi=1000)
     plt.show()
 
-    return selected_blood_features, selected_clinical_features, selected_combined_features
+    return {
+        "blood": {
+            "features": selected_blood_features,
+            "relevances": blood_scores
+        },
+        "clinical": {
+            "features": selected_clinical_features,
+            "relevances": clinical_scores
+        },
+        "combined": {
+            "features": selected_combined_features,
+            "relevances": combined_scores
+        }
+    }

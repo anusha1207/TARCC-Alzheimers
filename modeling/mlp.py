@@ -1,8 +1,8 @@
 """
 Defines functions for running and evaluating a Multi-Layer Perceptron (MLP) Neural Network Model.
 """
-import pickle as pk
-from typing import Any, Dict, List
+import pickle
+from typing import Any
 
 import pandas as pd
 import numpy as np
@@ -18,16 +18,15 @@ from utils.utils import remove_bookkeeping_features
 LABEL = "P1_PT_TYPE"
 
 
-def run_mlp(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> dict[str, Any]:
+def run_mlp(df: pd.DataFrame, num_iters: int = 1, pkl: str = None) -> dict[str, Any]:
     """
-    Runs an Multi-Layer Perceptron (MLP) Neural Network Model for num_iters train-test splits on the input
-    dataframe, using "P1_PT_TYPE" as the label.
-    Output the results to a pickle file if the pickle option is provided.
+    Runs a Multi-Layer Perceptron (MLP) Neural Network Model for num_iters train-test splits on the input dataframe,
+    using "P1_PT_TYPE" as the label. Output the results to a pickle file if the pkl option is provided.
 
     Args:
         df: The cleaned and encoded TARCC dataset.
         num_iters: The number of MLP iterations to perform.
-        pickle: The name of the pickle file to cache the results in.
+        pkl: The name of the pickle file to cache the results in.
 
     Returns: A dictionary of model results with the following keys and values:
         - features: A list of feature used in the MLP neural net model.
@@ -64,7 +63,6 @@ def run_mlp(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> dict[st
 
         mlp_model = MLPClassifier(
             max_iter=300,
-            activation='relu',
             hidden_layer_sizes=[20, 20]
         )
         mlp_model.fit(X_train, y_train)
@@ -80,31 +78,32 @@ def run_mlp(df: pd.DataFrame, num_iters: int = 1, pickle: str = None) -> dict[st
         "testing_data": testing_data
     }
 
-    # Cache the return value if the pickle option has been provided.
-    if pickle:
-        with open(f"{pickle}.pickle", "wb") as handle:
-            pk.dump(output, handle, protocol=pk.HIGHEST_PROTOCOL)
+    # Cache the return value if the pkl option has been provided.
+    if pkl:
+        with open(pkl, "wb") as handle:
+            pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     return output
 
 
-def evaluate_mlp(pickle: str) -> dict[str, list]:
+def evaluate_mlp(pkl: str, verbose: bool = False) -> dict[str, list]:
     """
     Evaluates the results of the Multi-Layer Perceptron (MLP) neural network models stored in the input pickle file.
-    For each train-test split, this model prints the optimal hyperparameters, the micro-F1 score, the feature importances,
-    and the confusion matrix. After all iterations, this function prints the mean micro-F1 score and the mean confusion matrix.
+    For each train-test split, this model prints the optimal hyperparameters, the micro-F1 score, the feature
+    importances, and the confusion matrix if the verbose option is True. After all iterations, this function prints the
+    mean micro-F1 score and the mean confusion matrix.
 
     Args:
-        pickle: The name of the pickle file (without the ".pickle" extension) which stores the output of the MLP neural
-        network classifier model to evaluate. The object stored in this file should be a dictionary returned by the
-        run_mlp function.
+        pkl: The name of the pickle file which stores the output of the MLP neural network classifier model to evaluate.
+        The object stored in this file should be a dictionary returned by the run_mlp function.
+        verbose: If True, prints the results after each iteration; otherwise, prints only the aggregate results
 
     Returns:
         None
     """
 
-    with open(f"{pickle}.pickle", "rb") as handle:
-        data = pk.load(handle)
+    with open(pkl, "rb") as handle:
+        data = pickle.load(handle)
         features = data["features"]
         models = data["models"]
         testing_data = data["testing_data"]
@@ -136,13 +135,14 @@ def evaluate_mlp(pickle: str) -> dict[str, list]:
         confusion = confusion_matrix(y_test, predictions)
         confusions.append(confusion)
 
-        print(f"Iteration {i}")
-        print(f"Best Loss: {best_loss}")
-        print(f"Best Validation Score: {best_validation_score}")
-        print(f"Micro-F1 score: {micro_f1_score}")
-        print(f"Feature importances: {sorted_important_features}")
-        print(f"Confusion matrix:\n{confusion}")
-        print()
+        if verbose:
+            print(f"Iteration {i}")
+            print(f"Best Loss: {best_loss}")
+            print(f"Best Validation Score: {best_validation_score}")
+            print(f"Micro-F1 score: {micro_f1_score}")
+            print(f"Feature importances: {sorted_important_features}")
+            print(f"Confusion matrix:\n{confusion}")
+            print()
 
     print(f"Average micro-F1 score: {sum(micro_f1_scores) / len(micro_f1_scores)}")
     print(f"Average confusion matrix:\n{sum(confusions) / len(confusions)}")

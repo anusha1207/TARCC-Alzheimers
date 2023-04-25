@@ -1,21 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.patches as mpatches
-import seaborn as sns
-
-from utils.utils import get_features_label, split_csv
-
-from preprocessing.cleaning import get_cleaned_data
-from preprocessing.encoding import encode_data
-
-from exploration.data_correlations import plot_correlations
-from exploration.data_statistics import plot_labels_pie_chart, plot_blood_draw_statistics
-from exploration.midterm_exploration import plot_feature_against_diagnosis
-
-from modeling.mrmr_feature_selection import plot_accuracy_with_features, perform_mrmr
-from modeling.logistic import run_elastic_net, evaluate_results
 import numpy as np
+import seaborn as sns
 
 
 def plot_mrmr_features(scores):

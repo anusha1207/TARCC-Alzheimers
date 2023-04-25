@@ -1,5 +1,8 @@
-import pickle as pk
-from typing import Any, Dict, List
+"""
+Defines functions for running and evaluating random forest models.
+"""
+import pickle
+from typing import Any
 
 import pandas as pd
 import numpy as np
@@ -9,32 +12,31 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, f1_score
+
 from utils.utils import remove_bookkeeping_features
 
 LABEL = "P1_PT_TYPE"
 
 
-def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pickle: str = None, blood = False) -> dict[str, Any]:
+def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pkl: str = None) -> dict[str, Any]:
     """
-    Runs an elastic net model for num_iters train-test splits on the input dataframe, using "P1_PT_TYPE" as the label.
-    Output the results to a pickle file if the pickle option is provided.
+    Runs a random forest model for num_iters train-test splits on the input dataframe, using "P1_PT_TYPE" as the label.
+    Output the results to a pickle file if the pkl option is provided.
 
     Args:
         df: The cleaned and encoded TARCC dataset.
-        num_iters: The number of elastic-net iterations to perform.
-        pickle: The name of the pickle file to cache the results in.
+        num_iters: The number of random forest iterations to perform.
+        pkl: The name of the pickle file to cache the results in.
 
     Returns: A dictionary of model results with the following keys and values:
-        - features: A list of feature used in the elastic net model.
-        - models: A list containing the RandomForest object after each iteration.
+        - features: A list of feature used in the random forest model.
+        - models: A list containing the RandomForestClassifier object after each iteration.
         - training_data: A list of tuples, where each tuple is an (X, y) pair of training data.
         - testing_data: A list of tuples, where each tuple is an (X, y) pair of testing data.
     """
 
     # Remove bookkeeping information before modeling.
     df = remove_bookkeeping_features(df)
-    if blood:
-        df = df[df[LABEL] != 4]
 
     # Obtain the features, the data matrix, and the label vector.
     features = df.drop(LABEL, axis=1).columns
@@ -54,7 +56,7 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pickle: str = None, 
     training_data = []
     testing_data = []
 
-    # Run the elastic net model multiple times.
+    # Run the random forest model multiple times.
     for i in range(num_iters):
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -73,37 +75,39 @@ def run_random_forest(df: pd.DataFrame, num_iters: int = 1, pickle: str = None, 
         "testing_data": testing_data
     }
 
-    # Cache the return value if the pickle option has been provided.
-    if pickle:
-        with open(f"{pickle}.pickle", "wb") as handle:
-            pk.dump(output, handle, protocol=pk.HIGHEST_PROTOCOL)
+    # Cache the return value if the pkl option has been provided.
+    if pkl:
+        with open(pkl, "wb") as handle:
+            pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     return output
 
 
-def evaluate_random_forest(pickle: str) -> dict[str, list]:
+def evaluate_random_forest(pkl: str, verbose: bool = False) -> dict[str, list]:
     """
     Evaluates the results of the random forest models stored in the input pickle file. For each train-test split,
     this model prints the optimal hyperparameters, the micro-F1 score, the feature importances, and the confusion
-    matrix. After all iterations, this function prints the mean micro-F1 score and the mean confusion matrix.
+    matrix if the verbose option is True. After all iterations, this function prints the mean micro-F1 score and the
+    mean confusion matrix.
 
     Args:
-        pickle: The name of the pickle file (without the ".pickle" extension) which stores the output of the random forest
-        model to evaluate. The object stored in this file should be a dictionary returned by the
-        run_elastic_net function.
+        pkl: The name of the pickle file which stores the output of the random forest model to evaluate. The object
+        stored in this file should be a dictionary returned by the run_random_forest function.
+        verbose: If True, prints the results after each iteration; otherwise, prints only the aggregate results
 
     Returns:
         None
     """
 
-    with open(f"{pickle}.pickle", "rb") as handle:
-        data = pk.load(handle)
+    with open(pkl, "rb") as handle:
+        data = pickle.load(handle)
         features = data["features"]
         models = data["models"]
         testing_data = data["testing_data"]
 
     micro_f1_scores = []
     confusions = []
+    r = None
 
     for i in range(len(models)):
 
@@ -118,7 +122,8 @@ def evaluate_random_forest(pickle: str) -> dict[str, list]:
             random_forest_model, X_test, y_test,
             scoring="f1_micro",
             n_repeats=10,
-            random_state=0
+            random_state=0,
+            n_jobs=-1
         )
 
         importance_indices = np.argsort(r["importances_mean"])[::-1]
@@ -127,11 +132,12 @@ def evaluate_random_forest(pickle: str) -> dict[str, list]:
         confusion = confusion_matrix(y_test, predictions)
         confusions.append(confusion)
 
-        print(f"Iteration {i}")
-        print(f"Micro-F1 score: {micro_f1_score}")
-        print(f"Feature importances: {sorted_important_features}")
-        print(f"Confusion matrix:\n{confusion}")
-        print()
+        if verbose:
+            print(f"Iteration {i}")
+            print(f"Micro-F1 score: {micro_f1_score}")
+            print(f"Feature importances: {sorted_important_features}")
+            print(f"Confusion matrix:\n{confusion}")
+            print()
 
     print(f"Average micro-F1 score: {sum(micro_f1_scores) / len(micro_f1_scores)}")
     print(f"Average confusion matrix:\n{sum(confusions) / len(confusions)}")

@@ -91,6 +91,22 @@ def plot_mci_f1_scores(
         pad: int = None,
         png: str = None
 ) -> None:
+    """
+    Plots the micro-F1 scores of the input MCI models as violin plots, with models on the x-axis and scores on the
+    y-axis.
+
+    Args:
+        f1_scores: A list of numpy arrays containing the micro-F1 scores of the models.
+        title: The title of the plot
+        xlabel: The label of the x-axis.
+        ylabel: The label of the y-axis.
+        models: A list of model names to plot. This list must divide the length of the micro-F1 scores list.
+        pad: The number of groups in the final plot, where each group is a collection of related models.
+        png: The name of the png file to save.
+
+    Returns:
+        None
+    """
 
     # Check that len(models) divides len(f1_scores).
     if len(f1_scores) % len(models) != 0:

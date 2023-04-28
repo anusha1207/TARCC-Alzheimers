@@ -61,7 +61,8 @@ def plot_f1_scores(
         padded_f1_scores,
         orient="v",
         scale="width",
-        palette=padded_colors
+        palette=padded_colors,
+        # cut=0
     )
     violin_plot.set_title(title, fontsize=18)
     violin_plot.set_xlabel(xlabel, fontsize=14)

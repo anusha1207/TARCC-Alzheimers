@@ -107,7 +107,7 @@ def plot_mrmr_and_rf(scores, result, features):
     plt.xticks(rotation=90)
 
     # Add a legend
-    ax.legend(loc='best', fontsize=18, fontweight='bold')
+    ax.legend(loc='best', fontsize=14)
 
     # Add a title
     ax.set_xlabel('Features', fontsize=12)

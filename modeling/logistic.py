@@ -36,7 +36,7 @@ def run_logistic_regression(df: pd.DataFrame, num_iters: int = 1, pkl: str = Non
     """
 
     # Reset the random seed.
-    np.random.seed(0)
+    np.random.seed(123)
 
     # Remove bookkeeping information before modeling.
     df = remove_bookkeeping_features(df)

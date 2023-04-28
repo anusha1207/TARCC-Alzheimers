@@ -35,6 +35,9 @@ def run_logistic_regression(df: pd.DataFrame, num_iters: int = 1, pkl: str = Non
         - testing_data: A list of tuples, where each tuple is an (X, y) pair of testing data.
     """
 
+    # Reset the random seed.
+    np.random.seed(0)
+
     # Remove bookkeeping information before modeling.
     df = remove_bookkeeping_features(df)
 

@@ -6,6 +6,8 @@ from typing import Any
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.preprocessing import normalize
 
 
 def plot_f1_scores(
@@ -172,3 +174,21 @@ def insert_value(original_list: list[Any], val: Any, padding: int) -> list[Any]:
     copy.insert(0, val)
     copy.append(val)
     return copy
+
+
+def plot_average_confusion_matrix(
+        confusion_matrices: np.ndarray,
+        classes: list[str],
+        title: str,
+        png: str = None
+) -> None:
+
+    confusion_matrix = normalize(sum(confusion_matrices), norm="l1")
+    disp = ConfusionMatrixDisplay(confusion_matrix, display_labels=classes)
+    disp.plot(cmap="Blues")
+    disp.im_.set_clim(0, 1)
+    disp.im_.colorbar.remove()
+    plt.title(title)
+    if png:
+        plt.savefig(png, dpi=500)
+    plt.show()

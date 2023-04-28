@@ -17,3 +17,6 @@ of the input features, and plots those standard deviations as boxplots.
 ## midterm_exploration.py
 This module contains the plot_feature_against_diagnosis function, which was used for the plots in the midterm presentation/report.
 This function plots three separate boxplots (one for each diagnosis level) of the input feature. The data should be cleaned and encoded before use.
+
+## feature_selection_plots.py
+Module containing the functions to plot the feature selection results from our MRMR and Random Forest models. Compares and contrasts feature importance scores, and identifies the intersection of features shared between models

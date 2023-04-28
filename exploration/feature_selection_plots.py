@@ -113,24 +113,31 @@ def plot_mrmr_and_rf(scores, result, features):
     all_scores_df.loc[:9, 'type'] = 'MRMR'
     all_scores_df.loc[10:19, 'type'] = 'Random Forest'
 
+    # Find the overlapping features
+    overlap = scores.index.intersection(top_10_features)
+
     # Create the bar plot using Seaborn
     ax = sns.barplot(x=all_scores_df.index, y='score', hue='type', data=all_scores_df, palette=colors, width=0.8)
     plt.xticks(rotation=90)
 
     # Add a legend
-    ax.legend(loc='best')
+    ax.legend(loc='best', fontsize=18, fontweight='bold')
 
     # Add a title
-    ax.set_xlabel('Features')
-    ax.set_xticklabels(all_scores_df['feature'])
-    ax.set_ylabel('Scaled Importance Scores')
-    ax.set_title('Top 10 Features of Both MRMR and Random Forest')
+    ax.set_xlabel('Features', fontsize=12)
+    ax.set_xticklabels(all_scores_df['feature'], fontsize=12)
+    ax.set_ylabel('Scaled Importance Scores', fontsize=12)
+    ax.set_title('Top 10 Features of Both MRMR and Random Forest', fontweight='bold', fontsize=14)
+    labels = ax.get_xticklabels()
+
+    for label in labels:
+        if label.get_text() in overlap:
+            label.set_fontweight('bold')
+
+    ax.set_xticklabels(labels)
 
     # Rotate the x-axis labels
     plt.show()
-
-    # Find the overlapping features
-    overlap = scores.index.intersection(top_10_features)
 
     # Create the stacked bar chart for overlapping features using seaborn
     sns.set(style="whitegrid")

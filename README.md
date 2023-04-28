@@ -25,13 +25,18 @@ This project installs and uses the following packages.
 - [Scikit Learn](https://pypi.org/project/scikit-learn/)
 - [Scipy Stats](https://pypi.org/project/scipy/)
 - [Seaborn](https://seaborn.pydata.org/)
+- [mrmr](https://github.com/smazzanti/mrmr)
+- [matplotlib](https://matplotlib.org/)
 
 
 ## Folder Structure
 * config: This folder contains a file named requirements.txt which contains all the packages you need to install.
-* data: The data folder contains the csv file of our raw input (TARCC_data.csv) 
+* data: The data folder contains the csv file of our raw input (TARCC_data.csv).
 * exploration: This contains initial data exploration files.
+* modeling: This contains the machine learning model files.
+* output: This contains the outputs for our visualizations and model results.
 * preprocessing: This folder contains a preprocessing file which cleans our data's missing values and features.
+* utils: This contains utulity functions to log the features as they are processed in data loading and cleaning.
 * main.ipynb: The main notebook for running functions located in other modules. This notebook serves as a demo of what our code can do.
 
 
@@ -65,7 +70,7 @@ Our preprocessing stage merged data by patient visits to minimze the number of m
 Our team conducted feature selection using a model agnostic approach: maximum relevancy, minimal redundancy (MRMR). MRMR is an iterative approach that selects the best features based on their highest correlation to the response variable (relevance), and lowest correlation between features (redundancy).
 
 ## Modeling
-Our modeling stage is currently utilizing a multiclass logistic regression for prediction of disease class. We will next be exploring a XGBoost Random Forest model to improve accuracy and interpretation.
+Our modeling stage is currently utilizing a multiclass logistic regression, Random Forest, and MultiLayer Perceptron Neural Net for prediction of disease class. We evaluate these results, bootstrapping our scores and plotting them side-by-side via a violin plot to compare performances across different models and data partitions. Here, we also calculate the points of diminishing returns of feature relevance through the MRMR algorithm, plotting the cutoff points at the optimal number of features.
 
 ## Contributors
 **Lee, Michelle** <br />

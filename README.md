@@ -65,7 +65,7 @@ Our preprocessing stage merged data by patient visits to minimze the number of m
 Our team conducted feature selection using a model agnostic approach: maximum relevancy, minimal redundancy (MRMR). MRMR is an iterative approach that selects the best features based on their highest correlation to the response variable (relevance), and lowest correlation between features (redundancy).
 
 ## Modeling
-Our modeling stage is currently utilizing a multiclass logistic regression for prediction of disease class. We will next be exploring a XGBoost Random Forest model to improve accuracy and interpretation.
+Our modeling stage is currently utilizing a multiclass logistic regression, Random Forest, and MultiLayer Perceptron Neural Net for prediction of disease class. We evaluate these results, bootstrapping our scores and plotting them side-by-side via a violin plot to compare performances across different models and data partitions. Here, we also calculate the points of diminishing returns of feature relevance through the MRMR algorithm, plotting the cutoff points at the optimal number of features.
 
 ## Contributors
 **Lee, Michelle** <br />

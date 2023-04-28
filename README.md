@@ -31,9 +31,12 @@ This project installs and uses the following packages.
 
 ## Folder Structure
 * config: This folder contains a file named requirements.txt which contains all the packages you need to install.
-* data: The data folder contains the csv file of our raw input (TARCC_data.csv) 
+* data: The data folder contains the csv file of our raw input (TARCC_data.csv).
 * exploration: This contains initial data exploration files.
+* modeling: This contains the machine learning model files.
+* output: This contains the outputs for our visualizations and model results.
 * preprocessing: This folder contains a preprocessing file which cleans our data's missing values and features.
+* utils: This contains utulity functions to log the features as they are processed in data loading and cleaning.
 * main.ipynb: The main notebook for running functions located in other modules. This notebook serves as a demo of what our code can do.
 
 

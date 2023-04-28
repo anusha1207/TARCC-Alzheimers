@@ -140,3 +140,5 @@ def plot_mrmr_and_rf(scores, result, features):
     ax.tick_params(axis='x', rotation=90)
     plt.show()
 
+    # Reset the style
+    sns.set(style="white")

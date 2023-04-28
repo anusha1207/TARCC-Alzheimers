@@ -25,6 +25,8 @@ This project installs and uses the following packages.
 - [Scikit Learn](https://pypi.org/project/scikit-learn/)
 - [Scipy Stats](https://pypi.org/project/scipy/)
 - [Seaborn](https://seaborn.pydata.org/)
+- [mrmr](https://github.com/smazzanti/mrmr)
+- [matplotlib](https://matplotlib.org/)
 
 
 ## Folder Structure

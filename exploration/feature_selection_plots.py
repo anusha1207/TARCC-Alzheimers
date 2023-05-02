@@ -5,6 +5,14 @@ import numpy as np
 
 
 def plot_mrmr_features(scores):
+    """
+    This function creates a barplot of the top 10 features ranked as the most important by MRMR. The scores
+    are left unscaled to show the original scores assigned.
+
+    :param scores: The importance scores assigned to the features by MRMR
+    :return: Returns a bar plot of the top 10 features selected by MRMR (unscaled)
+    """
+
     scores = scores.sort_values(ascending=False)
     scores = scores.head(10)
 
@@ -15,6 +23,13 @@ def plot_mrmr_features(scores):
     plt.show()
 
 def plot_mrmr_features_scaled(scores):
+    """
+    This function creates a barplot of the top 10 features ranked as the most important by MRMR. The difference here is
+    that the scores are scaled with respect to the maximum importance score of the features selected by MRMR.
+
+    :param scores: The importance scores assigned to the features by MRMR
+    :return: A bar plot of the top 10 features selected by MRMR (scaled)
+    """
     scores = scores.sort_values(ascending=False)
     scores = scores.head(10)
     max_score = max(scores)
@@ -27,6 +42,14 @@ def plot_mrmr_features_scaled(scores):
 
 
 def plot_rf_features(result, features):
+    """
+    This function creates a barplot of the top 10 features ranked as the most important by the permutation
+    importance of Random Forest. The scores are left unscaled to show the original scores assigned.
+
+    :param result: The importance scores assigned by the permutation importance.
+    :param features: The names of the features.
+    :return: A bar plot of the top 10 features selected by the permutation importance (unscaled).
+    """
     sns.set(style="whitegrid")
     top_10_idx = np.argsort(result.importances_mean)[::-1][:10]
     top_10_features = features[top_10_idx]
@@ -53,6 +76,15 @@ def plot_rf_features(result, features):
     plt.show()
 
 def plot_rf_features_scaled(result, features):
+    """
+    This function creates a barplot of the top 10 features ranked as the most important by the permutation
+    importance of Random Forest. The difference here is that the scores are scaled with respect to the maximum
+    importance score of the features selected by the permutation importance of Random Forest.
+
+    :param result: The importance scores assigned by the permutation importance.
+    :param features: The names of the features.
+    :return: A bar plot of the top 10 features selected by the permutation importance (unscaled).
+    """
     top_10_idx = np.argsort(result.importances_mean)[::-1][:10]
     top_10_features = features[top_10_idx]
     top_10_scores = result.importances_mean[top_10_idx]
@@ -75,6 +107,19 @@ def plot_rf_features_scaled(result, features):
     plt.show()
 
 def plot_mrmr_and_rf(scores, result, features):
+    """
+    This function creates two bar plots using seaborn. The first bar plot show the top 10 features selected as the most
+    important by both MRMR and Random Forest. The scores in the first bar plot are scaled with respect to the maximum
+    score of the corresponding model. The second bar plot shows the features that overlap between MRMR and Random
+    Forest. In other words, the features that are in the top 10 for both MRMR and Random Forest are shown in the second
+    bar plot. The scores are also scaled in the second bar plot.
+
+    :param scores: The importance scores assigned to the features by MRMR
+    :param result: The importance scores assigned by the permutation importance.
+    :param features: The names of the features.
+    :return: Two barplots, one showing the top 10 features of both MRMR and Random Forest and another that shows the
+             the features that overlap between both algorithms.
+    """
     scores = scores.sort_values(ascending=False)
     scores = scores.head(10)
     max_score = max(scores)
